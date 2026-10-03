@@ -14,6 +14,7 @@ class App : Application() {
             Mushaf.load(this)
             Ayat.build(this)
             Ayahs.load(this)
+            if (Settings.translit(this)) Translit.load(this)
         }.apply { priority = Thread.MIN_PRIORITY }.start()
     }
 }

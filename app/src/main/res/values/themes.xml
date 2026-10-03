@@ -18,6 +18,8 @@
     <!-- Bottom sheet dialog: no frame and no title -->
     <style name="SheetDialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- Dialogs do not inherit Theme.Quran, so Cairo is set again -->
+        <item name="android:fontFamily">@font/cairo</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimAmount">0.4</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.InputMethod</item>

@@ -13,4 +13,4 @@
     android:textAlignment="viewStart"
     android:textColor="@color/text"
     android:textColorHint="@color/text_mute"
-    android:textSize="15sp" />
+    android:textSize="@dimen/row_title" />

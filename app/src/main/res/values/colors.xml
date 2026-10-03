@@ -3,6 +3,8 @@
     <!-- Mushaf paper; also the window background. Keep in step with the website's paper colour -->
     <color name="paper">#FFFDF7</color>
     <color name="ink">#1A1A1A</color>
+    <!-- Surah, juz and search lists: a cool white, so only the mushaf itself reads as paper -->
+    <color name="list_ground">#F4F8FB</color>
 
     <!-- Same palette as the website -->
     <color name="accent">#1A6FA3</color>

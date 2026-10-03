@@ -19,12 +19,12 @@
 
         <TextView
             android:id="@+id/juz_num"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/num_disc"
+            android:layout_height="@dimen/num_disc"
             android:gravity="center"
             android:background="@drawable/num_circle"
             android:textColor="@color/on_dark"
-            android:textSize="12sp"
+            android:textSize="@dimen/num_disc_text"
             android:textStyle="bold"
             android:includeFontPadding="false" />
 

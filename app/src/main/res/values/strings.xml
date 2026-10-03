@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">القرآن العظيم</string>
     <!-- "surah <name>", as a printed index names them. -->
     <string name="surah_named">سورة %1$s</string>
@@ -50,6 +50,15 @@
     <string name="next_ayah">الآية التالية</string>
     <string name="label_locate">تتبع</string>
     <string name="label_repeat">تكرار</string>
+    <string name="label_translit">النطق</string>
+    <string name="label_word">كلمة</string>
+    <string name="word_play_name">تشغيل الكلمة وحدها</string>
+    <string name="word_unheard">تعذّر تشغيل الكلمة. تحقق من الاتصال بالإنترنت</string>
+    <string name="speed_name">سرعة التلاوة</string>
+    <string name="speed_slow">٠٫٧٥×</string>
+    <string name="speed_normal">١×</string>
+    <string name="speed_fast">١٫٢٥×</string>
+    <string name="translit_name">النطق بالحروف اللاتينية</string>
     <string name="repeat_off">بدون تكرار</string>
     <string name="repeat_ayah">تكرار الآية</string>
     <string name="repeat_page">تكرار الصفحة</string>
@@ -172,15 +181,7 @@
     <string name="set_group_help">المساعدة</string>
     <string name="set_report">الإبلاغ عن مشكلة أو اقتراح</string>
     <string name="report_subject">مشكلة في تطبيق %1$s</string>
-    <string name="report_details">
-
-اكتب المشكلة أعلاه، وإن أمكن أرفق صورة للشاشة.
-
----
-إصدار التطبيق: %1$s
-أندرويد: %2$s (SDK %3$d)
-الهاتف: %4$s
-اللغة: %5$s</string>
+    <string name="report_details">\n\nاكتب المشكلة أعلاه، وإن أمكن أرفق صورة للشاشة.\n\n---\nإصدار التطبيق: %1$s\nأندرويد: %2$s (SDK %3$d)\nالهاتف: %4$s\nاللغة: %5$s</string>
     <string name="report_no_mail">لا يوجد تطبيق بريد على الهاتف</string>
     <string name="report_email" translatable="false">readqurantoday@outlook.com</string>
     <string name="fb_kind">النوع</string>
@@ -205,17 +206,17 @@
     <string name="fb_thanks">شكرًا لك، وصلت رسالتك</string>
     <string name="fb_too_many">أرسلت رسائل كثيرة، حاول لاحقًا</string>
     <string name="fb_failed">تعذّر الإرسال الآن. هل تريد إرسالها بالبريد الإلكتروني؟</string>
+    <string name="set_about">عن التطبيق</string>
+    <string name="about_text">القرآن الكريم كما هو مكتوب في مصحف المدينة (الإصدار الثاني) من مجمع الملك فهد لطباعة المصحف الشريف، مع تلاوة تتبع الكلمات.\n\nتطبيق مجاني ومفتوح المصدر.</string>
+    <string name="about_version">الإصدار %1$s</string>
+    <string name="about_links">روابط</string>
+    <string name="about_source">للمطورين</string>
+    <string name="about_docker">صورة Docker</string>
+    <string name="source_host" translatable="false">github.com/Ahmadooof/Quran_Android</string>
+    <string name="docker_host" translatable="false">hub.docker.com/r/ahmadooof/quran</string>
     <string name="set_website">الموقع الإلكتروني</string>
     <string name="site_host" translatable="false">readqurantoday.com</string>
     <string name="set_privacy">سياسة الخصوصية</string>
     <string name="set_credits">المصادر والتراخيص</string>
-    <string name="credits_text">نص القرآن المستخدم في البحث: مشروع تنزيل (Tanzil Project)، tanzil.net، برخصة المشاع الإبداعي نسب المصنف 3.0، دون أي تعديل.
-
-خطوط صفحات المصحف وأسماء السور: مجمع الملك فهد لطباعة المصحف الشريف.
-
-التلاوات الصوتية: حقوقها لأصحابها من القرّاء وجهات التسجيل.
-
-خط Cairo: رخصة SIL Open Font License 1.1.
-
-مكتبات AndroidX وMedia3 من Google، ومنتقي الألوان ColorPicker من Jared Rummler: رخصة Apache 2.0.</string>
+    <string name="credits_text">نص القرآن المستخدم في البحث: مشروع تنزيل (Tanzil Project)، tanzil.net، برخصة المشاع الإبداعي نسب المصنف 3.0، دون أي تعديل.\n\nخطوط صفحات المصحف وأسماء السور: مجمع الملك فهد لطباعة المصحف الشريف.\n\nالتلاوات الصوتية: حقوقها لأصحابها من القرّاء وجهات التسجيل.\n\nتلاوة الكلمات منفردة: مركز تفسير للدراسات القرآنية، عبر Quran.com.\n\nالنطق بالحروف اللاتينية: Quran.com.\n\nخط Cairo: رخصة SIL Open Font License 1.1، مع تكبير رقم الصفر.\n\nمكتبات AndroidX وMedia3 من Google، ومنتقي الألوان ColorPicker من Jared Rummler: رخصة Apache 2.0.</string>
 </resources>

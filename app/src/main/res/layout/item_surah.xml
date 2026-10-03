@@ -21,12 +21,12 @@
         <!-- The surah's number, in the same figures the page and running head use. -->
         <TextView
             android:id="@+id/num"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/num_disc"
+            android:layout_height="@dimen/num_disc"
             android:gravity="center"
             android:background="@drawable/num_circle"
             android:textColor="@color/accent"
-            android:textSize="12sp"
+            android:textSize="@dimen/num_disc_text"
             android:textStyle="bold"
             android:includeFontPadding="false" />
 

@@ -283,10 +283,10 @@ class SurahListActivity : LanguageActivity() {
         })
     }
 
-    // While a recitation runs the card leads to it instead, and says so
+    // While a recitation plays the card leads to it instead, and says so; a paused one may be long behind the reader
     private fun wireResume() {
         val card = findViewById<View>(R.id.card_resume)
-        val reciting = Recite.playing != 0
+        val reciting = Recite.wantsToPlay()
         val page = if (reciting) Recite.playingPage(this) else Settings.lastPage(this)
         canResume = page in 1..604
         sayFooters()

@@ -87,9 +87,9 @@
 
     <ImageView
         android:id="@+id/place_remove"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="11dp"
+        android:layout_width="@dimen/row_button"
+        android:layout_height="@dimen/row_button"
+        android:padding="13dp"
         android:src="@drawable/ic_close"
         android:clickable="true"
         android:focusable="true"

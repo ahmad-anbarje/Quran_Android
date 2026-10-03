@@ -33,9 +33,10 @@ class MushafPageView @JvmOverloads constructor(
         isLinearText = true
     }
 
-    /* Labels around the page (juz, surah name, folio) use the phone's own font. */
+    /* Labels around the page (juz, surah name, folio) are chrome, so they wear the app's font. */
     private val label = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
+        typeface = uiFont(context)
     }
 
     private val markPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -211,11 +212,42 @@ class MushafPageView @JvmOverloads constructor(
     /* Draw live even where a shot would do: set only while laying out for a tap. */
     private var forceLive = false
 
-    // The shot stands in at rest unzoomed and mid-gesture; never with a lit word, a scrolling page, or zoomed at rest
+    // This page as it stands with a word lit, taken when a gesture starts; the shared shot has no lit word
+    private var held: Bitmap? = null
+
+    // The shot stands in at rest unzoomed and mid-gesture; never on a scrolling page, or zoomed at rest
     private fun shotToDraw(): Bitmap? {
-        if (forceLive || litWord >= 0 || flashAyah > 0 || maxScroll > 0f || scrollTop != 0f) return null
-        if (zoom != 1f && !fingers && settle?.isRunning != true) return null
+        if (forceLive || maxScroll > 0f || scrollTop != 0f) return null
+        val moving = fingers || settle?.isRunning == true
+        if (zoom != 1f && !moving) return null
+        if (litWord >= 0 || flashAyah > 0) return if (moving) held else null
         return shots?.invoke(pageNo, width, height)
+    }
+
+    private fun closeLook() {
+        holdLook()
+        onCloseLook?.invoke()
+    }
+
+    // Without it a page with a lit word redraws every glyph on every frame of a pinch
+    private fun holdLook() {
+        held = null
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return
+        if (litWord < 0 && flashAyah <= 0) return
+        if (width == 0 || height == 0 || maxScroll > 0f) return
+        val z = zoom; val x = panX; val y = panY
+        zoom = 1f; panX = 0f; panY = 0f
+        forceLive = true
+        val picture = Picture()
+        draw(picture.beginRecording(width, height))
+        picture.endRecording()
+        forceLive = false
+        zoom = z; panX = x; panY = y
+        held = try {
+            Bitmap.createBitmap(picture, width, height, Bitmap.Config.HARDWARE)
+        } catch (_: Exception) {
+            null
+        }
     }
 
     private fun drawShot(canvas: Canvas, shot: Bitmap) {
@@ -277,7 +309,7 @@ class MushafPageView @JvmOverloads constructor(
                     turning = false
                 }
                 pinching = true
-                onCloseLook?.invoke()
+                closeLook()
                 scrolling = false
                 dropPress(e)
             }
@@ -301,7 +333,7 @@ class MushafPageView @JvmOverloads constructor(
                         /* Only past the slop, so a steady finger is still a press. */
                         if (!panning && (abs(e.x - downX) > slop || abs(e.y - downY) > slop)) {
                             panning = true
-                            onCloseLook?.invoke()
+                            closeLook()
                             dropPress(e)
                         }
                         if (panning) {
@@ -590,6 +622,19 @@ class MushafPageView @JvmOverloads constructor(
         return null
     }
 
+    /** Whether this word is on this page. */
+    fun holds(surah: Int, ayah: Int, word: Int): Boolean {
+        ensureLaidOut()
+        return placed.any { it[4].toInt() == surah && it[5].toInt() == ayah && it[6].toInt() == word }
+    }
+
+    /** The page's first ayah word as surah, ayah, word; null if it has none. */
+    fun firstWord(): IntArray? {
+        ensureLaidOut()
+        val w = placed.firstOrNull { it[5] > 0f && it[6] >= 0f } ?: return null
+        return intArrayOf(w[4].toInt(), w[5].toInt(), w[6].toInt())
+    }
+
     /** When true, onDraw renders only the first text line centered in the view. */
     var previewMode = false
 
@@ -597,6 +642,7 @@ class MushafPageView @JvmOverloads constructor(
         dress()
         /* A recycled view arrives still holding the last reader's zoom. */
         settle?.cancel()
+        held = null
         zoom = 1f; panX = 0f; panY = 0f
         pageNo = page
         lines = Mushaf.lines(page)
@@ -707,6 +753,7 @@ class MushafPageView @JvmOverloads constructor(
         }
         val firstLayout = !laidOut
         laidOut = true
+        tipLitWord(canvas, top)
         seamGuard(false)
         if (moved) canvas.restore()
         // Bounds only exist after the first draw, so the flash starts on the next frame
@@ -715,6 +762,23 @@ class MushafPageView @JvmOverloads constructor(
 
         /* Now that the words are placed, bring a newly lit one into view if it is not. */
         if (revealPending) reveal()
+    }
+
+    private val tip by lazy { WordTip(context) }
+
+    // The lit word's transliteration, when the reader has it on; drawn last so it sits over the lines
+    private fun tipLitWord(canvas: Canvas, top: Float) {
+        if (litWord < 0 || !Settings.translit(context)) return
+        val said = Translit.of(litSurah, litAyah, litWord) ?: return
+        val w = placed.firstOrNull {
+            it[4].toInt() == litSurah && it[5].toInt() == litAyah && it[6].toInt() == litWord
+        } ?: return
+        tip.draw(
+            canvas, said,
+            left = w[0], top = w[2], right = w[1], bottom = w[3],
+            minX = padX, maxX = width - padX, minY = maxOf(top, scrollTop),
+            ink = paint.color, paper = paperTrial ?: Settings.paperColor(context)
+        )
     }
 
     /* Renders exactly one line (the first text line) centered vertically — used in settings preview. */

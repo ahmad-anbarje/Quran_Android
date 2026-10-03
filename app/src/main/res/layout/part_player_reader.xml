@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Reader player: five equal columns; ids on icons and labels that sayPlayer() changes -->
+<!-- Reader player: seven equal columns, three either side of play; ids on icons and labels that sayPlayer() changes -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/player"
     android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:layout_marginTop="@dimen/icon_label_gap"
             android:text="@string/label_locate"
             android:textColor="@color/text_mute"
-            android:textSize="10sp"
+            android:textSize="@dimen/icon_label"
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>
@@ -63,7 +63,40 @@
             android:layout_marginTop="@dimen/icon_label_gap"
             android:text="@string/reciter"
             android:textColor="@color/text_mute"
-            android:textSize="10sp"
+            android:textSize="@dimen/icon_label"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <!-- Transliteration over the lit word: accent while on, like repeat -->
+    <LinearLayout
+        android:id="@+id/p_translit"
+        android:contentDescription="@string/translit_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/row_flat"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:id="@+id/p_translit_icon"
+            android:layout_width="@dimen/icon_nav"
+            android:layout_height="@dimen/icon_nav"
+            android:tint="@color/text_mute"
+            android:src="@drawable/ic_translit"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/p_translit_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/icon_label_gap"
+            android:text="@string/label_translit"
+            android:textColor="@color/text_mute"
+            android:textSize="@dimen/icon_label"
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>
@@ -113,8 +146,41 @@
             android:layout_marginTop="2dp"
             android:text="@string/play"
             android:textColor="@color/accent"
-            android:textSize="10sp"
+            android:textSize="@dimen/icon_label"
             android:textStyle="bold"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <!-- The chosen word on its own, from the word-by-word recordings -->
+    <LinearLayout
+        android:id="@+id/p_word"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/row_flat"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/word_play_name">
+
+        <ImageView
+            android:id="@+id/p_word_icon"
+            android:layout_width="@dimen/icon_nav"
+            android:layout_height="@dimen/icon_nav"
+            android:tint="@color/text_mute"
+            android:src="@drawable/ic_word_play"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/p_word_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/icon_label_gap"
+            android:text="@string/label_word"
+            android:textColor="@color/text_mute"
+            android:textSize="@dimen/icon_label"
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>
@@ -134,6 +200,7 @@
             android:id="@+id/p_repeat_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
+            android:tint="@color/text_mute"
             android:src="@drawable/ic_repeat"
             android:contentDescription="@null" />
 
@@ -143,13 +210,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/icon_label_gap"
             android:text="@string/label_repeat"
-            android:textSize="10sp"
+            android:textColor="@color/text_mute"
+            android:textSize="@dimen/icon_label"
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>
 
+    <!-- Recitation speed; the label is the speed itself -->
     <LinearLayout
-        android:id="@+id/p_close"
+        android:id="@+id/p_speed"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -157,22 +226,25 @@
         android:gravity="center"
         android:background="@drawable/row_flat"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:contentDescription="@string/speed_name">
 
         <ImageView
+            android:id="@+id/p_speed_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
             android:tint="@color/text_mute"
-            android:src="@drawable/ic_close"
+            android:src="@drawable/ic_speed"
             android:contentDescription="@null" />
 
         <TextView
+            android:id="@+id/p_speed_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/close"
+            android:text="@string/speed_normal"
             android:textColor="@color/text_mute"
-            android:textSize="10sp"
+            android:textSize="@dimen/icon_label"
             android:includeFontPadding="false"
             android:maxLines="1" />
     </LinearLayout>

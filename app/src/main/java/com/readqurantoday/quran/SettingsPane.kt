@@ -1,7 +1,6 @@
 package com.readqurantoday.quran
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.net.toUri
 
 // Settings screens built as titled cards: general, and reading style with a live page preview
 class SettingsPane(private val host: Activity, private val into: LinearLayout) {
@@ -53,27 +51,9 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
         }
 
         group(R.string.set_group_help) { rows ->
-            rows.add(siteRow())
+            rows.add(linkRow(R.string.set_about, { host.startActivity(Intent(host, AboutActivity::class.java)) }, emptyList()))
             rows.add(linkRow(R.string.set_report, { host.startActivity(Intent(host, FeedbackActivity::class.java)) }, emptyList()))
-            rows.add(linkRow(R.string.set_privacy, { openLink(PRIVACY_URL) }, emptyList()))
-            rows.add(linkRow(R.string.set_credits, { host.notice(host.getString(R.string.credits_text)) }, emptyList()))
-        }
-    }
-
-    // The address itself is the value, so the row reads as a link to the website
-    private fun siteRow(): View {
-        val row = blow.inflate(R.layout.row_setting, into, false)
-        row.findViewById<TextView>(R.id.set_label).setText(R.string.set_website)
-        row.findViewById<TextView>(R.id.set_value).setText(R.string.site_host)
-        row.setOnClickListener { openLink(SITE_URL) }
-        return row
-    }
-
-    private fun openLink(url: String) {
-        try {
-            host.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
-        } catch (_: ActivityNotFoundException) {
-            host.notice(url)
+            rows.add(linkRow(R.string.set_privacy, { host.openLink(PRIVACY_URL) }, emptyList()))
         }
     }
 
@@ -324,8 +304,6 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
     }
 
     private companion object {
-        private const val PRIVACY_URL = "https://readqurantoday.com/privacy/"
-        private const val SITE_URL = "https://readqurantoday.com/"
 
         /* In the order of Settings.WEIGHT_*, lightest first. */
         val WEIGHT_NAMES = listOf(

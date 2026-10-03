@@ -81,6 +81,8 @@ class ReaderActivity : LanguageActivity() {
     /* Word chosen by long-press but not yet played. */
     private var pendingSurah = 0
     private var pendingFrom  = 0
+    // Set when the start was picked for the reader, so a later page can pick again
+    private var pendingAuto = false
 
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -95,7 +97,11 @@ class ReaderActivity : LanguageActivity() {
                     go(page)
                     val surah = result.data?.getIntExtra(SurahListActivity.SURAH, 0) ?: 0
                     val ayah = result.data?.getIntExtra(SurahListActivity.AYAH, 0) ?: 0
-                    if (surah > 0 && ayah > 0) flashAyah(page, surah, ayah)
+                    if (surah > 0 && ayah > 0) {
+                        flashAyah(page, surah, ayah)
+                        // The player moves to the ayah's first word, playing only if it already was (see offer)
+                        pager.post { offer(surah, ayah, 0) }
+                    }
                 }
                 /* page == 0: caller wants us to follow the live audio position. */
                 Recite.playing != 0 -> {
@@ -136,7 +142,8 @@ class ReaderActivity : LanguageActivity() {
             currentPage = ::page,
             onChanged   = ::sayPlayer,
             onNavigate  = ::go,
-            onLight     = ::lit,
+            // A word being said alone keeps the mark; a paused recitation would re-mark its own word
+            onLight     = { s, a, w -> if (!WordVoice.saying) lit(s, a, w) },
             onStopped   = {
                 player.visibility = View.GONE
                 sayBars()
@@ -497,14 +504,24 @@ class ReaderActivity : LanguageActivity() {
         pager.removeCallbacks(autoClose)
     }
 
+    // Controls left untouched leave on their own; a sheet over them takes focus, and they wait for it
+    private val idleClose = Runnable { if (hasWindowFocus()) closeChrome() else armIdle() }
+
+    private fun armIdle() {
+        pager.removeCallbacks(idleClose)
+        if (chrome) pager.postDelayed(idleClose, IDLE_CLOSE_MS)
+    }
+
     /* One tap hides/shows all controls together: top bar and player bar. */
     private fun showChrome(on: Boolean) {
         chrome = on
+        armIdle()
         bar.visibility = if (on) View.VISIBLE else View.GONE
         if (!on) {
             player.visibility = View.GONE
-        } else if (Recite.playing != 0 || pendingSurah != 0) {
-            showPlayer()
+        } else {
+            offerPageStart()
+            if (Recite.playing != 0 || pendingSurah != 0) showPlayer()
         }
         seatPlayer()
         sayBars()
@@ -549,9 +566,15 @@ class ReaderActivity : LanguageActivity() {
     // Highlights the pressed word and shows the player without starting audio; seeks if already playing
     private fun offer(view: MushafPageView, x: Float, y: Float) {
         val word = view.wordUnder(x, y) ?: return
-        val surah = word[0]; val ayah = word[1]; val w = word[2]
-        if (surah <= 0 || ayah <= 0) return
+        offer(surah = word[0], ayah = word[1], w = word[2])
+    }
 
+    // A paused recitation stays paused at the new word; only one already playing carries on from it
+    private fun offer(surah: Int, ayah: Int, w: Int) {
+        if (surah <= 0 || ayah <= 0) return
+        val play = Recite.wantsToPlay()
+
+        lit(surah, ayah, w)
         val voice = Recite.chosen(this)?.id ?: return
         val timing = Timing.of(this, surah, voice)
         if (timing == null) { notice(getString(R.string.no_timing)); return }
@@ -559,7 +582,6 @@ class ReaderActivity : LanguageActivity() {
         /* Seek to the exact word so the highlight is immediate and correct. */
         val from = timing.wordSpan(ayah, w)?.get(0) ?: timing.startOf(ayah)
 
-        lit(surah, ayah, w)
         rc.litAyah = ayah
         rc.litWord = w
         rc.until   = 0
@@ -571,20 +593,41 @@ class ReaderActivity : LanguageActivity() {
             if (Recite.playing == surah && rc.reading != null) {
                 rc.startedAt = from
                 Recite.seek(from)
-                if (!Recite.wantsToPlay()) Recite.toggle()
+                if (play && !Recite.wantsToPlay()) Recite.toggle()
                 rc.follow()
             } else {
-                rc.start(surah, from)
+                rc.start(surah, from, play)
             }
+            if (play) closeSoon()
         } else {
             /* Not yet playing: remember where to start; user will tap Play. */
             pendingSurah = surah
             pendingFrom  = from
+            pendingAuto  = false
         }
 
         showPlayer()
         sayPlayer()
     }
+
+    // Nothing chosen yet: Play starts from the first word of the page in view, unlit until it plays
+    private fun offerPageStart() {
+        if (Recite.playing != 0 || (pendingSurah != 0 && !pendingAuto)) return
+        val (surah, ayah, w) = pageInView()?.firstWord() ?: return
+        val voice = Recite.chosen(this)?.id ?: return
+        val timing = Timing.of(this, surah, voice) ?: return
+        pendingSurah = surah
+        pendingFrom  = timing.wordSpan(ayah, w)?.get(0) ?: timing.startOf(ayah)
+        pendingAuto  = true
+        rc.litAyah = ayah
+        rc.litWord = w
+        rc.until   = 0
+        rc.reanchor()
+    }
+
+    private fun pageInView(): MushafPageView? =
+        (0 until pager.childCount).map { pager.getChildAt(it) }
+            .firstOrNull { (it as? MushafPageView)?.page == page() } as? MushafPageView
 
     // The player never shows without the top bar; showChrome recurses here once
     private fun showPlayer() {
@@ -623,6 +666,21 @@ class ReaderActivity : LanguageActivity() {
         val repeating = getColor(if (Recite.repeat != Recite.ONCE) R.color.accent else R.color.text_mute)
         findViewById<ImageView>(R.id.p_repeat_icon).imageTintList = ColorStateList.valueOf(repeating)
         findViewById<TextView>(R.id.p_repeat_label).setTextColor(repeating)
+        // Accent off the recorded speed, like repeat while it is on
+        val speed = Settings.speed(this)
+        val paced = getColor(if (speed != 1f) R.color.accent else R.color.text_mute)
+        findViewById<ImageView>(R.id.p_speed_icon).imageTintList = ColorStateList.valueOf(paced)
+        findViewById<TextView>(R.id.p_speed_label).apply {
+            setText(SPEED_NAMES.getOrElse(SPEEDS.indexOfFirst { it == speed }) { R.string.speed_normal })
+            setTextColor(paced)
+        }
+        // Accent while the word is being said, like repeat while it is on
+        val word = getColor(if (WordVoice.saying) R.color.accent else R.color.text_mute)
+        findViewById<ImageView>(R.id.p_word_icon).imageTintList = ColorStateList.valueOf(word)
+        findViewById<TextView>(R.id.p_word_label).setTextColor(word)
+        val latin = getColor(if (Settings.translit(this)) R.color.accent else R.color.text_mute)
+        findViewById<ImageView>(R.id.p_translit_icon).imageTintList = ColorStateList.valueOf(latin)
+        findViewById<TextView>(R.id.p_translit_label).setTextColor(latin)
     }
 
     private fun wirePlayer() {
@@ -635,7 +693,10 @@ class ReaderActivity : LanguageActivity() {
 
         /* Play: start from the pending position, or toggle if already running. */
         findViewById<View>(R.id.p_play).setOnClickListener {
+            WordVoice.stop()
             if (Recite.playing == 0) {
+                // Menus shown before the page was laid out left no start; the page in view gives one now
+                if (pendingSurah == 0) offerPageStart()
                 if (pendingSurah > 0) {
                     rc.start(pendingSurah, pendingFrom)
                     pendingSurah = 0
@@ -663,8 +724,8 @@ class ReaderActivity : LanguageActivity() {
 
         /* Reciter: pick a voice; if playing, restart from the current word. */
         findViewById<View>(R.id.p_reciter).setOnClickListener {
+            // A voice can be chosen before anything is chosen to recite
             val surah = if (Recite.playing != 0) rc.readingSurah else pendingSurah
-            if (surah <= 0) return@setOnClickListener
             val voices = Recite.reciters()
             val now = Recite.chosen(this)?.id
 
@@ -685,7 +746,7 @@ class ReaderActivity : LanguageActivity() {
                     rc.until = 0
                     val from = span?.get(0) ?: if (keepAyah > 0) fresh?.startOf(keepAyah) ?: 0 else 0
                     rc.start(rc.readingSurah, from, wasPlaying)
-                } else {
+                } else if (surah > 0) {
                     /* Recalculate pending start for the new voice. */
                     val fresh = Timing.of(this, surah, id)
                     pendingFrom = fresh?.wordSpan(rc.litAyah, rc.litWord)?.get(0)
@@ -709,12 +770,40 @@ class ReaderActivity : LanguageActivity() {
             }
         }
 
-        findViewById<View>(R.id.p_close).setOnClickListener {
-            Recite.stop()
-            rc.stop()
-            player.visibility = View.GONE
-            sayBars()
-            pendingSurah = 0
+        /* Word: the chosen word alone; a running recitation pauses for it, and a second tap stops it. */
+        findViewById<View>(R.id.p_word).setOnClickListener {
+            if (WordVoice.saying) {
+                WordVoice.stop()
+                return@setOnClickListener
+            }
+            // The marked word if it is on this page, else the page's first word
+            val view = pageInView()
+            val (surah, ayah, w) = shownWord?.takeIf { view?.holds(it[0], it[1], it[2]) == true }
+                ?: view?.firstWord() ?: return@setOnClickListener
+            if (Recite.wantsToPlay()) Recite.toggle()
+            lit(surah, ayah, w)
+            WordVoice.say(this, surah, ayah, w) { ok ->
+                sayPlayer()
+                if (!ok) notice(getString(R.string.word_unheard))
+            }
+            sayPlayer()
+        }
+
+        findViewById<View>(R.id.p_translit).setOnClickListener {
+            val on = !Settings.translit(this)
+            Settings.setTranslit(this, on)
+            sayPlayer()
+            if (on && !Translit.ready) Thread { Translit.load(this); runOnUiThread { redrawPages() } }.start()
+            else redrawPages()
+        }
+
+        /* Speed: each tap steps to the next, round to the start. */
+        findViewById<View>(R.id.p_speed).setOnClickListener {
+            val now = SPEEDS.indexOfFirst { it == Settings.speed(this) }
+            val next = SPEEDS[(now + 1) % SPEEDS.size]
+            Settings.setSpeed(this, next)
+            Recite.setSpeed(next)
+            sayPlayer()
         }
     }
 
@@ -731,7 +820,15 @@ class ReaderActivity : LanguageActivity() {
         btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
     }
 
+    private fun redrawPages() {
+        for (i in 0 until pager.childCount) pager.getChildAt(i).invalidate()
+    }
+
+    /* The word marked on the page now, from recitation, a long-press, search or Word; null when none. */
+    private var shownWord: IntArray? = null
+
     private fun lit(surah: Int, ayah: Int, word: Int) {
+        shownWord = if (word >= 0) intArrayOf(surah, ayah, word) else null
         for (i in 0 until pager.childCount) {
             (pager.getChildAt(i) as? MushafPageView)?.light(surah, ayah, word)
         }
@@ -745,7 +842,7 @@ class ReaderActivity : LanguageActivity() {
         sayMotion()
         sayPage(page())
         // Pages re-read their style on draw; they only need invalidating
-        for (i in 0 until pager.childCount) pager.getChildAt(i).invalidate()
+        redrawPages()
         // The page colour also shows beside the camera and in the hidden bars
         findViewById<View>(R.id.root).setBackgroundColor(Settings.paperColor(this))
         sayBars()
@@ -754,9 +851,10 @@ class ReaderActivity : LanguageActivity() {
         rc.syncWithRecite()
 
         Recite.onChange = heard
+        // The page opens clear even mid-recitation; the lit word shows where it is, a tap brings the player
         if (Recite.playing != 0) {
             rc.follow()
-            showPlayer()
+            if (chrome) showPlayer()
             sayPlayer()
         }
     }
@@ -768,8 +866,23 @@ class ReaderActivity : LanguageActivity() {
 
     override fun onPause() {
         super.onPause()
+        WordVoice.stop()
         /* Only if it is still ours: see heard. */
         if (Recite.onChange === heard) Recite.onChange = null
+    }
+
+    // Back to the menu or out of the app with nothing sounding: the marks and a paused recitation are let go
+    override fun onStop() {
+        super.onStop()
+        if (isChangingConfigurations || Recite.wantsToPlay()) return
+        if (Recite.playing != 0) {
+            Recite.stop()
+            rc.stop()
+        }
+        pendingSurah = 0
+        pendingAuto = false
+        lit(-1, -1, -1)
+        player.visibility = View.GONE
     }
 
     /* Re-apply chrome state on every focus change; the request is dropped without focus. */
@@ -783,14 +896,18 @@ class ReaderActivity : LanguageActivity() {
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 keepOpen()
+                pager.removeCallbacks(idleClose)
                 fromBarEdge = !chrome && onBarEdge(ev.rawY)
                 edgeDownX = ev.rawX
                 edgeDownY = ev.rawY
             }
-            MotionEvent.ACTION_UP -> if (fromBarEdge) {
-                val slop = android.view.ViewConfiguration.get(this).scaledTouchSlop
-                val still = abs(ev.rawX - edgeDownX) < slop && abs(ev.rawY - edgeDownY) < slop
-                if (still) showChrome(true)
+            MotionEvent.ACTION_UP -> {
+                armIdle()
+                if (fromBarEdge) {
+                    val slop = android.view.ViewConfiguration.get(this).scaledTouchSlop
+                    val still = abs(ev.rawX - edgeDownX) < slop && abs(ev.rawY - edgeDownY) < slop
+                    if (still) showChrome(true)
+                }
             }
         }
         return fromBarEdge || super.dispatchTouchEvent(ev)
@@ -808,6 +925,11 @@ class ReaderActivity : LanguageActivity() {
     companion object {
         private const val CHROME = "chrome"
         private const val TURN_FLING_DP = 400f
-        private const val AUTO_CLOSE_MS = 3000L
+        private const val AUTO_CLOSE_MS = 1500L
+        private const val IDLE_CLOSE_MS = 6000L
+
+        /* The speeds a tap steps through, and what each is called; in step with each other. */
+        private val SPEEDS = floatArrayOf(0.75f, 1f, 1.25f)
+        private val SPEED_NAMES = listOf(R.string.speed_slow, R.string.speed_normal, R.string.speed_fast)
     }
 }

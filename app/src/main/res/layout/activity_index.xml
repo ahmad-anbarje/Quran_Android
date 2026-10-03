@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/paper">
+            android:background="@color/list_ground">
 
             <!-- Head strip is the pane's first child, which paintBars reads for the status bar colour -->
             <FrameLayout
@@ -58,7 +58,7 @@
                     android:hint="@string/search_hint"
                     android:textColor="@color/text"
                     android:textColorHint="@color/text_mute"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     android:background="@null"
                     android:paddingTop="9dp"
                     android:paddingBottom="9dp"

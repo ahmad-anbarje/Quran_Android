@@ -4,6 +4,8 @@
     <color name="paper">#151A1E</color>
     <!-- Near-white, short of white, which glares and blooms on a dark screen -->
     <color name="ink">#DDE2E7</color>
+    <!-- Deeper than the page, so a list and a page are told apart at a glance -->
+    <color name="list_ground">#0F1316</color>
 
     <color name="accent">#3F9BD1</color>
     <!-- Soft fills need more alpha on a dark ground to stay visible -->

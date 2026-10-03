@@ -4,7 +4,7 @@
     android:id="@+id/head"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/paper"
+    android:background="@color/list_ground"
     android:textColor="@color/text_mute"
     android:textSize="11sp"
     android:includeFontPadding="false"

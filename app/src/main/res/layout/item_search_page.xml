@@ -15,8 +15,8 @@
     android:focusable="true">
 
     <FrameLayout
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/num_disc"
+        android:layout_height="@dimen/num_disc"
         android:background="@drawable/chip_soft">
 
         <ImageView
@@ -32,7 +32,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="11dp"
+        android:layout_marginStart="12dp"
         android:layout_marginEnd="8dp"
         android:orientation="vertical">
 

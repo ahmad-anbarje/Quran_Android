@@ -41,5 +41,12 @@
     <!-- A row's own title, the quiet line under it, and the label under an icon -->
     <dimen name="row_title">15sp</dimen>
     <dimen name="row_meta">11sp</dimen>
-    <dimen name="icon_label">9sp</dimen>
+    <dimen name="icon_label">10sp</dimen>
+
+    <!-- The numbered disc that opens a surah, juz or search row -->
+    <dimen name="num_disc">32dp</dimen>
+    <dimen name="num_disc_text">12sp</dimen>
+
+    <!-- A lone icon button inside a row: big enough to hit without a second try -->
+    <dimen name="row_button">44dp</dimen>
 </resources>

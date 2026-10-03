@@ -137,18 +137,19 @@
     <string name="dl_save_denied">Storage permission is needed to save to the phone</string>
     <string name="label_locate">Follow</string>
     <string name="label_repeat">Repeat</string>
+    <string name="label_translit">Phonetic</string>
+    <string name="label_word">Word</string>
+    <string name="word_play_name">Play the word alone</string>
+    <string name="word_unheard">This word could not be played. Check your internet connection</string>
+    <string name="speed_name">Recitation speed</string>
+    <string name="speed_slow">0.75×</string>
+    <string name="speed_normal">1×</string>
+    <string name="speed_fast">1.25×</string>
+    <string name="translit_name">Transliteration</string>
     <string name="set_group_help">Help</string>
     <string name="set_report">Report an issue or suggest</string>
     <string name="report_subject">Issue in %1$s</string>
-    <string name="report_details">
-
-Describe the issue above, and attach a screenshot if you can.
-
----
-App version: %1$s
-Android: %2$s (SDK %3$d)
-Phone: %4$s
-Language: %5$s</string>
+    <string name="report_details">\n\nDescribe the issue above, and attach a screenshot if you can.\n\n---\nApp version: %1$s\nAndroid: %2$s (SDK %3$d)\nPhone: %4$s\nLanguage: %5$s</string>
     <string name="report_no_mail">No email app on this phone</string>
     <string name="fb_kind">Type</string>
     <string name="fb_kind_bug">Problem</string>
@@ -172,16 +173,14 @@ Language: %5$s</string>
     <string name="fb_thanks">Thank you, your message was sent</string>
     <string name="fb_too_many">Too many messages sent, please try later</string>
     <string name="fb_failed">Could not send right now. Send it by email instead?</string>
+    <string name="set_about">About</string>
+    <string name="about_text">The Quran as written in the Madinah Mushaf (second edition) from the King Fahd Glorious Quran Printing Complex, with recitation that follows the words.\n\nFree and open source.</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_links">Links</string>
+    <string name="about_source">Source code on GitHub</string>
+    <string name="about_docker">Docker image</string>
     <string name="set_website">Website</string>
     <string name="set_privacy">Privacy policy</string>
     <string name="set_credits">Sources and licences</string>
-    <string name="credits_text">Quran text used for search: Tanzil Project, tanzil.net, under Creative Commons Attribution 3.0, unmodified.
-
-Mushaf page and surah name fonts: King Fahd Glorious Quran Printing Complex.
-
-Recitation audio: rights belong to the reciters and their recording publishers.
-
-Cairo font: SIL Open Font License 1.1.
-
-AndroidX and Media3 libraries by Google, and ColorPicker by Jared Rummler: Apache License 2.0.</string>
+    <string name="credits_text">Quran text used for search: Tanzil Project, tanzil.net, under Creative Commons Attribution 3.0, unmodified.\n\nMushaf page and surah name fonts: King Fahd Glorious Quran Printing Complex.\n\nRecitation audio: rights belong to the reciters and their recording publishers.\n\nWord-by-word recitation: Tafsir Center for Quranic Studies, via Quran.com.\n\nTransliteration: Quran.com.\n\nCairo font: SIL Open Font License 1.1, with an enlarged zero.\n\nAndroidX and Media3 libraries by Google, and ColorPicker by Jared Rummler: Apache License 2.0.</string>
 </resources>

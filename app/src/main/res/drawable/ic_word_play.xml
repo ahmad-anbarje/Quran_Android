@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Back to the default: an arrow turning back on itself. Outlined, tinted from code -->
+<!-- One word heard: a speaker with a single wave. Outlined, tinted from code -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
     android:viewportWidth="24" android:viewportHeight="24">
     <path
-        android:pathData="M4.8,9 A7.6,7.6 0 1 1 4.4,13.5"
+        android:pathData="M4,9.5 H7.5 L12.5,5.5 V18.5 L7.5,14.5 H4 Z"
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFF"
         android:strokeWidth="1.6"
-        android:strokeLineCap="round"
         android:strokeLineJoin="round" />
     <path
-        android:pathData="M4.2,4.6 V9.2 H8.8"
+        android:pathData="M16,8.8 A4.2,4.2 0 0 1 16,15.2 M18.6,6.2 A7.6,7.6 0 0 1 18.6,17.8"
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFF"
         android:strokeWidth="1.6"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:strokeLineCap="round" />
 </vector>

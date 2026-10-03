@@ -42,11 +42,7 @@ object Feedback {
     )
 
     fun details(context: Context): Details {
-        val version = try {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName.orEmpty()
-        } catch (_: Exception) {
-            ""
-        }
+        val version = appVersion(context)
         val config = context.resources.configuration
         val theme = when (Settings.theme(context)) {
             Settings.LIGHT -> "light"

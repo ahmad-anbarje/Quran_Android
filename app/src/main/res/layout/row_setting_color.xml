@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/text"
-        android:textSize="15sp" />
+        android:textSize="@dimen/row_title" />
 
     <!-- The colour as it stands. -->
     <ImageView
@@ -33,9 +33,9 @@
 
     <ImageView
         android:id="@+id/set_reset"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="10dp"
+        android:layout_width="@dimen/row_button"
+        android:layout_height="@dimen/row_button"
+        android:padding="12dp"
         android:src="@drawable/ic_reset"
         android:tint="@color/icon_btn"
         android:clickable="true"

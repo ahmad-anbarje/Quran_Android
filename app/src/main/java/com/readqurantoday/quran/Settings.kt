@@ -136,6 +136,28 @@ object Settings {
         store(context).edit { putBoolean(PAGE_TURN, on) }
     }
 
+    // --- recitation speed ---
+
+    private const val SPEED = "speed"
+
+    /* How fast recitation plays; 1 is as recorded. */
+    fun speed(context: Context) = store(context).getFloat(SPEED, 1f)
+
+    fun setSpeed(context: Context, speed: Float) {
+        store(context).edit { putFloat(SPEED, speed) }
+    }
+
+    // --- transliteration ---
+
+    private const val TRANSLIT = "translit"
+
+    /* A Latin reading over the lit word; on until the reader turns it off. */
+    fun translit(context: Context) = store(context).getBoolean(TRANSLIT, true)
+
+    fun setTranslit(context: Context, on: Boolean) {
+        store(context).edit { putBoolean(TRANSLIT, on) }
+    }
+
     // --- recently read ---
 
     /** A surah read lately: the page it was last left on, and when, in epoch ms (0 unknown). */

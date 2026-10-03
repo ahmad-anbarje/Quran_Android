@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,7 +31,7 @@
         android:elevation="@dimen/elevation_chrome"
         android:visibility="gone">
 
-        <!-- Fixed height so buttons fill it; two buttons each side keep the place centred -->
+        <!-- Fixed height so buttons fill it; two equal buttons each side keep the place centred, which shrinks its type to fit -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/chrome_row_height"
@@ -39,8 +40,9 @@
 
             <LinearLayout
                 android:id="@+id/btn_back"
-                android:layout_width="56dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/row_flat"
@@ -61,15 +63,16 @@
                     android:layout_marginTop="@dimen/icon_label_gap"
                     android:text="@string/to_menu"
                     android:textColor="@color/text_mute"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/icon_label"
                     android:includeFontPadding="false"
                     android:maxLines="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/btn_mark"
-                android:layout_width="56dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/row_flat"
@@ -90,7 +93,7 @@
                     android:layout_marginTop="@dimen/icon_label_gap"
                     android:text="@string/mark_short"
                     android:textColor="@color/text_mute"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/icon_label"
                     android:includeFontPadding="false"
                     android:maxLines="1" />
             </LinearLayout>
@@ -99,9 +102,12 @@
             <TextView
                 android:id="@+id/bar_place"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
                 android:gravity="center"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="12sp"
+                app:autoSizeMaxTextSize="16sp"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:textColor="@color/text"
@@ -113,8 +119,9 @@
 
             <LinearLayout
                 android:id="@+id/btn_turn_wrap"
-                android:layout_width="56dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/row_flat"
@@ -135,15 +142,16 @@
                     android:layout_marginTop="@dimen/icon_label_gap"
                     android:text="@string/motion_slide"
                     android:textColor="@color/text_mute"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/icon_label"
                     android:includeFontPadding="false"
                     android:maxLines="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/btn_theme_wrap"
-                android:layout_width="56dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/row_flat"
@@ -164,7 +172,7 @@
                     android:layout_marginTop="@dimen/icon_label_gap"
                     android:text="@string/set_theme"
                     android:textColor="@color/text_mute"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/icon_label"
                     android:includeFontPadding="false"
                     android:maxLines="1" />
             </LinearLayout>

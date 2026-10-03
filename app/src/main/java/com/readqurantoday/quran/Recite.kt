@@ -209,6 +209,7 @@ object Recite {
             })
 
             setMediaItem(MediaItem.fromUri(uri))
+            setPlaybackSpeed(Settings.speed(context))
 
             /* Seek before prepare so ExoPlayer starts at the right position. */
             if (from > 0) seekTo(from.toLong())
@@ -217,6 +218,11 @@ object Recite {
         }
         app?.let { PlayerService.show(it, surah) }
         changed()
+    }
+
+    // Positions stay in recording time, so word timings hold at any speed
+    fun setSpeed(speed: Float) {
+        player?.setPlaybackSpeed(speed)
     }
 
     fun toggle() {

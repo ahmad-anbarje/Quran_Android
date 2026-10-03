@@ -290,6 +290,8 @@ class MushafPageView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 // A new touch finishes a running glide at once; end() on a finished one would replay it
                 settle?.takeIf { it.isRunning }?.end()
+                // A new touch has no picture of its own until it becomes a pinch or a pan
+                held = null
                 fingers = true
                 pinching = false
                 panning = false
@@ -526,6 +528,7 @@ class MushafPageView @JvmOverloads constructor(
     }
 
     fun flash(surah: Int, ayah: Int) {
+        held = null
         flashSurah = surah
         flashAyah = ayah
         flashStart = SystemClock.uptimeMillis()
@@ -576,6 +579,8 @@ class MushafPageView @JvmOverloads constructor(
 
     fun light(surah: Int, ayah: Int, word: Int) {
         if (surah == litSurah && ayah == litAyah && word == litWord) return
+        // The picture taken for a gesture shows the old mark
+        held = null
         litSurah = surah
         litAyah = ayah
         litWord = word

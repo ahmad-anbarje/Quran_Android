@@ -141,6 +141,8 @@
     <string name="label_word">Word</string>
     <string name="word_play_name">Play the word alone</string>
     <string name="word_unheard">This word could not be played. Check your internet connection</string>
+    <string name="word_missing">This word has no recording of its own</string>
+    <string name="recite_unheard">The recitation could not be played. Check your internet connection, or download the surah to listen offline.</string>
     <string name="speed_name">Recitation speed</string>
     <string name="speed_slow">0.75×</string>
     <string name="speed_normal">1×</string>

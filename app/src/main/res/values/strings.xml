@@ -54,6 +54,8 @@
     <string name="label_word">كلمة</string>
     <string name="word_play_name">تشغيل الكلمة وحدها</string>
     <string name="word_unheard">تعذّر تشغيل الكلمة. تحقق من الاتصال بالإنترنت</string>
+    <string name="word_missing">لا يوجد تسجيل منفرد لهذه الكلمة</string>
+    <string name="recite_unheard">تعذّر تشغيل التلاوة. تحقق من الاتصال بالإنترنت، أو نزّل السورة للاستماع دون إنترنت.</string>
     <string name="speed_name">سرعة التلاوة</string>
     <string name="speed_slow">٠٫٧٥×</string>
     <string name="speed_normal">١×</string>
@@ -212,8 +214,8 @@
     <string name="about_links">روابط</string>
     <string name="about_source">للمطورين</string>
     <string name="about_docker">صورة Docker</string>
-    <string name="source_host" translatable="false">github.com/Ahmadooof/Quran_Android</string>
-    <string name="docker_host" translatable="false">hub.docker.com/r/ahmadooof/quran</string>
+    <string name="source_host" translatable="false">github.com/ahmad-anbarje/Quran_Android</string>
+    <string name="docker_host" translatable="false">hub.docker.com/r/ahmadanbarje/quran</string>
     <string name="set_website">الموقع الإلكتروني</string>
     <string name="site_host" translatable="false">readqurantoday.com</string>
     <string name="set_privacy">سياسة الخصوصية</string>

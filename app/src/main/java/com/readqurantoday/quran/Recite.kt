@@ -160,10 +160,15 @@ object Recite {
         return "$BUCKET/${path.ifEmpty { "$reciter/$padded.mp3" }}"
     }
 
+    /** The last recitation stopped because its audio could not be played; cleared by the next start. */
+    var failed = false
+        private set
+
     fun start(context: Context, surah: Int, from: Int = 0, andPlay: Boolean = true) {
         if (surah <= 0) return
         val voice = chosen(context) ?: return
         stop()
+        failed = false
 
         app = context.applicationContext
         playing = surah
@@ -200,6 +205,7 @@ object Recite {
 
                 override fun onPlayerError(error: PlaybackException) {
                     stop()
+                    failed = true
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {

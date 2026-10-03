@@ -145,6 +145,8 @@ class ReaderActivity : LanguageActivity() {
             // A word being said alone keeps the mark; a paused recitation would re-mark its own word
             onLight     = { s, a, w -> if (!WordVoice.saying) lit(s, a, w) },
             onStopped   = {
+                // An audio file that failed to load says so, instead of the player just leaving
+                if (Recite.failed) notice(getString(R.string.recite_unheard))
                 player.visibility = View.GONE
                 sayBars()
                 pendingSurah = 0
@@ -278,8 +280,22 @@ class ReaderActivity : LanguageActivity() {
             return Holder(v)
         }
         override fun onBindViewHolder(holder: Holder, position: Int) {
-            (holder.itemView as MushafPageView).show(position + 1)
+            (holder.itemView as MushafPageView).apply {
+                show(position + 1)
+                markAsNow(this)
+            }
         }
+
+        // A page kept aside off screen comes back without a bind, still holding the mark it had then
+        override fun onViewAttachedToWindow(holder: Holder) {
+            markAsNow(holder.itemView as MushafPageView)
+        }
+    }
+
+    // One word marked across every page: whatever lit() last chose, or none
+    private fun markAsNow(view: MushafPageView) {
+        val w = shownWord
+        if (w == null) view.light(-1, -1, -1) else view.light(w[0], w[1], w[2])
     }
 
     class Holder(v: View) : RecyclerView.ViewHolder(v)
@@ -574,7 +590,10 @@ class ReaderActivity : LanguageActivity() {
         if (surah <= 0 || ayah <= 0) return
         val play = Recite.wantsToPlay()
 
+        // A new word chosen ends the one being said, and is fetched now for the Word button
+        WordVoice.stop()
         lit(surah, ayah, w)
+        WordVoice.warm(this, surah, ayah, w)
         val voice = Recite.chosen(this)?.id ?: return
         val timing = Timing.of(this, surah, voice)
         if (timing == null) { notice(getString(R.string.no_timing)); return }
@@ -614,6 +633,7 @@ class ReaderActivity : LanguageActivity() {
     private fun offerPageStart() {
         if (Recite.playing != 0 || (pendingSurah != 0 && !pendingAuto)) return
         val (surah, ayah, w) = pageInView()?.firstWord() ?: return
+        WordVoice.warm(this, surah, ayah, w)
         val voice = Recite.chosen(this)?.id ?: return
         val timing = Timing.of(this, surah, voice) ?: return
         pendingSurah = surah
@@ -646,6 +666,8 @@ class ReaderActivity : LanguageActivity() {
     }
 
     private fun sayPlayer() {
+        // The recitation going again, from here or the notification, ends a word said alone
+        if (WordVoice.saying && Recite.wantsToPlay()) WordVoice.stop()
         armClose()
         val isPlaying = Recite.wantsToPlay()
         // A spinner while audio is on its way, so the silence does not look like a dead button
@@ -674,10 +696,16 @@ class ReaderActivity : LanguageActivity() {
             setText(SPEED_NAMES.getOrElse(SPEEDS.indexOfFirst { it == speed }) { R.string.speed_normal })
             setTextColor(paced)
         }
-        // Accent while the word is being said, like repeat while it is on
+        // Accent while the word is being said, like repeat while it is on; faded while it is fetched
         val word = getColor(if (WordVoice.saying) R.color.accent else R.color.text_mute)
-        findViewById<ImageView>(R.id.p_word_icon).imageTintList = ColorStateList.valueOf(word)
-        findViewById<TextView>(R.id.p_word_label).setTextColor(word)
+        findViewById<ImageView>(R.id.p_word_icon).apply {
+            imageTintList = ColorStateList.valueOf(word)
+            imageAlpha = if (WordVoice.loading) 0x66 else 0xFF
+        }
+        findViewById<TextView>(R.id.p_word_label).apply {
+            setText(if (WordVoice.loading) R.string.loading else R.string.label_word)
+            setTextColor(word)
+        }
         val latin = getColor(if (Settings.translit(this)) R.color.accent else R.color.text_mute)
         findViewById<ImageView>(R.id.p_translit_icon).imageTintList = ColorStateList.valueOf(latin)
         findViewById<TextView>(R.id.p_translit_label).setTextColor(latin)
@@ -772,6 +800,8 @@ class ReaderActivity : LanguageActivity() {
 
         /* Word: the chosen word alone; a running recitation pauses for it, and a second tap stops it. */
         findViewById<View>(R.id.p_word).setOnClickListener {
+            // Still fetching: a second tap would only ask again
+            if (WordVoice.loading) return@setOnClickListener
             if (WordVoice.saying) {
                 WordVoice.stop()
                 return@setOnClickListener
@@ -782,9 +812,13 @@ class ReaderActivity : LanguageActivity() {
                 ?: view?.firstWord() ?: return@setOnClickListener
             if (Recite.wantsToPlay()) Recite.toggle()
             lit(surah, ayah, w)
-            WordVoice.say(this, surah, ayah, w) { ok ->
+            WordVoice.say(this, surah, ayah, w, changed = ::sayPlayer) { how ->
                 sayPlayer()
-                if (!ok) notice(getString(R.string.word_unheard))
+                when (how) {
+                    WordVoice.End.MISSING -> notice(getString(R.string.word_missing))
+                    WordVoice.End.UNREACHABLE -> notice(getString(R.string.word_unheard))
+                    WordVoice.End.HEARD -> {}
+                }
             }
             sayPlayer()
         }

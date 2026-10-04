@@ -11,6 +11,7 @@
     <!-- Player notification in the shade while a recitation is running. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!-- Never asked for: the player's controls come from its media session, which needs none -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application

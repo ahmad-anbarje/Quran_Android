@@ -115,16 +115,6 @@ object Settings {
         store(context).edit { putInt(LAST_PAGE, page) }
     }
 
-    // --- notifications ---
-
-    private const val NOTIFICATIONS_ASKED = "notifications-asked"
-
-    fun notificationsAsked(context: Context) = store(context).getBoolean(NOTIFICATIONS_ASKED, false)
-
-    fun setNotificationsAsked(context: Context) {
-        store(context).edit { putBoolean(NOTIFICATIONS_ASKED, true) }
-    }
-
     // --- page motion ---
 
     private const val PAGE_TURN = "page-turn"

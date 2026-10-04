@@ -64,29 +64,37 @@ en:
 
 > The Great Quran shows the Madinah Mushaf exactly as printed, page by page, in clear sharp type on any screen.
 >
-> - Word-by-word highlighting while the recitation plays
-> - Several reciters; download for offline listening, or save the audio to your phone
-> - Search the Quran by word, surah, or page
+> - Pinch to zoom up to three times, and the text stays sharp at every size
+> - Each word lights up as it is recited, with its pronunciation in Latin letters above it
+> - Hear any word on its own to learn how it is said
+> - Hold any word to start the recitation from it
+> - Repeat an ayah, a page or a surah to memorise, and set the recitation speed
+> - Five recitations: Maher al-Muaiqly (two), Mishari al-Afasy, Yasser Ad-Dussary, Saad al-Ghamdi
+> - Download for offline listening, or save the recitation to your phone
+> - Keeps playing with the screen off, with controls on the lock screen and in quick settings
+> - Search the Quran by word, surah or page
 > - Save pages and continue where you left off
-> - Light and dark modes, adjustable colours and text weight
-> - Slide or page-turn motion, one or two pages side by side
+> - Light, dark or follow the phone, with your own colours and text weight
+> - Turn pages by sliding or with a paper page-turn
 > - Arabic and English interface
->
-> No account, no ads, no tracking.
 
 ar:
 
 > يعرض «القرآن العظيم» مصحف المدينة كما هو مطبوع، صفحةً صفحة، بخط واضح على كل الشاشات.
 >
-> - تمييز الكلمة أثناء التلاوة
-> - عدة قرّاء، مع التنزيل للاستماع دون إنترنت أو حفظ التلاوات في الهاتف
+> - كبّر الصفحة بإصبعين حتى ثلاثة أضعاف، ويبقى الخط واضحًا حادًّا في كل حجم
+> - تُضاء كل كلمة لحظة تلاوتها، ويظهر نطقها بالحروف اللاتينية فوقها
+> - استمع إلى أي كلمة وحدها لتتعلّم نطقها
+> - اضغط مطوّلًا على أي كلمة لتبدأ التلاوة منها
+> - تكرار الآية أو الصفحة أو السورة للحفظ، مع التحكّم في سرعة التلاوة
+> - خمس تلاوات: ماهر المعيقلي (تلاوتان)، مشاري العفاسي، ياسر الدوسري، سعد الغامدي
+> - التنزيل للاستماع دون إنترنت، أو حفظ التلاوة في الهاتف
+> - تستمر التلاوة والشاشة مغلقة، مع أزرار التحكّم في شاشة القفل ولوحة الإعدادات السريعة
 > - البحث في القرآن بالكلمة أو السورة أو الصفحة
 > - حفظ الصفحات والمتابعة من حيث توقفت
-> - مظهر فاتح وداكن، مع تخصيص الألوان وسماكة الخط
-> - تقليب الصفحات بالسحب أو بحركة تقليب الورق، وصفحة أو صفحتان
+> - مظهر فاتح وداكن وحسب النظام، مع تخصيص الألوان وسماكة الخط
+> - تقليب الصفحات بالسحب أو بحركة تقليب الورق
 > - واجهة عربية وإنجليزية
->
-> بلا حساب، وبلا إعلانات، وبلا تتبّع.
 
 **Category:** Books & Reference  **Contact email:** readqurantoday@outlook.com  **Website:** https://readqurantoday.com
 
@@ -133,7 +141,7 @@ Video of the feature (if asked): screen recording showing tapping play in the re
 ### Permissions
 
 - `INTERNET` — stream and download recitations, send reports
-- `POST_NOTIFICATIONS` — player and download notifications (asked once on first open)
+- `POST_NOTIFICATIONS` — declared but never asked for: the player's lock-screen and quick-settings controls come from its media session, which needs no permission, and download progress is shown by Android's own downloads
 - `WRITE_EXTERNAL_STORAGE` (maxSdk 28) — save audio to Download on Android 9 and older
 
 ## Content rights checklist

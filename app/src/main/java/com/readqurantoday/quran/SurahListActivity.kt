@@ -1,13 +1,10 @@
 package com.readqurantoday.quran
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,7 +14,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.addCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -30,8 +26,6 @@ class SurahListActivity : LanguageActivity() {
     private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_bookmark, R.drawable.ic_settings)
     private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_settings_outline)
 
-    // Nothing to do with the answer: the player and downloads simply show notifications if allowed
-    private val askNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     private lateinit var panes: List<View>
     private lateinit var navIcons: List<ImageView>
@@ -69,7 +63,6 @@ class SurahListActivity : LanguageActivity() {
         setContentView(R.layout.activity_index)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
-        if (savedInstanceState == null) askForNotificationsOnce()
         watchKeyboard()
 
         panes     = paneIds.map { findViewById<View>(it) }
@@ -329,13 +322,6 @@ class SurahListActivity : LanguageActivity() {
         )
     }
 
-    // Android 13+ hides player and download notifications until allowed; asked once, on first open
-    private fun askForNotificationsOnce() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || Settings.notificationsAsked(this)) return
-        Settings.setNotificationsAsked(this)
-        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
-        askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-    }
 
     // Rebuilt on every return: reading changes the history and saved pages
     private fun marks() {

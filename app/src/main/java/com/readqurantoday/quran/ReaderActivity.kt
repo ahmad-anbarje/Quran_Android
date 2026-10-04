@@ -36,6 +36,7 @@ class ReaderActivity : LanguageActivity() {
     private lateinit var barPlace: TextView
     private lateinit var player: View
     private lateinit var btnTheme: ImageView
+    private lateinit var themeLabel: TextView
     private lateinit var btnTurn: ImageView
     private lateinit var turnLabel: TextView
 
@@ -155,6 +156,7 @@ class ReaderActivity : LanguageActivity() {
         )
 
         btnTheme = findViewById(R.id.btn_theme)
+        themeLabel = findViewById(R.id.theme_label)
 
         dressWindow()
         buildPager()
@@ -179,8 +181,21 @@ class ReaderActivity : LanguageActivity() {
         val last = Settings.lastPage(this).let { if (it in 1..pages) it else 2 }
         // Opening behind the menu is not reading, so nothing is noted until a page is chosen
         go(last, note = false)
-        // restore chrome state on recreation (e.g. after theme toggle)
+        // A theme change rebuilds this screen: the chosen word, the mark and the bars come back as they were
+        savedInstanceState?.let { was ->
+            pendingSurah = was.getInt(PENDING_SURAH)
+            pendingFrom  = was.getInt(PENDING_FROM)
+            pendingAuto  = was.getBoolean(PENDING_AUTO)
+            rc.litAyah   = was.getInt(LIT_AYAH)
+            rc.litWord   = was.getInt(LIT_WORD, -1)
+            shownWord    = was.getIntArray(SHOWN_WORD)
+        }
         showChrome(savedInstanceState?.getBoolean(CHROME) ?: false)
+        // The player and the page's first word need laid-out pages, which the first pass has not got yet
+        if (savedInstanceState != null) pager.post {
+            shownWord?.let { lit(it[0], it[1], it[2]) }
+            showChrome(chrome)
+        }
 
         if (savedInstanceState == null) {
             fromIndex.launch(Intent(this, SurahListActivity::class.java))
@@ -552,10 +567,6 @@ class ReaderActivity : LanguageActivity() {
         }
     }
 
-    private fun night() =
-        (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
-
     private fun topBand(): Int {
         val id = resources.getIdentifier("status_bar_height", "dimen", "android")
         return if (id > 0) resources.getDimensionPixelSize(id)
@@ -843,15 +854,32 @@ class ReaderActivity : LanguageActivity() {
 
     // --- theme toggle ---
 
+    // System, light, dark, round again: the same three choices as in Settings
     private fun cycleTheme() {
-        Settings.setTheme(this, if (night()) Settings.LIGHT else Settings.DARK)
-        /* AppCompatDelegate triggers recreation; no further work needed here. */
+        val next = when (Settings.theme(this)) {
+            Settings.BY_SYSTEM -> Settings.LIGHT
+            Settings.LIGHT -> Settings.DARK
+            else -> Settings.BY_SYSTEM
+        }
+        Settings.setTheme(this, next)
+        // Following the system may keep the look already shown, and then nothing is rebuilt
+        sayThemeBtn()
     }
 
-    /* The icon shows the side you would switch to, not the side you are on. */
+    /* The icon and label name the choice in force. */
     private fun sayThemeBtn() {
-        btnTheme.setImageResource(if (night()) R.drawable.ic_sun else R.drawable.ic_moon)
+        val mode = Settings.theme(this)
+        btnTheme.setImageResource(when (mode) {
+            Settings.LIGHT -> R.drawable.ic_sun
+            Settings.DARK -> R.drawable.ic_moon
+            else -> R.drawable.ic_theme_system
+        })
         btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
+        themeLabel.setText(when (mode) {
+            Settings.LIGHT -> R.string.theme_light
+            Settings.DARK -> R.string.theme_dark
+            else -> R.string.theme_system
+        })
     }
 
     private fun redrawPages() {
@@ -896,6 +924,20 @@ class ReaderActivity : LanguageActivity() {
     override fun onSaveInstanceState(out: Bundle) {
         super.onSaveInstanceState(out)
         out.putBoolean(CHROME, chrome)
+        out.putInt(PENDING_SURAH, pendingSurah)
+        out.putInt(PENDING_FROM, pendingFrom)
+        out.putBoolean(PENDING_AUTO, pendingAuto)
+        out.putInt(LIT_AYAH, rc.litAyah)
+        out.putInt(LIT_WORD, rc.litWord)
+        shownWord?.let { out.putIntArray(SHOWN_WORD, it) }
+    }
+
+    // The old screen's timers and follower would otherwise act on views no longer shown
+    override fun onDestroy() {
+        pager.removeCallbacks(idleClose)
+        pager.removeCallbacks(autoClose)
+        rc.detach()
+        super.onDestroy()
     }
 
     override fun onPause() {
@@ -958,6 +1000,12 @@ class ReaderActivity : LanguageActivity() {
 
     companion object {
         private const val CHROME = "chrome"
+        private const val PENDING_SURAH = "pending-surah"
+        private const val PENDING_FROM = "pending-from"
+        private const val PENDING_AUTO = "pending-auto"
+        private const val LIT_AYAH = "lit-ayah"
+        private const val LIT_WORD = "lit-word"
+        private const val SHOWN_WORD = "shown-word"
         private const val TURN_FLING_DP = 400f
         private const val AUTO_CLOSE_MS = 1500L
         private const val IDLE_CLOSE_MS = 6000L

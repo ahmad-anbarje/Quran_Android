@@ -61,6 +61,11 @@ class RecitationController(
         follow()
     }
 
+    /** Stop following without touching the audio or the marks: the screen is going, not the recitation. */
+    fun detach() {
+        tickView.removeCallbacks(follower)
+    }
+
     fun follow() {
         tickView.removeCallbacks(follower)
         tickView.post(follower)

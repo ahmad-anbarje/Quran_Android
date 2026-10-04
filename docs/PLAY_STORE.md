@@ -13,7 +13,7 @@ Screenshots: take at least 2 phone screenshots on the device (menu, reader, play
 
 ### Taking screenshots
 
-The set lives in `store/screenshots/` as `ar-N-*.png` and `en-N-*.png`, at most 8 per language. Play wants the long side no more than twice the short side, so a tall phone (1440×3120 is 2.17) is shot at 1080×1920 instead:
+The set lives in `store/screenshots/ar/` and `store/screenshots/en/`, 2–8 per language, numbered in upload order. Play takes exactly 9:16 (or 16:9), each side 320–3840 px, so a tall phone (1440×3120) is shot at 1080×1920 instead:
 
 ```bash
 adb shell wm size 1080x1920
@@ -55,8 +55,8 @@ Play takes a YouTube link, not a file: **Grow users → Store presence → Main 
 
 **Short description (≤ 80 chars)**
 
-- en: Read the Madinah Mushaf page by page and listen to ayah-by-ayah recitation.
-- ar: اقرأ مصحف المدينة صفحةً صفحة، واستمع إلى التلاوة آيةً آية.
+- en: The Madinah Mushaf as printed, with each word lit as it is recited.
+- ar: مصحف المدينة كما هو مطبوع، وتُضاء كل كلمة لحظة تلاوتها.
 
 **Full description**
 

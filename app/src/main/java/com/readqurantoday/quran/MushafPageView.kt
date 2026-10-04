@@ -882,14 +882,22 @@ class MushafPageView @JvmOverloads constructor(
             val ofSurah = atSurah
             val ofAyah = atAyah
             val ofWord = if (isMark) -1 else atWord
+            val pair = !isMark && Mushaf.isPair(ofSurah, ofAyah, ofWord)
+            val split = if (pair) Mushaf.pairSplit(word) else word.length
 
             /* Detect lit word before collecting glyphs so we can route them correctly. */
-            val isLit = !isMark && ofSurah == litSurah && ofAyah == litAyah && ofWord == litWord
+            val litHere = !isMark && ofSurah == litSurah && ofAyah == litAyah
+            var isLit = litHere && ofWord == litWord
 
             val began = x
             var pen = x
+            var splitPen = x
             var i = 0
             while (i < word.length) {
+                if (pair && i == split) {
+                    splitPen = pen
+                    isLit = litHere && ofWord + 1 == litWord
+                }
                 val cp = word.codePointAt(i)
                 i += Character.charCount(cp)
 
@@ -929,12 +937,16 @@ class MushafPageView @JvmOverloads constructor(
 
             if (!isMark) {
                 if (!laidOut) {
-                    placed.add(floatArrayOf(
-                        pen, began, y - slot * 0.44f, y + slot * 0.24f,
-                        ofSurah.toFloat(), ofAyah.toFloat(), ofWord.toFloat()
-                    ))
+                    val top = y - slot * 0.44f
+                    val bottom = y + slot * 0.24f
+                    if (pair) {
+                        placed.add(floatArrayOf(splitPen, began, top, bottom, ofSurah.toFloat(), ofAyah.toFloat(), ofWord.toFloat()))
+                        placed.add(floatArrayOf(pen, splitPen, top, bottom, ofSurah.toFloat(), ofAyah.toFloat(), ofWord + 1f))
+                    } else {
+                        placed.add(floatArrayOf(pen, began, top, bottom, ofSurah.toFloat(), ofAyah.toFloat(), ofWord.toFloat()))
+                    }
                 }
-                atWord++
+                atWord += if (pair) 2 else 1
             } else {
                 atAyah++
                 atWord = 0
@@ -972,23 +984,37 @@ class MushafPageView @JvmOverloads constructor(
             var fbWord  = fbWord0
             for (word in words) {
                 val isMk = word.isNotEmpty() && marks.contains(word)
-                val isLit2 = !isMk && fbSurah == litSurah && fbAyah == litAyah && fbWord == litWord
-                val pen = when {
-                    isMk    -> markPaint
-                    isLit2  -> litPaint
-                    else    -> paint
+                val pair = !isMk && Mushaf.isPair(fbSurah, fbAyah, fbWord)
+                val split = if (pair) Mushaf.pairSplit(word) else word.length
+                val litHere = !isMk && fbSurah == litSurah && fbAyah == litAyah
+                val first = when {
+                    isMk -> markPaint
+                    litHere && fbWord == litWord -> litPaint
+                    else -> paint
                 }
+                val second = if (litHere && fbWord + 1 == litWord) litPaint else paint
+                var at = 0
                 for (part in word.split(' ')) {
-                    if (part.isEmpty()) continue
-                    val w = wordWidth(part, glyphs, size)
-                    canvas.drawText(part, wx - w, y, pen)
-                    wx -= w + innerSpace * size
+                    if (part.isNotEmpty()) {
+                        val cut = (split - at).coerceIn(0, part.length)
+                        if (cut > 0) wx = drawPart(canvas, part.substring(0, cut), wx, y, glyphs, size, first)
+                        if (cut < part.length) wx = drawPart(canvas, part.substring(cut), wx, y, glyphs, size, second)
+                        wx -= innerSpace * size
+                    }
+                    at += part.length + 1
                 }
                 wx += innerSpace * size
                 wx -= gap
-                if (!isMk) fbWord++ else { fbAyah++; fbWord = 0 }
+                if (!isMk) fbWord += if (pair) 2 else 1 else { fbAyah++; fbWord = 0 }
             }
         }
+    }
+
+    // Draws text right-aligned at [right]; returns where the next text ends
+    private fun drawPart(canvas: Canvas, text: String, right: Float, y: Float, glyphs: Mushaf.Glyphs, size: Float, pen: Paint): Float {
+        val w = wordWidth(text, glyphs, size)
+        canvas.drawText(text, right - w, y, pen)
+        return right - w
     }
 
     // Weight by dilation: redraws the glyphs nudged each way. Fake bold grows outlines and tears overlapping glyphs

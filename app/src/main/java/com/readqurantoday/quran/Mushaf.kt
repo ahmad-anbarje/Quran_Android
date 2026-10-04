@@ -221,6 +221,18 @@ object Mushaf {
         return nameFamily
     }
 
+    // بَعْدَ مَا: one printed slot, two recited words; surah*1000+ayah to slot, same list as the web's PAIRS
+    private val pairs = mapOf(2181 to 2, 8006 to 3, 13037 to 7)
+
+    /** Whether the slot reached at [word] is a pair; before the pair, slot and word number agree. */
+    fun isPair(surah: Int, ayah: Int, word: Int) = pairs[surah * 1000 + ayah] == word
+
+    /** Where a pair's second word starts: after its inner gap, or else after its first glyph. */
+    fun pairSplit(word: String): Int {
+        val gap = word.indexOf(' ')
+        return if (gap >= 0) gap + 1 else Character.charCount(word.codePointAt(0))
+    }
+
     /** Codepoint for surah N in the names face: E004 for surah 4, E114 for 114. */
     fun nameCode(surah: Int): Int = 0xE000 + Integer.parseInt(surah.toString().padStart(3, '0'), 16)
 

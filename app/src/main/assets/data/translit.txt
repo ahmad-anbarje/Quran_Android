@@ -185,7 +185,7 @@
 2:178	yāayyuhā|alladhīna|āmanū|kutiba|ʿalaykumu|l-qiṣāṣu|fī|l-qatlā|l-ḥuru|bil-ḥuri|wal-ʿabdu|bil-ʿabdi|wal-unthā|bil-unthā|faman|ʿufiya|lahu|min|akhīhi|shayon|fa-ittibāʿun|bil-maʿrūfi|wa-adāon|ilayhi|bi-iḥ'sānin|dhālika|takhfīfun|min|rabbikum|waraḥmatun|famani|iʿ'tadā|baʿda|dhālika|falahu|ʿadhābun|alīmun
 2:179	walakum|fī|l-qiṣāṣi|ḥayatun|yāulī|l-albābi|laʿallakum|tattaqūna
 2:180	kutiba|ʿalaykum|idhā|ḥaḍara|aḥadakumu|l-mawtu|in|taraka|khayran|l-waṣiyatu|lil'wālidayni|wal-aqrabīna|bil-maʿrūfi|ḥaqqan|ʿalā|l-mutaqīna
-2:181	faman|baddalahu|baʿdamā|samiʿahu|fa-innamā|ith'muhu|ʿalā|alladhīna|yubaddilūnahu|inna|al-laha|sami'un|alimun
+2:181	faman|baddalahu|baʿda|mā|samiʿahu|fa-innamā|ith'muhu|ʿalā|alladhīna|yubaddilūnahu|inna|al-laha|sami'un|alimun
 2:182	faman|khāfa|min|mūṣin|janafan|aw|ith'man|fa-aṣlaḥa|baynahum|falā|ith'ma|ʿalayhi|inna|l-laha|ghafūrun|raḥīmun
 2:183	yāayyuhā|alladhīna|āmanū|kutiba|ʿalaykumu|l-ṣiyāmu|kamā|kutiba|ʿalā|alladhīna|min|qablikum|laʿallakum|tattaqūna
 2:184	ayyāman|maʿdūdātin|faman|kāna|minkum|marīḍan|aw|ʿalā|safarin|faʿiddatun|min|ayyāmin|ukhara|waʿalā|alladhīna|yuṭīqūnahu|fid'yatun|ṭaʿāmu|mis'kīnin|faman|taṭawwaʿa|khayran|fahuwa|khayrun|lahu|wa-an|taṣūmū|khayrun|lakum|in|kuntum|taʿlamūna
@@ -1163,7 +1163,7 @@
 8:3	alladhīna|yuqīmūna|l-ṣalata|wamimmā|razaqnāhum|yunfiqūna
 8:4	ulāika|humu|l-mu'minūna|ḥaqqan|lahum|darajātun|ʿinda|rabbihim|wamaghfiratun|wariz'qun|karīmun
 8:5	kamā|akhrajaka|rabbuka|min|baytika|bil-ḥaqi|wa-inna|farīqan|mina|l-mu'minīna|lakārihūna
-8:6	yujādilūnaka|fī|l-ḥaqi|baʿdamā|tabayyana|ka-annamā|yusāqūna|ilā|l-mawti|wahum|yanẓurūna
+8:6	yujādilūnaka|fī|l-ḥaqi|baʿda|mā|tabayyana|ka-annamā|yusāqūna|ilā|l-mawti|wahum|yanẓurūna
 8:7	wa-idh|yaʿidukumu|l-lahu|iḥ'dā|l-ṭāifatayni|annahā|lakum|watawaddūna|anna|ghayra|dhāti|l-shawkati|takūnu|lakum|wayurīdu|l-lahu|an|yuḥiqqa|l-ḥaqa|bikalimātihi|wayaqṭaʿa|dābira|l-kāfirīna
 8:8	liyuḥiqqa|l-ḥaqa|wayub'ṭila|l-bāṭila|walaw|kariha|l-muj'rimūna
 8:9	idh|tastaghīthūna|rabbakum|fa-is'tajāba|lakum|annī|mumiddukum|bi-alfin|mina|l-malāikati|mur'difīna
@@ -1741,7 +1741,7 @@
 13:34	lahum|ʿadhābun|fī|l-ḥayati|l-dun'yā|walaʿadhābu|l-ākhirati|ashaqqu|wamā|lahum|mina|l-lahi|min|wāqin
 13:35	mathalu|l-janati|allatī|wuʿida|l-mutaqūna|tajrī|min|taḥtihā|l-anhāru|ukuluhā|dāimun|waẓilluhā|til'ka|ʿuq'bā|alladhīna|ittaqaw|waʿuq'bā|l-kāfirīna|l-nāru
 13:36	wa-alladhīna|ātaynāhumu|l-kitāba|yafraḥūna|bimā|unzila|ilayka|wamina|l-aḥzābi|man|yunkiru|baʿḍahu|qul|innamā|umir'tu|an|aʿbuda|l-laha|walā|ush'rika|bihi|ilayhi|adʿū|wa-ilayhi|maābi
-13:37	wakadhālika|anzalnāhu|ḥuk'man|ʿarabiyyan|wala-ini|ittabaʿta|ahwāahum|baʿdamā|jāaka|mina|l-ʿil'mi|mā|laka|mina|l-lahi|min|waliyyin|walā|wāqin
+13:37	wakadhālika|anzalnāhu|ḥuk'man|ʿarabiyyan|wala-ini|ittabaʿta|ahwāahum|baʿda|mā|jāaka|mina|l-ʿil'mi|mā|laka|mina|l-lahi|min|waliyyin|walā|wāqin
 13:38	walaqad|arsalnā|rusulan|min|qablika|wajaʿalnā|lahum|azwājan|wadhurriyyatan|wamā|kāna|lirasūlin|an|yatiya|biāyatin|illā|bi-idh'ni|l-lahi|likulli|ajalin|kitābun
 13:39	yamḥū|l-lahu|mā|yashāu|wayuth'bitu|waʿindahu|ummu|l-kitābi
 13:40	wa-in|mā|nuriyannaka|baʿḍa|alladhī|naʿiduhum|aw|natawaffayannaka|fa-innamā|ʿalayka|l-balāghu|waʿalaynā|l-ḥisābu

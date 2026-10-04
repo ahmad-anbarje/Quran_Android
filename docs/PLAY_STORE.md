@@ -11,6 +11,44 @@ Made by `python tools/render_store_art.py` into `store/`:
 
 Screenshots: take at least 2 phone screenshots on the device (menu, reader, player, dark mode, downloads).
 
+### Taking screenshots
+
+The set lives in `store/screenshots/` as `ar-N-*.png` and `en-N-*.png`, at most 8 per language. Play wants the long side no more than twice the short side, so a tall phone (1440×3120 is 2.17) is shot at 1080×1920 instead:
+
+```bash
+adb shell wm size 1080x1920
+adb shell wm density 420
+```
+
+Then, with the `.dev` build installed:
+
+```bash
+adb shell screencap -p /sdcard/s.png
+adb pull /sdcard/s.png
+```
+
+Put the phone back afterwards; a restart also undoes both:
+
+```bash
+adb shell wm size reset
+adb shell wm density reset
+```
+
+Play takes PNG only without transparency, and `screencap` writes it with an alpha channel: save each one again as 24-bit before uploading.
+
+Tips: a tap opens the menus but they close themselves a moment later, so open them and capture straight away. A recitation started mid-page puts the lit word, with its phonetic label, in the middle of the shot.
+
+### Promo video (optional)
+
+Play takes a YouTube link, not a file: **Grow users → Store presence → Main store listing → Video**. It plays above the screenshots, from the feature graphic.
+
+- Upload to YouTube as **Public** or **Unlisted**, never Private.
+- **Monetisation off** (no ads), not age-restricted, embedding allowed.
+- Paste the plain watch link, e.g. `https://www.youtube.com/watch?v=…`, not a Shorts or playlist link.
+- 30 seconds to 2 minutes; the first seconds matter most, so open on the recited word lighting up.
+- Landscape (16:9) fills the player best. A portrait phone recording works, but plays boxed with bars on the sides.
+- One video serves every language. Captions in both Arabic and English, or a separate video per custom store listing.
+
 ## Store listing
 
 **App name:** The Great Quran — القرآن العظيم

@@ -27,7 +27,7 @@ adb shell screencap -p /sdcard/s.png
 adb pull /sdcard/s.png
 ```
 
-Put the phone back afterwards; a restart also undoes both:
+Put the phone back afterwards; a restart does not undo either:
 
 ```bash
 adb shell wm size reset

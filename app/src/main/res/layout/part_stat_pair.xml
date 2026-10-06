@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two tiles side by side, kept to the same margins as the cards -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layoutDirection="locale"
+    android:baselineAligned="false"
+    android:paddingStart="@dimen/screen_margin"
+    android:paddingEnd="@dimen/screen_margin"
+    android:paddingTop="@dimen/tile_gap">
+
+    <include
+        android:id="@+id/tile_a"
+        layout="@layout/part_stat_tile" />
+
+    <Space
+        android:layout_width="@dimen/tile_gap"
+        android:layout_height="0dp" />
+
+    <include
+        android:id="@+id/tile_b"
+        layout="@layout/part_stat_tile" />
+</LinearLayout>

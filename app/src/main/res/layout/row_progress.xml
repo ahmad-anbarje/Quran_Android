@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A statistics row: label and value, an optional quiet line, an optional progress track -->
+<!-- A statistics row: label and value, an optional quiet line, an optional trend -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -47,10 +47,10 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/prog_track"
-        layout="@layout/part_progress"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/track_height"
-        android:layout_marginTop="8dp"
+        android:id="@+id/prog_trend"
+        layout="@layout/part_trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         android:visibility="gone" />
 </LinearLayout>

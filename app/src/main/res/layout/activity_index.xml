@@ -130,7 +130,22 @@
                 android:paddingBottom="24dp" />
         </ScrollView>
 
-        <!-- Pane 2: settings. -->
+        <!-- Statistics pane: filled by StatsPane -->
+        <ScrollView
+            android:id="@+id/pane_stats"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/stats_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="24dp" />
+        </ScrollView>
+
+        <!-- Pane 3: settings. -->
         <ScrollView
             android:id="@+id/pane_settings"
             android:layout_width="match_parent"
@@ -239,120 +254,32 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         android:background="@drawable/strip_surface">
 
-        <LinearLayout
+        <include
             android:id="@+id/nav_surahs"
+            layout="@layout/part_nav_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <FrameLayout
-                android:id="@+id/nav_pill_surahs"
-                android:layout_width="52dp"
-                android:layout_height="28dp"
-                android:duplicateParentState="true">
-
-                <ImageView
-                    android:id="@+id/nav_icon_surahs"
-                    android:contentDescription="@null"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:duplicateParentState="true"
-                    android:src="@drawable/ic_surahs_outline"
-                    android:tint="@color/accent" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/nav_label_surahs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:duplicateParentState="true"
-                android:text="@string/tab_index"
-                android:textColor="@color/accent"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
+            android:layout_weight="1" />
+        <include
             android:id="@+id/nav_marks"
+            layout="@layout/part_nav_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <FrameLayout
-                android:id="@+id/nav_pill_marks"
-                android:layout_width="52dp"
-                android:layout_height="28dp"
-                android:duplicateParentState="true">
-
-                <ImageView
-                    android:id="@+id/nav_icon_marks"
-                    android:contentDescription="@null"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:duplicateParentState="true"
-                    android:src="@drawable/ic_bookmark_outline"
-                    android:tint="@color/icon_btn" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/nav_label_marks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:duplicateParentState="true"
-                android:text="@string/tab_marks"
-                android:textColor="@color/icon_btn"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <LinearLayout
+            android:layout_weight="1" />
+        <include
+            android:id="@+id/nav_stats"
+            layout="@layout/part_nav_tab"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <include
             android:id="@+id/nav_settings"
+            layout="@layout/part_nav_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
-
-            <FrameLayout
-                android:id="@+id/nav_pill_settings"
-                android:layout_width="52dp"
-                android:layout_height="28dp"
-                android:duplicateParentState="true">
-
-                <ImageView
-                    android:id="@+id/nav_icon_settings"
-                    android:contentDescription="@null"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_gravity="center"
-                    android:duplicateParentState="true"
-                    android:src="@drawable/ic_settings_outline"
-                    android:tint="@color/icon_btn" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/nav_label_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:duplicateParentState="true"
-                android:text="@string/tab_settings"
-                android:textColor="@color/icon_btn"
-                android:textSize="11sp" />
-        </LinearLayout>
+            android:layout_weight="1" />
     </LinearLayout>
 </LinearLayout>

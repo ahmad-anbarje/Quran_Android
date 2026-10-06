@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One small statistic: an icon in its disc, the figure, what it counts -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:background="@drawable/card_group"
+    android:padding="@dimen/tile_pad">
+
+    <FrameLayout
+        android:layout_width="@dimen/tile_disc"
+        android:layout_height="@dimen/tile_disc"
+        android:background="@drawable/chip_soft">
+
+        <ImageView
+            android:id="@+id/tile_icon"
+            android:layout_width="@dimen/tile_icon"
+            android:layout_height="@dimen/tile_icon"
+            android:layout_gravity="center"
+            android:contentDescription="@null" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tile_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/text"
+        android:textSize="@dimen/tile_value"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/tile_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta"
+        android:maxLines="2" />
+</LinearLayout>

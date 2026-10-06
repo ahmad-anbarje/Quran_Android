@@ -47,6 +47,7 @@
     <!-- The accent value at the end of a settings or statistics row -->
     <dimen name="row_value">14sp</dimen>
     <dimen name="icon_label">10sp</dimen>
+    <dimen name="nav_label">11sp</dimen>
     <dimen name="icon_label_min">7sp</dimen>
     <!-- Smallest the reader bar's juz and page may shrink to under a large font -->
     <dimen name="bar_place_min">8sp</dimen>
@@ -61,4 +62,14 @@
     <dimen name="track_height">3dp</dimen>
     <!-- The statistics chart of recent days -->
     <dimen name="chart_height">96dp</dimen>
+    <!-- Statistics: the ring that tells a figure large, and the small tiles beside it -->
+    <dimen name="ring_size">96dp</dimen>
+    <dimen name="ring_stroke">8dp</dimen>
+    <dimen name="hero_value">26sp</dimen>
+    <dimen name="tile_value">20sp</dimen>
+    <dimen name="tile_pad">14dp</dimen>
+    <dimen name="tile_disc">34dp</dimen>
+    <dimen name="tile_icon">18dp</dimen>
+    <dimen name="tile_gap">10dp</dimen>
+    <dimen name="trend_icon">14dp</dimen>
 </resources>

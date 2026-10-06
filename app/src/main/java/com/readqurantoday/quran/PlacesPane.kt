@@ -1,14 +1,13 @@
 package com.readqurantoday.quran
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-// Places tab: today's reading, then recent surahs, then saved pages in mushaf order
+// Places tab: recent surahs first, then saved pages in mushaf order
 class PlacesPane(
     private val host: Activity,
     private val into: LinearLayout,
@@ -20,8 +19,6 @@ class PlacesPane(
     fun build() {
         into.removeAllViews()
 
-        blow.card(into, R.string.stats_today, listOf(todayRow()))
-
         val recent = recent()
         blow.card(into, R.string.marks_col_recent,
             if (recent.isEmpty()) listOf(empty(R.string.no_recent))
@@ -31,26 +28,6 @@ class PlacesPane(
         blow.card(into, R.string.marks_col_saved,
             if (saved.isEmpty()) listOf(empty(R.string.no_marks))
             else saved.map { savedRow(it) })
-    }
-
-    // Today in a line, with the goal as a bar; the whole row opens the statistics
-    private fun todayRow(): View {
-        val day = Stats.day(host, Stats.today())
-        val goal = Stats.goal(host)
-        val read = day.pages.size
-        val res = host.resources
-        return blow.inflate(R.layout.row_progress, into, false).apply {
-            isClickable = true
-            setOnClickListener { host.startActivity(Intent(host, StatsActivity::class.java)) }
-            findViewById<TextView>(R.id.prog_label).text =
-                if (read == 0 && day.listenSec == 0) host.getString(R.string.stats_none_today) else pagesSaid(read, res)
-            findViewById<TextView>(R.id.prog_value).text = host.getString(R.string.stats_title)
-            findViewById<TextView>(R.id.prog_note).apply {
-                text = host.getString(R.string.stats_today_line, spent(day.readSec, res), spent(day.listenSec, res))
-                visibility = View.VISIBLE
-            }
-            if (goal > 0) findViewById<View>(R.id.prog_track).fillTrack(read.toFloat(), goal.toFloat())
-        }
     }
 
     /* The reading history; before any was kept, the one last page stands in for it. */

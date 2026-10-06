@@ -23,11 +23,12 @@ import androidx.recyclerview.widget.RecyclerView
 /** Index screen: surah list (with play+download), bookmarks, and settings. Returns a page number. */
 class SurahListActivity : LanguageActivity() {
 
-    /* Pane index matches the nav order: 0=surahs, 1=marks, 2=settings. */
-    private val paneIds      = intArrayOf(R.id.pane_index, R.id.pane_marks, R.id.pane_settings)
-    private val navIds       = intArrayOf(R.id.nav_surahs, R.id.nav_marks, R.id.nav_settings)
-    private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_bookmark, R.drawable.ic_settings)
-    private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_settings_outline)
+    /* Pane index matches the nav order: 0=surahs, 1=marks, 2=statistics, 3=settings. */
+    private val paneIds      = intArrayOf(R.id.pane_index, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings)
+    private val navIds       = intArrayOf(R.id.nav_surahs, R.id.nav_marks, R.id.nav_stats, R.id.nav_settings)
+    private val navNames     = intArrayOf(R.string.tab_index, R.string.tab_marks, R.string.stats_title, R.string.tab_settings)
+    private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_bookmark, R.drawable.ic_stats, R.drawable.ic_settings)
+    private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 
 
     private lateinit var panes: List<View>
@@ -64,16 +65,16 @@ class SurahListActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_index)
-        keepToColumn(R.id.search_head, R.id.segments, R.id.list, R.id.pane_marks, R.id.pane_settings, R.id.card_resume)
+        keepToColumn(R.id.search_head, R.id.segments, R.id.list, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings, R.id.card_resume)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
         watchKeyboard()
 
         panes     = paneIds.map { findViewById<View>(it) }
-        navIcons  = listOf(R.id.nav_icon_surahs, R.id.nav_icon_marks, R.id.nav_icon_settings)
-            .map { findViewById<ImageView>(it) }
-        navLabels = listOf(R.id.nav_label_surahs, R.id.nav_label_marks, R.id.nav_label_settings)
-            .map { findViewById<TextView>(it) }
+        val tabs  = navIds.map { findViewById<View>(it) }
+        navIcons  = tabs.map { it.findViewById<ImageView>(R.id.nav_icon) }
+        navLabels = tabs.map { it.findViewById<TextView>(R.id.nav_label) }
+        navLabels.forEachIndexed { i, label -> label.setText(navNames[i]) }
 
         navIds.forEachIndexed { i, id -> findViewById<View>(id).setOnClickListener { choose(i) } }
         choose(savedInstanceState?.getInt(TAB) ?: 0)
@@ -163,6 +164,7 @@ class SurahListActivity : LanguageActivity() {
         /* Built on every return, so the reading style row shows colours just changed. */
         settings()
         marks()
+        stats()
     }
 
     override fun onSaveInstanceState(out: Bundle) {
@@ -335,6 +337,11 @@ class SurahListActivity : LanguageActivity() {
     // Rebuilt on every return: reading changes the history and saved pages
     private fun marks() {
         PlacesPane(this, findViewById(R.id.places_groups)) { page -> answer(page) }.build()
+    }
+
+    // Rebuilt on every return: reading and listening move the numbers
+    private fun stats() {
+        StatsPane(this, findViewById(R.id.stats_groups)).build()
     }
 
     // [surah] and [ayah] are set when an ayah was picked, so the reader can highlight it

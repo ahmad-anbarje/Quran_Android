@@ -228,16 +228,13 @@
     <!-- Statistics: kept on the phone only. Figures arrive already written in Arabic figures -->
     <string name="stats_title">الإحصاءات</string>
     <string name="stats_today">اليوم</string>
-    <string name="stats_pages_read">الصفحات المقروءة</string>
     <string name="stats_read_time">وقت القراءة</string>
     <string name="stats_listen_time">وقت الاستماع</string>
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
     <string name="stats_what">ما قرأت اليوم</string>
     <string name="stats_pages_range">الصفحات %1$s–%2$s</string>
-    <string name="stats_today_line">%1$s قراءة · %2$s استماع</string>
     <string name="stats_goal">الهدف اليومي</string>
     <string name="stats_goal_none">بلا هدف</string>
-    <string name="stats_goal_of">%1$s من %2$s</string>
     <string name="stats_goal_reached">بلغت هدف اليوم</string>
     <string name="stats_goal_juz">جزء واحد</string>
     <string name="stats_goal_juz2">جزءان</string>
@@ -246,7 +243,6 @@
     <string name="stats_khatma">الختمة</string>
     <string name="stats_khatma_read">قرأت %1$s من %2$s صفحة</string>
     <string name="stats_left">المتبقي</string>
-    <string name="stats_finish">الختم المتوقع</string>
     <string name="stats_finish_unknown">اقرأ بضعة أيام ليظهر موعد الختم المتوقع.</string>
     <string name="stats_done">ختمات مكتملة</string>
     <string name="stats_new_khatma">ابدأ ختمة جديدة</string>
@@ -277,5 +273,23 @@
         <item quantity="few">%1$s دقائق</item>
         <item quantity="many">%1$s دقيقة</item>
         <item quantity="other">%1$s دقيقة</item>
+    </plurals>
+    <string name="stats_pages_today">صفحات اليوم</string>
+    <string name="stats_goal_hint">اختر هدفًا يوميًا من الأسفل ليمتلئ هذا الحلق.</string>
+    <string name="of_count">%1$s من %2$s</string>
+    <string name="stats_days_read">أيام القراءة في آخر %1$s أيام</string>
+    <string name="stats_finish_on">الختم المتوقع %1$s</string>
+    <string name="stats_total">مجموع الصفحات</string>
+    <string name="trend_up">%1$s أكثر من الأسبوع الماضي</string>
+    <string name="trend_down">%1$s أقل من الأسبوع الماضي</string>
+    <string name="trend_same">مثل الأسبوع الماضي</string>
+    <string name="trend_new">أكثر من الأسبوع الماضي</string>
+    <plurals name="pages_unit">
+        <item quantity="zero">صفحة</item>
+        <item quantity="one">صفحة</item>
+        <item quantity="two">صفحتان</item>
+        <item quantity="few">صفحات</item>
+        <item quantity="many">صفحة</item>
+        <item quantity="other">صفحة</item>
     </plurals>
 </resources>

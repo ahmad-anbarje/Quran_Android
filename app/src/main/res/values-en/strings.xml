@@ -266,11 +266,11 @@
     <string name="stats_per_hour_note">An estimate from your speed this month</string>
     <string name="pt_sort">Order</string>
     <string name="pt_by_page">By page</string>
-    <string name="pt_by_time">Longest first</string>
+    <string name="pt_by_time">Slowest first</string>
     <string name="pt_total">Today in all</string>
     <string name="pt_average">Average page</string>
-    <string name="pt_fastest">Quickest page</string>
-    <string name="pt_slowest">Longest page</string>
+    <string name="pt_fastest">Fastest page</string>
+    <string name="pt_slowest">Slowest page</string>
     <plurals name="hours_count">
         <item quantity="one">%1$s hour</item>
         <item quantity="other">%1$s hours</item>
@@ -281,4 +281,16 @@
     </plurals>
     <string name="page_in_surah">%1$s, %2$s</string>
     <string name="stats_khatma_none">This khatma has not begun yet</string>
+    <string name="stats_per_hour_juz">That is %1$s, an estimate from your speed this month</string>
+    <string name="about">about %1$s</string>
+    <string name="and_half">%1$s and a half</string>
+    <string name="under_hizb">under a hizb</string>
+    <plurals name="juz_count">
+        <item quantity="one">%1$s juz</item>
+        <item quantity="other">%1$s juz</item>
+    </plurals>
+    <plurals name="hizb_count">
+        <item quantity="one">%1$s hizb</item>
+        <item quantity="other">%1$s hizb</item>
+    </plurals>
 </resources>

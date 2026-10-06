@@ -316,11 +316,11 @@
     <string name="stats_per_hour_note">تقدير بحسب سرعتك هذا الشهر</string>
     <string name="pt_sort">الترتيب</string>
     <string name="pt_by_page">بالصفحة</string>
-    <string name="pt_by_time">الأطول وقتًا أولًا</string>
+    <string name="pt_by_time">الأبطأ أولًا</string>
     <string name="pt_total">مجموع اليوم</string>
     <string name="pt_average">متوسط الصفحة</string>
     <string name="pt_fastest">أسرع صفحة</string>
-    <string name="pt_slowest">أطول صفحة</string>
+    <string name="pt_slowest">أبطأ صفحة</string>
     <plurals name="hours_count">
         <item quantity="zero">%1$s ساعة</item>
         <item quantity="one">ساعة</item>
@@ -341,4 +341,24 @@
     <string name="stats_khatma_none">لم تبدأ هذه الختمة بعد</string>
     <!-- Nothing yet: a dash, since an Arabic zero is a lone dot -->
     <string name="none_yet" translatable="false">—</string>
+    <string name="stats_per_hour_juz">أي %1$s، تقديرًا بحسب سرعتك هذا الشهر</string>
+    <string name="about">نحو %1$s</string>
+    <string name="and_half">%1$s ونصف</string>
+    <string name="under_hizb">أقل من حزب</string>
+    <plurals name="juz_count">
+        <item quantity="zero">%1$s جزء</item>
+        <item quantity="one">جزء</item>
+        <item quantity="two">جزءان</item>
+        <item quantity="few">%1$s أجزاء</item>
+        <item quantity="many">%1$s جزءًا</item>
+        <item quantity="other">%1$s جزء</item>
+    </plurals>
+    <plurals name="hizb_count">
+        <item quantity="zero">%1$s حزب</item>
+        <item quantity="one">حزب</item>
+        <item quantity="two">حزبان</item>
+        <item quantity="few">%1$s أحزاب</item>
+        <item quantity="many">%1$s حزبًا</item>
+        <item quantity="other">%1$s حزب</item>
+    </plurals>
 </resources>

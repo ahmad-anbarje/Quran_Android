@@ -51,3 +51,17 @@ private fun counted(plural: Int, n: Int, resources: Resources): String =
 // The larger amount, then "and" the smaller one unless it is nothing
 private fun joined(first: String, plural: Int, n: Int, resources: Resources): String =
     if (n == 0) first else resources.getString(R.string.time_and, first, counted(plural, n, resources))
+
+/** [pages] as the parts a reader counts by: "about 4 juz", "about 4 and a half juz", or hizb under a juz. */
+fun juzSaid(pages: Float, resources: Resources): String {
+    val juz = pages / (Mushaf.PAGES / 30f)
+    if (juz < 1f) {
+        val hizb = Math.round(pages / (Mushaf.PAGES / 60f))
+        if (hizb < 1) return resources.getString(R.string.under_hizb)
+        return resources.getString(R.string.about, counted(R.plurals.hizb_count, hizb, resources))
+    }
+    // To the nearest half, as one would say it aloud
+    val halves = Math.round(juz * 2)
+    val whole = counted(R.plurals.juz_count, halves / 2, resources)
+    return resources.getString(R.string.about, if (halves % 2 == 0) whole else resources.getString(R.string.and_half, whole))
+}

@@ -145,7 +145,8 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             // A rate, not a promise: what the month's pace would come to over an hour
             row(host.getString(R.string.stats_per_hour),
                 if (monthSec == 0) none(res) else pagesSaid((monthPages * 3600f / monthSec).roundToInt(), res),
-                host.getString(R.string.stats_per_hour_note))
+                if (monthSec == 0) host.getString(R.string.stats_per_hour_note)
+                else host.getString(R.string.stats_per_hour_juz, juzSaid(monthPages * 3600f / monthSec, res)))
         )
         if (today.pages.isNotEmpty()) rows += action(
             host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))

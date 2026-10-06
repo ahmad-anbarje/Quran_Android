@@ -152,7 +152,8 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             count = k.read * 100 / all,
             say = { host.getString(R.string.percent, figures(it, res)) },
             unit = "",
-            title = host.getString(R.string.stats_khatma),
+            // The card is already headed «khatma»
+            title = "",
             line = host.getString(R.string.stats_khatma_read, figures(k.read, res), figures(all, res)),
             note = finish
         ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
@@ -243,7 +244,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         blow.inflate(R.layout.part_stat_hero, into, false).apply {
             countFigure(findViewById(R.id.hero_value), key, count, say)
             findViewById<TextView>(R.id.hero_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
-            findViewById<TextView>(R.id.hero_title).text = title
+            findViewById<TextView>(R.id.hero_title).apply { text = title; visibility = if (title.isEmpty()) View.GONE else View.VISIBLE }
             findViewById<TextView>(R.id.hero_line).text = line
             findViewById<TextView>(R.id.hero_note).apply { text = note; visibility = if (note.isEmpty()) View.GONE else View.VISIBLE }
         }

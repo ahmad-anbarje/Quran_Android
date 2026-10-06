@@ -40,15 +40,11 @@
         </FrameLayout>
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/play_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
             android:duplicateParentState="true"
             android:text="@string/play"
-            android:textColor="@color/accent"
-            android:textSize="@dimen/icon_label"
-            android:maxLines="1" />
+            android:textColor="@color/accent" />
     </LinearLayout>
 
     <!-- Reciter -->
@@ -71,13 +67,9 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
+            style="@style/IconLabel"
             android:duplicateParentState="true"
             android:text="@string/reciter"
-            android:textColor="@color/icon_btn"
-            android:textSize="@dimen/icon_label"
-            android:maxLines="1" />
+            android:textColor="@color/icon_btn" />
     </LinearLayout>
 </merge>

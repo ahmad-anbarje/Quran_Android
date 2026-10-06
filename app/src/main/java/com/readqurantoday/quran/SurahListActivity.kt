@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -61,6 +64,7 @@ class SurahListActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_index)
+        keepToColumn(R.id.search_head, R.id.segments, R.id.list, R.id.pane_marks, R.id.pane_settings, R.id.card_resume)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
         watchKeyboard()
@@ -79,16 +83,21 @@ class SurahListActivity : LanguageActivity() {
         wireResume()
     }
 
-    // Hides nav and resume strip while typing; measured from the window frame because insets read zero with adjustResize
+    // Hides nav and resume strip while typing; before Android 11 insets read zero with adjustResize, so the window frame is measured
     private fun watchKeyboard() {
         val root = findViewById<View>(R.id.index_root)
         val seen = Rect()
         root.viewTreeObserver.addOnGlobalLayoutListener {
             val whole = root.rootView.height
             if (whole > 0) {
-                root.getWindowVisibleDisplayFrame(seen)
-                // System bars never reach a fifth of the screen; a keyboard always does
-                val up = whole - seen.height() > whole / 5
+                val insets = ViewCompat.getRootWindowInsets(root)
+                val up = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && insets != null) {
+                    insets.isVisible(WindowInsetsCompat.Type.ime())
+                } else {
+                    root.getWindowVisibleDisplayFrame(seen)
+                    // System bars never reach a fifth of the screen; a keyboard always does
+                    whole - seen.height() > whole / 5
+                }
                 if (up != typing) {
                     typing = up
                     sayFooters()
@@ -101,7 +110,7 @@ class SurahListActivity : LanguageActivity() {
         findViewById<View>(R.id.bottom_nav).visibility =
             if (typing) View.GONE else View.VISIBLE
         findViewById<View>(R.id.card_resume).visibility =
-            if (canResume && !typing) View.VISIBLE else View.GONE
+            if (canResume && !typing && resources.getBoolean(R.bool.resume_strip)) View.VISIBLE else View.GONE
     }
 
     /* Active tab: filled icon + flat accent. Inactive: outlined icon + accent on press, muted at rest. */
@@ -291,9 +300,9 @@ class SurahListActivity : LanguageActivity() {
         val surah = Surahs.ofPage(page)
         surah?.let { fillSurahTitle(findViewById(R.id.resume_title), it.id, R.dimen.surah_title) }
         val at = getString(R.string.head_page, figures(page, resources))
-        // English name isolated so it does not pull the separator into its run on an Arabic line
+        // Page first, so a cramped line drops the name rather than the page; the name is isolated so it keeps the separator out of its run
         findViewById<TextView>(R.id.resume_detail).text = surah?.let {
-            getString(R.string.surah_meta, android.text.BidiFormatter.getInstance().unicodeWrap(it.english), at)
+            getString(R.string.surah_meta, at, android.text.BidiFormatter.getInstance().unicodeWrap(it.english))
         } ?: at
 
         // Page 0 tells the reader to follow the live recitation rather than open a fixed page

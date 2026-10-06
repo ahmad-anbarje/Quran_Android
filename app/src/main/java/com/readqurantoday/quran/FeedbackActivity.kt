@@ -29,6 +29,7 @@ class FeedbackActivity : LanguageActivity() {
         // The reciter list is read to name the chosen reciter in the report
         Recite.load(this)
         setContentView(R.layout.activity_feedback)
+        keepToColumn(R.id.fb_groups)
 
         findViewById<ImageView>(R.id.fb_back_icon).imageTintList =
             ColorStateList.valueOf(getColor(R.color.accent))

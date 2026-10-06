@@ -99,6 +99,8 @@ class MushafPageView @JvmOverloads constructor(
     private val innerSpace = 0.04f
 
     private var padX = 0f
+    // padX, or wider when a big screen's page is narrowed to fit its height
+    private var side = 0f
     private var padTop = 0f
     private var padBottom = 0f
     private var headBand = 0f
@@ -432,7 +434,8 @@ class MushafPageView @JvmOverloads constructor(
         padTop    = PAD_TOP    * d
         padBottom = PAD_BOTTOM * d
         headBand  = HEAD_BAND  * d
-        label.textSize = LABEL_SP * resources.displayMetrics.scaledDensity
+        // dp, not sp: the labels belong to the page, which the phone's font size does not resize
+        label.textSize = LABEL_DP * d
     }
 
     /* The style version this view last dressed at. -1 so the first draw dresses. */
@@ -458,7 +461,7 @@ class MushafPageView @JvmOverloads constructor(
 
     // --- page geometry and scrolling ---
 
-    // Type is sized by width; rows share the height, or keep upright proportions and scroll
+    // Type is sized by width (by height when that fits a big screen whole); rows share the height, or keep upright proportions and scroll
     private var body = 0f
     private var step = 0f
 
@@ -479,8 +482,15 @@ class MushafPageView @JvmOverloads constructor(
         val wide = width - 2 * padX
         if (wide <= 0f) return
         body = (wide / Mushaf.emWidth).toFloat()
+        side = padX
         val top = padTop + headBand
         val fit = (height - top - padBottom) / GRID
+        // Too wide for its height: narrow the page to fit whole, unless that shrinks the type below a phone's
+        val fitted = fit * TALL_FROM
+        if (!previewMode && fit > 0f && body > fitted && fitted >= MIN_FIT_BODY * resources.displayMetrics.density) {
+            body = fitted
+            side = (width - body * Mushaf.emWidth.toFloat()) / 2f
+        }
         step = if (previewMode || (fit > 0f && body / fit <= TALL_FROM)) fit else body / READING_ROW
         pageTall = if (previewMode) height.toFloat() else top + step * GRID + padBottom
         scrollTop = scrollTop.coerceIn(0f, maxScroll)
@@ -717,8 +727,8 @@ class MushafPageView @JvmOverloads constructor(
         }
 
         val top = padTop + headBand
-        val left = padX
-        val measure = wide
+        val left = side
+        val measure = width - 2 * side
 
         /* Zoom about the screen, then the page slid up by however far it is scrolled. */
         val moved = zoom != 1f || scrollTop != 0f
@@ -786,7 +796,7 @@ class MushafPageView @JvmOverloads constructor(
         tip.draw(
             canvas, said,
             left = w[0], top = w[2], right = w[1], bottom = w[3],
-            minX = padX, maxX = width - padX, minY = maxOf(top, scrollTop),
+            minX = side, maxX = width - side, minY = maxOf(top, scrollTop),
             ink = paint.color, paper = paperTrial ?: Settings.paperColor(context)
         )
     }
@@ -1281,7 +1291,10 @@ class MushafPageView @JvmOverloads constructor(
         /** Height of the header band (holds juz + surah name + page number). */
         const val HEAD_BAND = 30f
 
-        /** Header/footer label size in sp. */
-        const val LABEL_SP = 14f
+        /** Header/footer label size in dp. */
+        const val LABEL_DP = 14f
+
+        /** Smallest type size (dp) a page may be narrowed to so it fits whole; below it the page scrolls. */
+        const val MIN_FIT_BODY = 20f
     }
 }

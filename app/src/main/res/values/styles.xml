@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The word under a chrome icon; shrinks rather than clips when a large font or narrow button leaves no room -->
+    <style name="IconLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/icon_label_gap</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/text_mute</item>
+        <item name="android:textSize">@dimen/icon_label</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">@dimen/icon_label_min</item>
+        <item name="autoSizeMaxTextSize">@dimen/icon_label</item>
+    </style>
+</resources>

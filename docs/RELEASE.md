@@ -58,6 +58,18 @@ Set Build Variants back to **debug** before running the app from Android Studio 
 Debug builds install as a separate app, `com.readqurantoday.quran.dev`, next to the Play version,
 so the Play install is never touched. Run them from Android Studio with Build Variants on **debug**.
 
+## Checking other screen sizes
+
+With the phone connected (USB or wireless debugging) and a debug build made:
+
+```bash
+python tools/screens.py
+```
+
+It poses the phone as a small phone with the largest font, a foldable, and a tablet upright and on its side,
+screenshots each main screen, then puts the phone back. One picture per size lands in `build/screens/`.
+In the tablet-on-its-side pictures, the empty band at the top is the phone's camera cutout, not the app.
+
 ## Upload key
 
 - Keystore: `C:\Users\ahmad\AndroidKeys\readqurantoday-upload.jks`, with copies in personal cloud storage

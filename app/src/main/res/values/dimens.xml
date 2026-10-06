@@ -5,6 +5,9 @@
     <!-- Horizontal margin between screen edge and cards / containers -->
     <dimen name="screen_margin">12dp</dimen>
 
+    <!-- Lists and settings stop growing here; wider screens centre them -->
+    <dimen name="content_max_width">640dp</dimen>
+
     <!-- Vertical padding inside list rows (top and bottom) -->
     <dimen name="row_pad_v">11dp</dimen>
 
@@ -42,6 +45,9 @@
     <dimen name="row_title">15sp</dimen>
     <dimen name="row_meta">11sp</dimen>
     <dimen name="icon_label">10sp</dimen>
+    <dimen name="icon_label_min">7sp</dimen>
+    <!-- Smallest the reader bar's juz and page may shrink to under a large font -->
+    <dimen name="bar_place_min">8sp</dimen>
 
     <!-- The numbered disc that opens a surah, juz or search row -->
     <dimen name="num_disc">32dp</dimen>

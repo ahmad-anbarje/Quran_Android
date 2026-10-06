@@ -24,6 +24,7 @@
 
             <!-- Head strip is the pane's first child, which paintBars reads for the status bar colour -->
             <FrameLayout
+                android:id="@+id/search_head"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/strip_head"
@@ -70,6 +71,7 @@
 
             <!-- What the list holds: the surahs or the thirty juz -->
             <LinearLayout
+                android:id="@+id/segments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -184,11 +186,10 @@
                 android:contentDescription="@null" />
         </FrameLayout>
 
-        <!-- The label, then the surah as the list writes it; the page sits apart at the end. -->
+        <!-- The label, then the surah as the list writes it; the page sits apart at the end and yields first. -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical">
@@ -200,7 +201,8 @@
                 android:text="@string/resume"
                 android:textColor="@color/accent"
                 android:includeFontPadding="false"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:maxLines="1" />
 
             <include
                 android:id="@+id/resume_title"
@@ -212,13 +214,16 @@
 
         <TextView
             android:id="@+id/resume_detail"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginEnd="8dp"
+            android:textAlignment="viewEnd"
             android:textColor="@color/text_mute"
             android:includeFontPadding="false"
             android:textSize="13sp"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:ellipsize="end" />
 
         <ImageView
             android:layout_width="16dp"

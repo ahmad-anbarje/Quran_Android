@@ -58,14 +58,8 @@
                     android:contentDescription="@null" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/icon_label_gap"
-                    android:text="@string/to_menu"
-                    android:textColor="@color/text_mute"
-                    android:textSize="@dimen/icon_label"
-                    android:includeFontPadding="false"
-                    android:maxLines="1" />
+                    style="@style/IconLabel"
+                    android:text="@string/to_menu" />
             </LinearLayout>
 
             <LinearLayout
@@ -87,15 +81,9 @@
                     android:contentDescription="@null" />
 
                 <TextView
+                    style="@style/IconLabel"
                     android:id="@+id/mark_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/icon_label_gap"
-                    android:text="@string/mark_short"
-                    android:textColor="@color/text_mute"
-                    android:textSize="@dimen/icon_label"
-                    android:includeFontPadding="false"
-                    android:maxLines="1" />
+                    android:text="@string/mark_short" />
             </LinearLayout>
 
             <!-- Juz and page only; the page's running head already names the surah -->
@@ -106,7 +94,7 @@
                 android:layout_weight="2"
                 android:gravity="center"
                 app:autoSizeTextType="uniform"
-                app:autoSizeMinTextSize="12sp"
+                app:autoSizeMinTextSize="@dimen/bar_place_min"
                 app:autoSizeMaxTextSize="16sp"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
@@ -136,15 +124,9 @@
                     android:contentDescription="@null" />
 
                 <TextView
+                    style="@style/IconLabel"
                     android:id="@+id/turn_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/icon_label_gap"
-                    android:text="@string/motion_slide"
-                    android:textColor="@color/text_mute"
-                    android:textSize="@dimen/icon_label"
-                    android:includeFontPadding="false"
-                    android:maxLines="1" />
+                    android:text="@string/motion_slide" />
             </LinearLayout>
 
             <LinearLayout
@@ -166,15 +148,9 @@
                     android:contentDescription="@null" />
 
                 <TextView
+                    style="@style/IconLabel"
                     android:id="@+id/theme_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/icon_label_gap"
-                    android:text="@string/set_theme"
-                    android:textColor="@color/text_mute"
-                    android:textSize="@dimen/icon_label"
-                    android:includeFontPadding="false"
-                    android:maxLines="1" />
+                    android:text="@string/set_theme" />
             </LinearLayout>
 
         </LinearLayout>

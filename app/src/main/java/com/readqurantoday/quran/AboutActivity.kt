@@ -13,6 +13,7 @@ class AboutActivity : LanguageActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
+        keepToColumn(R.id.about_groups)
 
         findViewById<ImageView>(R.id.about_back_icon).imageTintList =
             ColorStateList.valueOf(getColor(R.color.accent))

@@ -54,13 +54,8 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:id="@+id/dl_save_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            style="@style/IconLabel"
+            android:id="@+id/dl_save_label" />
     </LinearLayout>
 
     <LinearLayout
@@ -82,12 +77,7 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:id="@+id/dl_action_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            style="@style/IconLabel"
+            android:id="@+id/dl_action_label" />
     </LinearLayout>
 </LinearLayout>

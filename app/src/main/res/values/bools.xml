@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Short screens (landscape phones, car displays) give the list the room; the places pane still offers the way back -->
+    <bool name="resume_strip">false</bool>
+</resources>

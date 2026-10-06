@@ -29,14 +29,8 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/label_locate"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            style="@style/IconLabel"
+            android:text="@string/label_locate" />
     </LinearLayout>
 
     <LinearLayout
@@ -58,14 +52,8 @@
             android:contentDescription="@null" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/reciter"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            style="@style/IconLabel"
+            android:text="@string/reciter" />
     </LinearLayout>
 
     <!-- Transliteration over the lit word: accent while on, like repeat -->
@@ -90,15 +78,9 @@
             android:contentDescription="@null" />
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/p_translit_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/label_translit"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            android:text="@string/label_translit" />
     </LinearLayout>
 
     <!-- Play / pause: the one filled thing on the strip. -->
@@ -140,16 +122,12 @@
         </FrameLayout>
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/p_play_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="@string/play"
             android:textColor="@color/accent"
-            android:textSize="@dimen/icon_label"
-            android:textStyle="bold"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            android:textStyle="bold" />
     </LinearLayout>
 
     <!-- The chosen word on its own, from the word-by-word recordings -->
@@ -174,15 +152,9 @@
             android:contentDescription="@null" />
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/p_word_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/label_word"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            android:text="@string/label_word" />
     </LinearLayout>
 
     <LinearLayout
@@ -205,15 +177,9 @@
             android:contentDescription="@null" />
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/p_repeat_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/label_repeat"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            android:text="@string/label_repeat" />
     </LinearLayout>
 
     <!-- Recitation speed; the label is the speed itself -->
@@ -238,14 +204,8 @@
             android:contentDescription="@null" />
 
         <TextView
+            style="@style/IconLabel"
             android:id="@+id/p_speed_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/icon_label_gap"
-            android:text="@string/speed_normal"
-            android:textColor="@color/text_mute"
-            android:textSize="@dimen/icon_label"
-            android:includeFontPadding="false"
-            android:maxLines="1" />
+            android:text="@string/speed_normal" />
     </LinearLayout>
 </LinearLayout>

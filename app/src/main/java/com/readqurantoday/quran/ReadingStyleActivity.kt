@@ -11,6 +11,7 @@ class ReadingStyleActivity : LanguageActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reading_style)
+        keepToColumn(R.id.style_groups)
 
         findViewById<ImageView>(R.id.style_back_icon).imageTintList =
             ColorStateList.valueOf(getColor(R.color.accent))

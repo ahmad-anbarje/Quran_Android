@@ -25,6 +25,7 @@ class DownloadsActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_downloads)
+        keepToColumn(R.id.dl_groups)
 
         findViewById<ImageView>(R.id.dl_back_icon).imageTintList =
             ColorStateList.valueOf(getColor(R.color.accent))

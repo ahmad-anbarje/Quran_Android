@@ -26,7 +26,7 @@ class SurahListActivity : LanguageActivity() {
     /* Pane index matches the nav order: 0=surahs, 1=marks, 2=statistics, 3=settings. */
     private val paneIds      = intArrayOf(R.id.pane_index, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings)
     private val navIds       = intArrayOf(R.id.nav_surahs, R.id.nav_marks, R.id.nav_stats, R.id.nav_settings)
-    private val navNames     = intArrayOf(R.string.tab_index, R.string.tab_marks, R.string.tab_wird, R.string.tab_settings)
+    private val navNames     = intArrayOf(R.string.tab_index, R.string.tab_marks, R.string.tab_achievements, R.string.tab_settings)
     private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_bookmark, R.drawable.ic_stats, R.drawable.ic_settings)
     private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 

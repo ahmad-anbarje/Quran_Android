@@ -226,8 +226,8 @@
     <string name="credits_text">نص القرآن المستخدم في البحث: مشروع تنزيل (Tanzil Project)، tanzil.net، برخصة المشاع الإبداعي نسب المصنف 3.0، دون أي تعديل.\n\nخطوط صفحات المصحف وأسماء السور: مجمع الملك فهد لطباعة المصحف الشريف.\n\nالتلاوات الصوتية: حقوقها لأصحابها من القرّاء وجهات التسجيل.\n\nتلاوة الكلمات منفردة: مركز تفسير للدراسات القرآنية، عبر Quran.com.\n\nالنطق بالحروف اللاتينية: Quran.com.\n\nخط Cairo: رخصة SIL Open Font License 1.1، مع تكبير رقم الصفر.\n\nمكتبات AndroidX وMedia3 من Google، ومنتقي الألوان ColorPicker من Jared Rummler: رخصة Apache 2.0.</string>
 
     <!-- Statistics: kept on the phone only. Figures arrive already written in Arabic figures -->
-    <!-- The tab of reading and listening numbers: the reader's daily portion -->
-    <string name="tab_wird">وِردي</string>
+    <!-- The tab of reading and listening numbers, told as what the reader has done -->
+    <string name="tab_achievements">إنجازي</string>
     <string name="stats_today">اليوم</string>
     <string name="stats_read_time">وقت القراءة</string>
     <string name="stats_listen_time">وقت الاستماع</string>

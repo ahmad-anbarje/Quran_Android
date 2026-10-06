@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Less than the week before: a line falling to an arrow. Outlined, tinted from code -->
+<!-- Less than the week before: a line falling to an arrow. Mirrors in RTL, as time runs right to left there. Outlined, tinted from code -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp" android:height="24dp"
-    android:viewportWidth="24" android:viewportHeight="24">
+    android:viewportWidth="24" android:viewportHeight="24"
+    android:autoMirrored="true">
     <path
         android:pathData="M3.5,7 L9.5,13 L13,9.5 L20,16.5"
         android:fillColor="#00000000"

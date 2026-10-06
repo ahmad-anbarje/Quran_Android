@@ -233,7 +233,7 @@
     <string name="stats_days_read">Days you read this month</string>
     <string name="stats_finish_on">Expected to finish %1$s</string>
     <string name="stats_total">In all, %1$s days</string>
-    <string name="trend_by">%1$s on last week</string>
+    <string name="trend_by">%1$s vs last week</string>
     <string name="trend_up">%1$s more than last week</string>
     <string name="trend_down">%1$s less than last week</string>
     <string name="trend_same">Same as last week</string>

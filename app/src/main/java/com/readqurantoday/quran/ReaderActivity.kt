@@ -46,7 +46,9 @@ class ReaderActivity : LanguageActivity() {
     private lateinit var shots: PageShots
 
     // Reading time for the statistics
-    private val clock by lazy { PageClock(this) }
+    private val clock by lazy {
+        PageClock(this) { findViewById<ViewGroup>(R.id.root).celebrate(getString(R.string.goal_done)) }
+    }
 
     // --- page turn ---
     private lateinit var curl: PageCurlView

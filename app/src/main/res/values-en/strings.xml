@@ -195,8 +195,8 @@
 
     <!-- Statistics -->
     <string name="tab_achievements">My Achievements</string>
-    <string name="stats_read_time">Reading time</string>
-    <string name="stats_listen_time">Listening time</string>
+    <string name="stats_read_time">Reading time today</string>
+    <string name="stats_listen_time">Listening time today</string>
     <string name="stats_none_today">Nothing read yet today</string>
     <string name="stats_goal">Daily goal</string>
     <string name="stats_goal_none">No goal</string>
@@ -212,8 +212,8 @@
     <string name="stats_new_khatma">Start a new khatma</string>
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
-    <string name="stats_week">Last %1$s days</string>
-    <string name="stats_avg">Daily average</string>
+    <string name="stats_week">Listening, last %1$s days</string>
+    <string name="stats_avg">Pages a day this month</string>
     <string name="stats_chart_desc">Pages read each day for the last %1$s days; most in a day: %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
     <string name="stats_private">These numbers stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
@@ -231,7 +231,7 @@
     <string name="stats_pages_today">Pages today</string>
     <string name="stats_goal_hint">Pick a daily goal below to fill this ring.</string>
     <string name="of_count">%1$s of %2$s</string>
-    <string name="stats_days_read">Days read in the last %1$s</string>
+    <string name="stats_days_read">Days read this month</string>
     <string name="stats_finish_on">Expected to finish %1$s</string>
     <string name="stats_total">Pages in all</string>
     <string name="trend_up">%1$s more than last week</string>
@@ -253,4 +253,14 @@
     <string name="chart_goal">Goal</string>
     <string name="time_s">%1$s s</string>
     <string name="time_ms">%1$s min %2$s s</string>
+    <string name="stats_read_month">Reading time this month</string>
+    <string name="stats_month">This month</string>
+    <string name="stats_calendar">Calendar</string>
+    <string name="cal_hijri">Hijri</string>
+    <string name="cal_greg">Gregorian</string>
+    <string name="stats_speed">Reading speed</string>
+    <string name="stats_page_avg_month">Average per page this month</string>
+    <string name="stats_per_hour">Pages an hour</string>
+    <string name="stats_page_times_open">Time on each page today (%1$s)</string>
+    <string name="goal_done">Today\'s goal is done</string>
 </resources>

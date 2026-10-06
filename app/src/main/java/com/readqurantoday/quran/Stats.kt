@@ -33,6 +33,8 @@ object Stats {
     private const val KHATMAS = "khatmas"
     private const val GOAL = "goal"
     private const val SINCE = "since"
+    private const val HIJRI = "hijri"
+    private const val CELEBRATED = "celebrated"
 
     /** One day: seconds on each page, and seconds of recitation heard from each surah. */
     data class Day(val pageSec: Map<Int, Int>, val surahSec: Map<Int, Int>) {
@@ -60,12 +62,17 @@ object Stats {
 
     // --- recording ---
 
-    fun addRead(ctx: Context, page: Int, sec: Int) {
-        if (page !in 1..Mushaf.PAGES || sec <= 0) return
+    /** Credit [sec] to [page]; true when this is what brings today's pages up to the goal. */
+    fun addRead(ctx: Context, page: Int, sec: Int): Boolean {
+        if (page !in 1..Mushaf.PAGES || sec <= 0) return false
         val day = day(ctx, today())
+        val before = day.pages.size
         val total = (day.pageSec[page] ?: 0) + sec
-        save(ctx, today(), day.copy(pageSec = day.pageSec + (page to total)))
+        val after = day.copy(pageSec = day.pageSec + (page to total))
+        save(ctx, today(), after)
         if (total >= READ_FROM_SEC) markRead(ctx, page)
+        val goal = goal(ctx)
+        return goal > 0 && before < goal && after.pages.size >= goal
     }
 
     fun addHeard(ctx: Context, surah: Int, sec: Int) {
@@ -127,6 +134,22 @@ object Stats {
 
     /** Pages a day lately, or 0 until there are enough days to tell. */
     fun pace(ctx: Context): Float = if (daysKept(ctx) < PACE_FROM_DAYS) 0f else average(ctx, PACE_DAYS)
+
+    /** Days of this month that statistics were kept for, oldest first, today last. */
+    fun monthDays(ctx: Context): List<Day> {
+        val from = maxOf(monthStart(today(), hijri(ctx)), today() - daysKept(ctx) + 1)
+        return (from..today()).map { day(ctx, it) }
+    }
+
+    /** Months counted by the Hijri calendar, or the Gregorian. */
+    fun hijri(ctx: Context) = store(ctx).getBoolean(HIJRI, true)
+
+    fun setHijri(ctx: Context, on: Boolean) = store(ctx).edit { putBoolean(HIJRI, on) }
+
+    /** Whether today's reached goal has had its celebration on the achievements tab. */
+    fun celebrated(ctx: Context) = store(ctx).getLong(CELEBRATED, -1L) == today()
+
+    fun setCelebrated(ctx: Context) = store(ctx).edit { putLong(CELEBRATED, today()) }
 
     /** Pages a day the reader aims for; 0 is no goal. */
     fun goal(ctx: Context) = store(ctx).getInt(GOAL, 0)

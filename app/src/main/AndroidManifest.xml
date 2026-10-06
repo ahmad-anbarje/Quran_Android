@@ -59,6 +59,12 @@
             android:exported="false"
             android:theme="@style/Theme.Quran.Index" />
 
+        <!-- Every page read today and its time: a step further into achievements. -->
+        <activity
+            android:name=".PageTimesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Quran.Index" />
+
         <!-- Reading style: a step further into settings, so it wears the index's theme. -->
         <activity
             android:name=".ReadingStyleActivity"

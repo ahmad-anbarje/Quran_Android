@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.res.ColorStateList
 import android.text.format.DateUtils
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -43,22 +44,22 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         blow.card(into, 0, listOf(todayHero(today, goal, week, before), goalRow(goal)))
 
         section(R.string.sec_reading)
-        val read = today.pages
+        val hijri = Stats.hijri(host)
+        val thisMonth = Stats.monthDays(host)
+        blow.card(into, 0, listOf(calendarRow(hijri)))
         into.addView(pair(
             Tile(R.drawable.ic_clock, spent(today.readSec, res), host.getString(R.string.stats_read_time)),
-            Tile(R.drawable.ic_surahs_outline,
-                if (read.isEmpty()) "–" else spentExact(read.sumOf { today.pageSec.getValue(it) } / read.size, res),
-                host.getString(R.string.stats_page_avg))
+            Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
         ))
         into.addView(pair(
             Tile(R.drawable.ic_calendar,
-                host.getString(R.string.of_count, figures(week.count { it.pages.isNotEmpty() }, res), figures(WEEK, res)),
-                host.getString(R.string.stats_days_read, figures(WEEK, res))),
+                host.getString(R.string.of_count, figures(thisMonth.count { it.pages.isNotEmpty() }, res), figures(thisMonth.size, res)),
+                host.getString(R.string.stats_days_read)),
             Tile(R.drawable.ic_stats_outline,
-                pagesSaid(Stats.average(host, Stats.CHART_DAYS).roundToInt(), res),
+                pagesSaid((thisMonth.sumOf { it.pages.size }.toFloat() / thisMonth.size).roundToInt(), res),
                 host.getString(R.string.stats_avg))
         ))
-        if (read.isNotEmpty()) blow.card(into, R.string.stats_page_times, pageRows(today))
+        blow.card(into, R.string.stats_speed, speedRows(today, thisMonth))
         blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
 
         section(R.string.sec_khatma)
@@ -77,7 +78,18 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
         blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
 
-        if (motion == Motion.OPEN) into.riseChildren()
+        if (motion == Motion.OPEN) {
+            into.riseChildren()
+            celebrateOnce(today, goal)
+        }
+    }
+
+    // The first look at the day's reached goal is met with a celebration; later looks are quiet
+    private fun celebrateOnce(today: Stats.Day, goal: Int) {
+        if (goal == 0 || today.pages.size < goal || Stats.celebrated(host)) return
+        Stats.setCelebrated(host)
+        val over = host.findViewById<ViewGroup>(android.R.id.content)
+        over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
     }
 
     // --- today ---
@@ -103,18 +115,42 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         }
     }
 
-    // Each page read today, in mushaf order, with how long it was on screen
-    private fun pageRows(today: Stats.Day): List<View> = today.pages.map { page ->
-        row(host.getString(R.string.head_page, figures(page, res)), spentExact(today.pageSec.getValue(page), res), surahsOn(page, page))
+    // Which month the numbers below belong to; a tap moves between the Hijri and Gregorian calendars
+    private fun calendarRow(hijri: Boolean): View =
+        row(host.getString(R.string.stats_month), monthName(Stats.today(), hijri, res),
+            host.getString(if (hijri) R.string.cal_hijri else R.string.cal_greg)).apply {
+            isClickable = true
+            setOnClickListener {
+                host.sheet(host.getString(R.string.stats_calendar), listOf(
+                    Choice(host.getString(R.string.cal_hijri), on = hijri),
+                    Choice(host.getString(R.string.cal_greg), on = !hijri)
+                )) { i ->
+                    Stats.setHijri(host, i == 0)
+                    build()
+                }
+            }
+        }
+
+    // How long a page takes, today and this month; every page's own time is a screen of its own, for days of many pages
+    private fun speedRows(today: Stats.Day, thisMonth: List<Stats.Day>): List<View> {
+        val monthPages = thisMonth.sumOf { it.pages.size }
+        val monthSec = thisMonth.sumOf { onPages(it) }
+        val rows = mutableListOf(
+            row(host.getString(R.string.stats_page_avg),
+                if (today.pages.isEmpty()) "–" else spentExact(onPages(today) / today.pages.size, res)),
+            row(host.getString(R.string.stats_page_avg_month),
+                if (monthPages == 0) "–" else spentExact(monthSec / monthPages, res)),
+            row(host.getString(R.string.stats_per_hour),
+                if (monthSec == 0) "–" else pagesSaid((monthPages * 3600f / monthSec).roundToInt(), res))
+        )
+        if (today.pages.isNotEmpty()) rows += action(
+            host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))
+        ) { host.startActivity(android.content.Intent(host, PageTimesActivity::class.java)) }
+        return rows
     }
 
-    // Plain names in the meta line; the calligraphy is for titles
-    private fun surahsOn(from: Int, to: Int): String {
-        val first = Surahs.ofPage(from) ?: return ""
-        val last = Surahs.ofPage(to) ?: first
-        val name = { s: Surahs.Surah -> if (arabic()) s.name else s.english }
-        return if (first.id == last.id) name(first) else "${name(first)} – ${name(last)}"
-    }
+    // Time on the pages that were read, leaving out pages only passed over
+    private fun onPages(day: Stats.Day): Int = day.pages.sumOf { day.pageSec.getValue(it) }
 
     // --- daily goal ---
 
@@ -303,11 +339,12 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             it.setOnClickListener { act() }
         }
 
-    private fun arabic() = res.configuration.locales[0].language == "ar"
 
     private companion object {
         const val WEEK = 7
         const val TOP_HEARD = 3
+        // Long enough for the cards to have come in first
+        const val CELEBRATE_AFTER_MS = 450L
         const val TODAY = "today"
         const val KHATMA = "khatma"
     }

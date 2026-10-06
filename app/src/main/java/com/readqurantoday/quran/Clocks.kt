@@ -6,7 +6,7 @@ import android.os.SystemClock
 private fun nowSec() = SystemClock.elapsedRealtime() / 1000L
 
 /** Times the page in view while the reader is in front; each stay is credited when it ends. */
-class PageClock(context: Context) {
+class PageClock(context: Context, private val goalReached: () -> Unit) {
 
     private val app = context.applicationContext
     private var page = 0
@@ -30,7 +30,8 @@ class PageClock(context: Context) {
 
     private fun credit() {
         val now = nowSec()
-        if (running && page > 0) Stats.addRead(app, page, (now - since).coerceAtMost(Stats.STAY_CAP_SEC.toLong()).toInt())
+        val sec = (now - since).coerceAtMost(Stats.STAY_CAP_SEC.toLong()).toInt()
+        if (running && page > 0 && Stats.addRead(app, page, sec)) goalReached()
         since = now
     }
 }

@@ -17,6 +17,8 @@
     <color name="surface_2">#F5F9FD</color>
     <!-- Scrollbar at rest: visible on any ground, never louder than the text -->
     <color name="scroll_thumb">#80577284</color>
+    <!-- Gold among the confetti when the day's goal is reached -->
+    <color name="confetti_gold">#E0B341</color>
     <color name="line">#DCE8F2</color>
     <color name="text">#16283A</color>
     <!-- Dark enough for the 9-11sp labels under the icons to hold 5:1 on white -->

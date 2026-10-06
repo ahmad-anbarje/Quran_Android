@@ -451,7 +451,7 @@ class MushafPageView @JvmOverloads constructor(
     private var pageMarks = ""
     private var headJuz = ""
     private var headPage = ""
-    private var headHizbPage = ""
+    private var headHizb = ""
     private var headSurah = 0
     private var folioText = ""
 
@@ -672,9 +672,7 @@ class MushafPageView @JvmOverloads constructor(
         headJuz = if (juz > 0) context.getString(R.string.head_juz, figures(juz, resources)) else ""
         headPage = context.getString(R.string.head_page, figures(page, resources))
         val hizb = Surahs.hizbOfPage(page)
-        headHizbPage = if (hizb > 0) {
-            context.getString(R.string.head_pair, context.getString(R.string.head_hizb, figures(hizb, resources)), headPage)
-        } else headPage
+        headHizb = if (hizb > 0) context.getString(R.string.head_hizb, figures(hizb, resources)) else ""
         // A page that opens with a surah's own title needs no name above it
         val opensWithTitle = lines.firstOrNull { it.kind == "surah" || it.kind == "ayah" }?.kind == "surah"
         headSurah = if (opensWithTitle) 0 else Surahs.headOfPage(page)?.id ?: 0
@@ -1079,7 +1077,7 @@ class MushafPageView @JvmOverloads constructor(
         // Narrow screens shrink the side labels rather than let them touch the centred name
         val full = label.textSize
         val side = (measure - titleWidth(headSurah, titleSize)) / 2f - full
-        val widest = maxOf(label.measureText(headHizbPage), label.measureText(headJuz))
+        val widest = maxOf(pageAndHizbWidth(), label.measureText(headJuz))
         if (widest > side && side > 0f) label.textSize = full * side / widest
 
         if (headJuz.isNotEmpty()) {
@@ -1089,10 +1087,15 @@ class MushafPageView @JvmOverloads constructor(
 
         if (headSurah > 0) title(canvas, headSurah, left + measure / 2f, titleSize, y)
 
+        // Page at the edge, its hizb beside it, a type-size apart so the two read as two
         label.textAlign = Paint.Align.LEFT
-        canvas.drawText(headHizbPage, left, y, label)
+        canvas.drawText(headPage, left, y, label)
+        if (headHizb.isNotEmpty()) canvas.drawText(headHizb, left + label.measureText(headPage) + label.textSize, y, label)
         label.textSize = full
     }
+
+    private fun pageAndHizbWidth(): Float =
+        label.measureText(headPage) + if (headHizb.isEmpty()) 0f else label.textSize + label.measureText(headHizb)
 
     private fun titleWidth(surah: Int, size: Float): Float {
         if (surah <= 0) return 0f

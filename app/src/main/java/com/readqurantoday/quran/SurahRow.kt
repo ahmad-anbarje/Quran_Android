@@ -2,8 +2,6 @@ package com.readqurantoday.quran
 
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -17,7 +15,8 @@ class SurahRow(v: View, names: Typeface?) : RecyclerView.ViewHolder(v) {
     val word: TextView = v.findViewById(R.id.word)
     val name: TextView = v.findViewById(R.id.name)
     private val english: TextView = v.findViewById(R.id.english)
-    val meta: TextView = v.findViewById(R.id.meta)
+    private val metaJuz: TextView = v.findViewById(R.id.meta_juz)
+    private val metaPages: TextView = v.findViewById(R.id.meta_pages)
 
     /* Containers are the click targets; ImageViews are for icon/tint changes. */
     val playBtn: View?     = v.findViewById(R.id.btn_play)
@@ -44,10 +43,9 @@ class SurahRow(v: View, names: Typeface?) : RecyclerView.ViewHolder(v) {
             else res.getString(R.string.juz_range, figures(from, res), figures(to, res))
         val pages = if (s.from == s.to) res.getString(R.string.head_page, figures(s.from, res))
             else res.getString(R.string.pages_range, figures(s.from, res), figures(s.to, res))
-        // The juz is for finding your way, so it takes the accent; a wide space, not a dot, follows its figure
-        val line = SpannableString(res.getString(R.string.head_pair, juz, pages))
-        line.setSpan(ForegroundColorSpan(itemView.context.getColor(R.color.accent)), 0, juz.length, 0)
-        meta.text = line
+        // The juz is for finding your way, so it takes the accent
+        metaJuz.text = juz
+        metaPages.text = pages
     }
 
     init {

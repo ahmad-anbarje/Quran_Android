@@ -78,16 +78,34 @@
                     android:maxLines="1" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/meta"
+            <!-- Its juz, then the pages it spans, held apart by a margin rather than spaces -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/text_mute"
-                android:includeFontPadding="false"
-                android:textSize="@dimen/row_meta"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/meta_juz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/accent"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/row_meta"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/meta_pages"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/meta_gap"
+                    android:textColor="@color/text_mute"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/row_meta"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
         </LinearLayout>
 
         <include layout="@layout/part_row_actions" />

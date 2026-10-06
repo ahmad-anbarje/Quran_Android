@@ -209,7 +209,10 @@ object Recite {
                 }
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    app?.let { PlayerService.show(it, playing) }
+                    app?.let {
+                        ListenClock.heard(it, playing, isPlaying)
+                        PlayerService.show(it, playing)
+                    }
                     changed()
                 }
             })
@@ -257,6 +260,7 @@ object Recite {
     fun stop() {
         val ctx = app
         val p = player
+        ctx?.let { ListenClock.heard(it, 0, false) }
         player = null
         playing = 0
         wanted = -1

@@ -73,6 +73,10 @@ def walk():
     shot(frames)
     tap('seg_juz'); shot(frames)
     tap('nav_marks'); shot(frames)
+    if tap('prog_label'):
+        shot(frames)
+        shell('input', 'keyevent', 'KEYCODE_BACK')
+        time.sleep(2)
     tap('nav_settings'); shot(frames)
     tap('nav_surahs')
     # Short screens hide the resume strip, so the first surah opens the reader instead

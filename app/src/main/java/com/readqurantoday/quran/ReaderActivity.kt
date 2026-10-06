@@ -45,6 +45,9 @@ class ReaderActivity : LanguageActivity() {
     /* Finished images of the page in view and its neighbours; see PageShots. */
     private lateinit var shots: PageShots
 
+    // Reading time for the statistics
+    private val clock by lazy { PageClock(this) }
+
     // --- page turn ---
     private lateinit var curl: PageCurlView
     private var turnPages = false
@@ -330,6 +333,7 @@ class ReaderActivity : LanguageActivity() {
     private fun arrived(page: Int, note: Boolean = true) {
         if (page !in 1..pages) return
         current = page
+        clock.show(page)
         sayPage(page)
         if (note) {
             Settings.setLastPage(this, page)
@@ -900,6 +904,7 @@ class ReaderActivity : LanguageActivity() {
 
     override fun onResume() {
         super.onResume()
+        clock.resume()
         delegate.applyDayNight()
         sayMotion()
         sayPage(page())
@@ -942,6 +947,7 @@ class ReaderActivity : LanguageActivity() {
 
     override fun onPause() {
         super.onPause()
+        clock.pause()
         WordVoice.stop()
         /* Only if it is still ours: see heard. */
         if (Recite.onChange === heard) Recite.onChange = null

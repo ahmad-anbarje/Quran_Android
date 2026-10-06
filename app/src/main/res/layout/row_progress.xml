@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A statistics row: label and value, an optional quiet line, an optional progress track -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:layoutDirection="locale"
+    android:background="@drawable/row_flat"
+    android:minHeight="52dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="@dimen/row_pad_v"
+    android:paddingBottom="@dimen/row_pad_v">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/prog_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text"
+            android:textSize="@dimen/row_title" />
+
+        <TextView
+            android:id="@+id/prog_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/row_value"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/prog_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/prog_track"
+        layout="@layout/part_progress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/track_height"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+</LinearLayout>

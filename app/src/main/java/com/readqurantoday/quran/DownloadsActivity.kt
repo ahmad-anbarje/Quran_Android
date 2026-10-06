@@ -2,14 +2,11 @@ package com.readqurantoday.quran
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 
 /** Downloads: per reciter, what is kept for offline listening, and copies saved to the phone. */
-class DownloadsActivity : LanguageActivity() {
+class DownloadsActivity : CardsActivity(R.string.set_downloads) {
 
     /* What to run once the storage permission comes back granted: a save that asked. */
     private var afterGrant: (() -> Unit)? = null
@@ -24,14 +21,8 @@ class DownloadsActivity : LanguageActivity() {
         super.onCreate(savedInstanceState)
         Surahs.load(this)
         Recite.load(this)
-        setContentView(R.layout.activity_downloads)
-        keepToColumn(R.id.dl_groups)
 
-        findViewById<ImageView>(R.id.dl_back_icon).imageTintList =
-            ColorStateList.valueOf(getColor(R.color.accent))
-        findViewById<View>(R.id.dl_back).setOnClickListener { finish() }
-
-        DownloadsPane(this, findViewById(R.id.dl_groups), ::whenMaySave).build()
+        DownloadsPane(this, cards, ::whenMaySave).build()
         sayBars()
     }
 
@@ -42,18 +33,5 @@ class DownloadsActivity : LanguageActivity() {
         if (!needed) return save()
         afterGrant = save
         permission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    }
-
-    private fun sayBars() {
-        showBars(
-            roof = groundOf(findViewById(R.id.dl_head)),
-            floor = groundOf(findViewById(R.id.dl_root))
-        )
-    }
-
-    /* Asked for and painted again with focus, as the other screens do: see showBars. */
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) sayBars()
     }
 }

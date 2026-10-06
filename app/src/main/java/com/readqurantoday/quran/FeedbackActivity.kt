@@ -1,16 +1,14 @@
 package com.readqurantoday.quran
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
 /** Report an issue or suggest something; sent to our own server, with email as the fallback. */
-class FeedbackActivity : LanguageActivity() {
+class FeedbackActivity : CardsActivity(R.string.set_report) {
 
     private lateinit var into: LinearLayout
     private var kind = Feedback.BUG
@@ -28,14 +26,8 @@ class FeedbackActivity : LanguageActivity() {
         super.onCreate(savedInstanceState)
         // The reciter list is read to name the chosen reciter in the report
         Recite.load(this)
-        setContentView(R.layout.activity_feedback)
-        keepToColumn(R.id.fb_groups)
 
-        findViewById<ImageView>(R.id.fb_back_icon).imageTintList =
-            ColorStateList.valueOf(getColor(R.color.accent))
-        findViewById<View>(R.id.fb_back).setOnClickListener { finish() }
-
-        into = findViewById(R.id.fb_groups)
+        into = cards
         build()
         sayBars()
     }
@@ -131,13 +123,4 @@ class FeedbackActivity : LanguageActivity() {
             it.setText(label)
             it.setOnClickListener { act() }
         }
-
-    private fun sayBars() {
-        showBars(roof = groundOf(findViewById(R.id.fb_head)), floor = groundOf(findViewById(R.id.fb_root)))
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) sayBars()
-    }
 }

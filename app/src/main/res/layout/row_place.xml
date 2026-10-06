@@ -51,27 +51,14 @@
             android:maxLines="1"
             android:ellipsize="end" />
 
-        <!-- How far through the surah: the filled share, then the rest. Weights set in code. -->
-        <LinearLayout
+        <!-- How far through the surah -->
+        <include
             android:id="@+id/place_track"
+            layout="@layout/part_progress"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="@dimen/track_height"
             android:layout_marginTop="6dp"
-            android:orientation="horizontal"
-            android:background="@color/line"
-            android:visibility="gone">
-
-            <View
-                android:id="@+id/place_fill"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:background="@color/accent" />
-
-            <View
-                android:id="@+id/place_rest"
-                android:layout_width="0dp"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView

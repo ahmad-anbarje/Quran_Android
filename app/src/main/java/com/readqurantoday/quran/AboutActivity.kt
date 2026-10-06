@@ -1,25 +1,16 @@
 package com.readqurantoday.quran
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
 /** What the app is, where developers find its code, and whose work it is built on. */
-class AboutActivity : LanguageActivity() {
+class AboutActivity : CardsActivity(R.string.set_about) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
-        keepToColumn(R.id.about_groups)
-
-        findViewById<ImageView>(R.id.about_back_icon).imageTintList =
-            ColorStateList.valueOf(getColor(R.color.accent))
-        findViewById<View>(R.id.about_back).setOnClickListener { finish() }
-
-        val into = findViewById<LinearLayout>(R.id.about_groups)
+        val into = cards
         val intro = layoutInflater.inflate(R.layout.part_about_intro, into, false)
         intro.findViewById<TextView>(R.id.about_version).text = getString(R.string.about_version, appVersion(this))
         layoutInflater.card(into, 0, listOf(intro))
@@ -41,13 +32,4 @@ class AboutActivity : LanguageActivity() {
             it.findViewById<TextView>(R.id.set_value).setText(shown)
             it.setOnClickListener { openLink(url) }
         }
-
-    private fun sayBars() {
-        showBars(roof = groundOf(findViewById(R.id.about_head)), floor = groundOf(findViewById(R.id.about_root)))
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) sayBars()
-    }
 }

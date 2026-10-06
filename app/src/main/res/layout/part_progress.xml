@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A thin progress track: the filled share, then the rest. Weights set by fillTrack(). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/track_height"
+    android:orientation="horizontal"
+    android:background="@color/line">
+
+    <View
+        android:id="@+id/track_fill"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@color/accent" />
+
+    <View
+        android:id="@+id/track_rest"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+</LinearLayout>

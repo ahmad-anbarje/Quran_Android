@@ -44,6 +44,8 @@
     <!-- A row's own title, the quiet line under it, and the label under an icon -->
     <dimen name="row_title">15sp</dimen>
     <dimen name="row_meta">11sp</dimen>
+    <!-- The accent value at the end of a settings or statistics row -->
+    <dimen name="row_value">14sp</dimen>
     <dimen name="icon_label">10sp</dimen>
     <dimen name="icon_label_min">7sp</dimen>
     <!-- Smallest the reader bar's juz and page may shrink to under a large font -->
@@ -55,4 +57,8 @@
 
     <!-- A lone icon button inside a row: big enough to hit without a second try -->
     <dimen name="row_button">44dp</dimen>
+    <!-- A thin progress track under a row -->
+    <dimen name="track_height">3dp</dimen>
+    <!-- The statistics chart of recent days -->
+    <dimen name="chart_height">96dp</dimen>
 </resources>

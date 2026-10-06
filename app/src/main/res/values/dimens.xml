@@ -43,6 +43,8 @@
     <dimen name="surah_title_row">22sp</dimen>
     <!-- A row's own title, the quiet line under it, and the label under an icon -->
     <dimen name="row_title">15sp</dimen>
+    <!-- A surah's English name, beside its calligraphy in a row -->
+    <dimen name="surah_english">14sp</dimen>
     <dimen name="row_meta">11sp</dimen>
     <!-- The accent value at the end of a settings or statistics row -->
     <dimen name="row_value">14sp</dimen>

@@ -71,10 +71,10 @@
                     android:id="@+id/english"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="14dp"
                     android:textColor="@color/text_mute"
                     android:includeFontPadding="false"
-                    android:textSize="@dimen/row_meta"
+                    android:textSize="@dimen/surah_english"
                     android:maxLines="1" />
             </LinearLayout>
 

@@ -4,7 +4,6 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -45,11 +44,9 @@ class SurahRow(v: View, names: Typeface?) : RecyclerView.ViewHolder(v) {
             else res.getString(R.string.juz_range, figures(from, res), figures(to, res))
         val pages = if (s.from == s.to) res.getString(R.string.head_page, figures(s.from, res))
             else res.getString(R.string.pages_range, figures(s.from, res), figures(s.to, res))
-        // The juz is for finding your way, so it stands out in the accent
-        // A wide space, not a dot, after the juz figure: see head_pair
+        // The juz is for finding your way, so it takes the accent; a wide space, not a dot, follows its figure
         val line = SpannableString(res.getString(R.string.head_pair, juz, pages))
         line.setSpan(ForegroundColorSpan(itemView.context.getColor(R.color.accent)), 0, juz.length, 0)
-        line.setSpan(StyleSpan(Typeface.BOLD), 0, juz.length, 0)
         meta.text = line
     }
 

@@ -448,6 +448,7 @@ class MushafPageView @JvmOverloads constructor(
     private var pageMarks = ""
     private var headJuz = ""
     private var headPage = ""
+    private var headHizbPage = ""
     private var headSurah = 0
     private var folioText = ""
 
@@ -660,6 +661,10 @@ class MushafPageView @JvmOverloads constructor(
         val juz = Surahs.juzOfPage(page)
         headJuz = if (juz > 0) context.getString(R.string.head_juz, figures(juz, resources)) else ""
         headPage = context.getString(R.string.head_page, figures(page, resources))
+        val hizb = Surahs.hizbOfPage(page)
+        headHizbPage = if (hizb > 0) {
+            context.getString(R.string.head_pair, context.getString(R.string.head_hizb, figures(hizb, resources)), headPage)
+        } else headPage
         // A page that opens with a surah's own title needs no name above it
         val opensWithTitle = lines.firstOrNull { it.kind == "surah" || it.kind == "ayah" }?.kind == "surah"
         headSurah = if (opensWithTitle) 0 else Surahs.headOfPage(page)?.id ?: 0
@@ -1055,20 +1060,35 @@ class MushafPageView @JvmOverloads constructor(
         canvas.restore()
     }
 
-    /* Running head: juz on the right, surah name centred, page number on the left. */
+    /* Running head: juz on the right, surah name centred, hizb and page on the left. */
     private fun runningHead(canvas: Canvas, left: Float, measure: Float) {
         if (pageNo <= 0) return
         val y = padTop + headBand * 0.62f
+        val titleSize = headBand * 0.82f
+
+        // Narrow screens shrink the side labels rather than let them touch the centred name
+        val full = label.textSize
+        val side = (measure - titleWidth(headSurah, titleSize)) / 2f - full
+        val widest = maxOf(label.measureText(headHizbPage), label.measureText(headJuz))
+        if (widest > side && side > 0f) label.textSize = full * side / widest
 
         if (headJuz.isNotEmpty()) {
             label.textAlign = Paint.Align.RIGHT
             canvas.drawText(headJuz, left + measure, y, label)
         }
 
-        if (headSurah > 0) title(canvas, headSurah, left + measure / 2f, headBand * 0.82f, y)
+        if (headSurah > 0) title(canvas, headSurah, left + measure / 2f, titleSize, y)
 
         label.textAlign = Paint.Align.LEFT
-        canvas.drawText(headPage, left, y, label)
+        canvas.drawText(headHizbPage, left, y, label)
+        label.textSize = full
+    }
+
+    private fun titleWidth(surah: Int, size: Float): Float {
+        if (surah <= 0) return 0f
+        val names = Mushaf.names(context) ?: return 0f
+        val scale = size / names.upem
+        return (names.advance(Mushaf.SURAH_WORD) + names.advance(Mushaf.nameCode(surah))) * scale + 0.1f * size
     }
 
     /* Surah name drawn as glyphs from the names face, not as typed text. */

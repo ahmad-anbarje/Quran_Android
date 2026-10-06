@@ -5,6 +5,7 @@
     <string name="surah_named">Surah %1$s</string>
     <string name="head_juz">Juz %1$s</string>
     <string name="head_page">Page %1$s</string>
+    <string name="head_hizb">Hizb %1$s</string>
     <string name="resume">Continue reading</string>
     <string name="resume_reciter">Follow the reciter</string>
     <string name="to_menu">Menu</string>

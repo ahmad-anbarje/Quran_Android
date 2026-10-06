@@ -5,7 +5,8 @@
     <string name="surah_named">سورة %1$s</string>
     <!-- Numbers arrive already written in Arabic figures, so these take strings -->
     <string name="head_juz">الجزء %1$s</string>
-    <string name="head_page">صفحة %1$s</string>
+    <string name="head_page">الصفحة %1$s</string>
+    <string name="head_hizb">الحزب %1$s</string>
     <!-- The way back into the page the reader was left on. -->
     <string name="resume">متابعة القراءة</string>
     <string name="resume_reciter">متابعة القارئ</string>
@@ -14,6 +15,8 @@
     <!-- Two parts of a place joined, e.g. the juz and the page in the reader's top bar. -->
     <string name="bar_place" translatable="false">%1$s %2$s</string>
     <string name="place_line" translatable="false">%1$s · %2$s</string>
+    <!-- A wide space, not a dot: a dot beside Arabic figures reads as zero. -->
+    <string name="head_pair" translatable="false">%1$s %2$s</string>
 
     <!-- Search section for a number: both a page and a surah to go to -->
     <string name="search_jump">الانتقال إلى</string>
@@ -21,7 +24,7 @@
     <string name="search_ayahs">الآيات</string>
     <string name="search_none">لا نتائج</string>
     <!-- A page result, with the surah it falls in so the number is recognisable. -->
-    <string name="search_page">صفحة %1$s</string>
+    <string name="search_page">الصفحة %1$s</string>
     <string name="search_page_in">سورة %1$s</string>
     <!-- An ayah result: which surah and which ayah the line came from. -->
     <string name="search_ayah_ref">%1$s · آية %2$s</string>

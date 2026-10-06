@@ -18,6 +18,7 @@ object Surahs {
     private val all = ArrayList<Surah>(114)
 
     private var juz = IntArray(0)
+    private var hizb = IntArray(0)
 
     fun load(context: Context) {
         if (all.isNotEmpty()) return
@@ -40,8 +41,14 @@ object Surahs {
         }
 
         val mushaf = context.assets.open("data/mushaf.json").use { it.readBytes() }
-        val pages = JSONObject(String(mushaf, Charsets.UTF_8)).optJSONArray("juzPages")
-        if (pages != null) juz = IntArray(pages.length()) { pages.getInt(it) }
+        val root = JSONObject(String(mushaf, Charsets.UTF_8))
+        juz = starts(root, "juzPages")
+        hizb = starts(root, "hizbPages")
+    }
+
+    private fun starts(root: JSONObject, key: String): IntArray {
+        val pages = root.optJSONArray(key) ?: return IntArray(0)
+        return IntArray(pages.length()) { pages.getInt(it) }
     }
 
     fun list(): List<Surah> = all
@@ -69,9 +76,14 @@ object Surahs {
     fun juzStarts(): IntArray = juz
 
     /** Which juz this page is in (1–30), or 0 if not yet loaded. */
-    fun juzOfPage(page: Int): Int {
+    fun juzOfPage(page: Int): Int = countUpTo(juz, page)
+
+    /** Which hizb this page is in (1–60), or 0 if not yet loaded. */
+    fun hizbOfPage(page: Int): Int = countUpTo(hizb, page)
+
+    private fun countUpTo(starts: IntArray, page: Int): Int {
         var n = 0
-        for (i in juz.indices) if (juz[i] <= page) n = i + 1 else break
+        for (i in starts.indices) if (starts[i] <= page) n = i + 1 else break
         return n
     }
 }

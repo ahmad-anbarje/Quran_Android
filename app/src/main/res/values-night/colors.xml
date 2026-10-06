@@ -4,9 +4,7 @@
     <color name="paper">#151A1E</color>
     <!-- Near-white, short of white, which glares and blooms on a dark screen -->
     <color name="ink">#DDE2E7</color>
-    <!-- Night grounds step up as things rise: list, screen, page, card and sheet, reader bars -->
-    <!-- Deeper than the page, so a list and a page are told apart at a glance -->
-    <color name="list_ground">#0D1114</color>
+    <!-- Night grounds step up as things rise: screen, page, card and sheet, reader bars -->
 
     <color name="accent">#3F9BD1</color>
     <!-- Soft fills need more alpha on a dark ground to stay visible -->
@@ -15,6 +13,7 @@
     <color name="surface">#1D242B</color>
     <!-- Lighter than the page at night, as raised things look on a dark screen. -->
     <color name="reader_chrome">#242C35</color>
+    <!-- Every screen's ground, lists included, so the tabs read as one app -->
     <color name="surface_2">#11161A</color>
     <color name="line">#323C47</color>
     <color name="text">#DDE2E7</color>

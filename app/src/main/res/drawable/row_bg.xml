@@ -2,5 +2,5 @@
 <!-- Flat list row: the list's cool ground, with a soft accent ripple on tap. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/accent_soft">
-    <item android:drawable="@color/list_ground" />
+    <item android:drawable="@color/surface_2" />
 </ripple>

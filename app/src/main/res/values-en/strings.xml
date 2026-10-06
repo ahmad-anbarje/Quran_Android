@@ -293,4 +293,5 @@
         <item quantity="one">%1$s hizb</item>
         <item quantity="other">%1$s hizb</item>
     </plurals>
+    <string name="stats_per_hour_today">That is %1$s, an estimate from your speed today</string>
 </resources>

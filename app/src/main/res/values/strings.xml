@@ -361,4 +361,5 @@
         <item quantity="many">%1$s حزبًا</item>
         <item quantity="other">%1$s حزب</item>
     </plurals>
+    <string name="stats_per_hour_today">أي %1$s، تقديرًا بحسب سرعتك اليوم</string>
 </resources>

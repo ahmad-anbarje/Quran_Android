@@ -142,16 +142,22 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
                 if (today.pages.isEmpty()) none(res) else perPage(onPages(today) / today.pages.size)),
             row(host.getString(R.string.stats_page_avg_month),
                 if (monthPages == 0) none(res) else perPage(monthSec / monthPages)),
-            // A rate, not a promise: what the month's pace would come to over an hour
-            row(host.getString(R.string.stats_per_hour),
-                if (monthSec == 0) none(res) else pagesSaid((monthPages * 3600f / monthSec).roundToInt(), res),
-                if (monthSec == 0) host.getString(R.string.stats_per_hour_note)
-                else host.getString(R.string.stats_per_hour_juz, juzSaid(monthPages * 3600f / monthSec, res)))
+            perHourRow(today, monthPages, monthSec)
         )
         if (today.pages.isNotEmpty()) rows += action(
             host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))
         ) { host.startActivity(android.content.Intent(host, PageTimesActivity::class.java)) }
         return rows
+    }
+
+    // A rate, not a promise: today's pace over an hour, or the month's before anything is read today
+    private fun perHourRow(today: Stats.Day, monthPages: Int, monthSec: Int): View {
+        val todaySec = onPages(today)
+        val (pages, sec, by) = if (todaySec > 0) Triple(today.pages.size, todaySec, R.string.stats_per_hour_today)
+            else Triple(monthPages, monthSec, R.string.stats_per_hour_juz)
+        if (sec == 0) return row(host.getString(R.string.stats_per_hour), none(res), host.getString(R.string.stats_per_hour_note))
+        val perHour = pages * 3600f / sec
+        return row(host.getString(R.string.stats_per_hour), pagesSaid(perHour.roundToInt(), res), host.getString(by, juzSaid(perHour, res)))
     }
 
     private fun perPage(sec: Int) = host.getString(R.string.per_page, spentExact(sec, res))

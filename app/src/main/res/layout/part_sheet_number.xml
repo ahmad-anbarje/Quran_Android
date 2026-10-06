@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A number of pages to type on a sheet: the box, then the action that keeps it -->
+<!-- A number to type on a sheet: the box with its clear button, then the action that keeps it -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,24 +9,46 @@
     android:paddingEnd="20dp"
     android:paddingTop="8dp">
 
-    <EditText
-        android:id="@+id/sheet_number"
+    <!-- Built like the search pill -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:background="@drawable/search_bg"
         android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:inputType="number"
-        android:imeOptions="actionDone"
-        android:maxLength="3"
-        android:maxLines="1"
-        android:textColor="@color/text"
-        android:textColorHint="@color/text_mute"
-        android:textSize="@dimen/row_title"
-        android:hint="@string/goal_custom_hint"
-        android:importantForAutofill="no" />
+        android:paddingEnd="4dp">
+
+        <EditText
+            android:id="@+id/sheet_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:maxLength="3"
+            android:maxLines="1"
+            android:textColor="@color/text"
+            android:textColorHint="@color/text_mute"
+            android:textSize="@dimen/row_title"
+            android:hint="@string/goal_custom_hint"
+            android:importantForAutofill="no" />
+
+        <!-- Empties the box; shown only while there is something in it -->
+        <ImageView
+            android:id="@+id/sheet_clear"
+            android:layout_width="@dimen/row_button"
+            android:layout_height="@dimen/row_button"
+            android:padding="13dp"
+            android:src="@drawable/ic_close"
+            android:background="@drawable/row_flat"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/search_clear" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/sheet_keep"

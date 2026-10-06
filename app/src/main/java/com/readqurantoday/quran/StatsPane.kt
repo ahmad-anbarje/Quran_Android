@@ -88,7 +88,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
     // The first look at the day's reached goal is met with a celebration; later looks are quiet
     private fun celebrateOnce(today: Stats.Day, goal: Int) {
-        if (today.pages.size < goal || Stats.celebrated(host)) return
+        if (goal == 0 || today.pages.size < goal || Stats.celebrated(host)) return
         Stats.setCelebrated(host)
         val over = host.findViewById<ViewGroup>(android.R.id.content)
         over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
@@ -106,10 +106,11 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             title = host.getString(R.string.stats_pages_today),
             line = when {
                 read == 0 -> host.getString(R.string.stats_none_today)
+                goal == 0 -> pagesSaid(read, res)
                 read >= goal -> host.getString(R.string.stats_goal_reached)
                 else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
             },
-            note = ""
+            note = if (goal == 0) host.getString(R.string.goal_none_today) else ""
         ).also {
             fillRing(it, TODAY, read.toFloat(), goal.toFloat())
             showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
@@ -166,37 +167,71 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
     // --- daily goal ---
 
-    // The fixed goals; a custom one is typed, and is shown by its pages
-    private val goals by lazy {
+    // Ready-made goals, the default first; anything else is built step by step under «custom»
+    private val presets by lazy {
         listOf(
-            5 to Choice(pagesSaid(5, res)),
-            10 to Choice(pagesSaid(10, res)),
-            20 to Choice(host.getString(R.string.stats_goal_juz), host.getString(R.string.stats_goal_month)),
-            40 to Choice(host.getString(R.string.stats_goal_juz2), host.getString(R.string.stats_goal_half_month)),
-            Stats.zahrawan(host) to Choice(host.getString(R.string.goal_zahrawan), pagesSaid(Stats.zahrawan(host), res))
+            Goal.DEFAULT to host.getString(R.string.stats_goal_month),
+            Goal(Goal.Kind.PAGES, 5, emptyList(), Goal.ALL_DAYS, kahf = false) to "",
+            Goal(Goal.Kind.PAGES, 10, emptyList(), Goal.ALL_DAYS, kahf = false) to "",
+            Goal(Goal.Kind.JUZ, 2, emptyList(), Goal.ALL_DAYS, kahf = false) to host.getString(R.string.stats_goal_half_month),
+            Goal(Goal.Kind.SURAHS, 0, listOf(2, 3), Goal.ALL_DAYS, kahf = false) to ""
         )
     }
 
+    // Today's pages by the goal, with the whole plan written beneath
     private fun goalRow(goal: Int): View {
-        val said = goals.firstOrNull { it.first == goal }?.second?.label ?: pagesSaid(goal, res)
-        return row(host.getString(R.string.stats_goal), said).apply {
+        val plan = Stats.goalPlan(host)
+        return row(host.getString(R.string.goal_today), if (goal == 0) none(res) else pagesSaid(goal, res), plan.said(res)).apply {
             isClickable = true
             setOnClickListener {
-                val fixed = goals.map { (pages, c) -> c.copy(on = pages == goal) }
-                val custom = Choice(host.getString(R.string.goal_custom), on = goals.none { it.first == goal })
-                host.sheet(host.getString(R.string.stats_goal), fixed + custom) { i ->
-                    if (i < goals.size) setGoal(goals[i].first)
-                    else host.askNumber(
-                        host.getString(R.string.goal_custom_ask),
-                        host.getString(R.string.goal_keep), goal, 1..Mushaf.PAGES, ::setGoal
-                    )
+                val choices = presets.map { (g, note) -> Choice(g.said(res), note, on = g == plan) } +
+                    Choice(host.getString(R.string.goal_custom), on = presets.none { it.first == plan })
+                host.sheet(host.getString(R.string.goal_title), choices) { i ->
+                    if (i < presets.size) setGoal(presets[i].first) else customGoal(plan)
                 }
             }
         }
     }
 
-    private fun setGoal(pages: Int) {
-        Stats.setGoal(host, pages)
+    // Custom: what to read, then how much, then on which days
+    private fun customGoal(plan: Goal) {
+        host.sheet(host.getString(R.string.goal_kind_ask), listOf(
+            Choice(host.getString(R.string.goal_kind_pages)),
+            Choice(host.getString(R.string.goal_kind_juz)),
+            Choice(host.getString(R.string.goal_kind_surah))
+        )) { i ->
+            when (i) {
+                0 -> host.askNumber(host.getString(R.string.goal_custom_ask), host.getString(R.string.goal_next),
+                    if (plan.kind == Goal.Kind.PAGES) plan.amount else 10, 1..Mushaf.PAGES) {
+                    pickDays(plan.copy(kind = Goal.Kind.PAGES, amount = it, surahs = emptyList()))
+                }
+                1 -> host.askNumber(host.getString(R.string.goal_juz_ask), host.getString(R.string.goal_next),
+                    if (plan.kind == Goal.Kind.JUZ) plan.amount else 1, 1..30) {
+                    pickDays(plan.copy(kind = Goal.Kind.JUZ, amount = it, surahs = emptyList()))
+                }
+                else -> host.sheet(host.getString(R.string.goal_surah_ask), Surahs.list().map { Choice(it.name) }) { s ->
+                    pickDays(plan.copy(kind = Goal.Kind.SURAHS, amount = 0, surahs = listOf(Surahs.list()[s].id)))
+                }
+            }
+        }
+    }
+
+    // The days of the week, Saturday first, and Al-Kahf on Friday as one more choice
+    private fun pickDays(goal: Goal) {
+        val labels = Goal.WEEK.map { Goal.weekdayName(it, res) } + host.getString(R.string.goal_add_kahf)
+        val chosen = BooleanArray(labels.size) { i ->
+            if (i < Goal.WEEK.size) goal.days and Goal.bit(Goal.WEEK[i]) != 0 else goal.kahf
+        }
+        host.pickMany(host.getString(R.string.goal_days_ask), labels, chosen, host.getString(R.string.goal_keep)) { now ->
+            val days = Goal.WEEK.indices.filter { now[it] }.fold(0) { mask, i -> mask or Goal.bit(Goal.WEEK[i]) }
+            val kahf = now.last()
+            // A goal on no day at all is no goal; the old one stays
+            if (days != 0 || kahf) setGoal(goal.copy(days = days, kahf = kahf))
+        }
+    }
+
+    private fun setGoal(goal: Goal) {
+        Stats.setGoalPlan(host, goal)
         build()
     }
 

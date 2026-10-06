@@ -198,10 +198,7 @@
     <string name="stats_read_time">Reading time today</string>
     <string name="stats_listen_time">Listening time today</string>
     <string name="stats_none_today">Nothing read yet today</string>
-    <string name="stats_goal">Daily goal</string>
     <string name="stats_goal_reached">Today\'s goal reached</string>
-    <string name="stats_goal_juz">One juz</string>
-    <string name="stats_goal_juz2">Two juz</string>
     <string name="stats_goal_month">A khatma in about a month</string>
     <string name="stats_goal_half_month">A khatma in about 15 days</string>
     <string name="stats_khatma_read">%1$s of %2$s</string>
@@ -292,9 +289,35 @@
         <item quantity="other">%1$s hizb</item>
     </plurals>
     <string name="stats_per_hour_today">That is %1$s, an estimate from your speed today</string>
-    <string name="goal_zahrawan">Al-Baqarah and Al-Imran</string>
     <string name="goal_custom">Custom goal…</string>
     <string name="goal_custom_ask">How many pages a day?</string>
-    <string name="goal_custom_hint">Pages</string>
+    <string name="goal_custom_hint">Number</string>
     <string name="goal_keep">Save goal</string>
+    <string name="goal_title">Your goal</string>
+    <string name="goal_today">Goal today</string>
+    <string name="goal_none_today">No goal for today</string>
+    <string name="goal_every_day">every day</string>
+    <string name="goal_plan">%1$s %2$s</string>
+    <string name="goal_plan_days">%1$s on %2$s</string>
+    <string name="goal_with_kahf">%1$s, and Al-Kahf on Friday</string>
+    <string name="list_join">", "</string>
+    <string name="goal_kind_ask">What will you read?</string>
+    <string name="goal_kind_pages">A number of pages</string>
+    <string name="goal_kind_juz">A number of juz</string>
+    <string name="goal_kind_surah">A surah</string>
+    <string name="goal_juz_ask">How many juz?</string>
+    <string name="goal_surah_ask">Which surah?</string>
+    <string name="goal_days_ask">On which days?</string>
+    <string name="goal_add_kahf">And Al-Kahf on Friday</string>
+    <string name="goal_next">Next</string>
+    <string-array name="weekdays">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    <string name="and_join">" and "</string>
 </resources>

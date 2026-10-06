@@ -32,6 +32,7 @@ object Stats {
     private const val KHATMA_FROM = "khatma_from"
     private const val KHATMAS = "khatmas"
     private const val GOAL = "goal"
+    private const val GOAL_PLAN = "goal_plan"
     private const val SINCE = "since"
     private const val HIJRI = "hijri"
     private const val CELEBRATED = "celebrated"
@@ -151,16 +152,24 @@ object Stats {
 
     fun setCelebrated(ctx: Context) = store(ctx).edit { putLong(CELEBRATED, today()) }
 
-    /** Pages a day the reader aims for; until one is chosen, Al-Baqarah and Al-Imran together. */
-    fun goal(ctx: Context): Int = store(ctx).getInt(GOAL, 0).takeIf { it > 0 } ?: zahrawan(ctx)
-
-    /** The pages of Al-Baqarah and Al-Imran, the two surahs read together as a day's portion. */
-    fun zahrawan(ctx: Context): Int {
+    /** Pages to read today by the reader's goal; 0 on a day the goal leaves free. */
+    fun goal(ctx: Context): Int {
         Surahs.load(ctx)
-        return Surahs.list().filter { it.id == 2 || it.id == 3 }.sumOf { it.to - it.from + 1 }
+        return goalPlan(ctx).pagesToday()
     }
 
-    fun setGoal(ctx: Context, pages: Int) = store(ctx).edit { putInt(GOAL, pages) }
+    /** The goal as chosen; a goal kept as a plain number from before is that many pages every day. */
+    fun goalPlan(ctx: Context): Goal {
+        val prefs = store(ctx)
+        Goal.decoded(prefs.getString(GOAL_PLAN, null))?.let { return it }
+        val pages = prefs.getInt(GOAL, 0)
+        return if (pages > 0) Goal(Goal.Kind.PAGES, pages, emptyList(), Goal.ALL_DAYS, kahf = false) else Goal.DEFAULT
+    }
+
+    fun setGoalPlan(ctx: Context, goal: Goal) = store(ctx).edit {
+        putString(GOAL_PLAN, goal.encoded())
+        remove(GOAL)
+    }
 
     /** Start the khatma over; finished ones stay counted. */
     fun newKhatma(ctx: Context) = store(ctx).edit {

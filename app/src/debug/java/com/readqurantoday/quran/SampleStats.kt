@@ -56,7 +56,7 @@ class SampleStats : BroadcastReceiver() {
             Stats.writeDay(ctx, day, Stats.Day(pages, heard))
         }
         Stats.writeDay(ctx, today, Stats.Day((300..311).associateWith { rnd.nextInt(40, 61) }, mapOf(18 to 640)))
-        Stats.setGoal(ctx, 20)
+        Stats.setGoalPlan(ctx, Goal(Goal.Kind.PAGES, 20, emptyList(), Goal.ALL_DAYS, kahf = false))
         Stats.writeKhatma(ctx, (1..320).toSet(), today - 25, done = 1)
     }
 
@@ -71,7 +71,7 @@ class SampleStats : BroadcastReceiver() {
             Stats.writeDay(ctx, day, Stats.Day(pages, mapOf(rnd.nextInt(1, 115) to rnd.nextInt(1800, 5400))))
         }
         Stats.writeDay(ctx, today, Stats.Day((1..220).associateWith { rnd.nextInt(20, 91) }, mapOf(2 to 3700, 36 to 900)))
-        Stats.setGoal(ctx, 40)
+        Stats.setGoalPlan(ctx, Goal(Goal.Kind.JUZ, 2, emptyList(), Goal.ALL_DAYS, kahf = true))
         Stats.writeKhatma(ctx, (1..554).toSet(), today - 3, done = 3)
     }
 

@@ -236,10 +236,7 @@
     <string name="stats_read_time">وقت القراءة اليوم</string>
     <string name="stats_listen_time">وقت الاستماع اليوم</string>
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
-    <string name="stats_goal">الهدف اليومي</string>
     <string name="stats_goal_reached">بلغت هدف اليوم</string>
-    <string name="stats_goal_juz">جزء واحد</string>
-    <string name="stats_goal_juz2">جزءان</string>
     <string name="stats_goal_month">ختمة في شهر تقريبًا</string>
     <string name="stats_goal_half_month">ختمة في نحو ١٥ يومًا</string>
     <string name="stats_khatma_read">%1$s من %2$s</string>
@@ -360,9 +357,35 @@
         <item quantity="other">%1$s حزب</item>
     </plurals>
     <string name="stats_per_hour_today">أي %1$s، تقديرًا بحسب سرعتك اليوم</string>
-    <string name="goal_zahrawan">البقرة وآل عمران</string>
     <string name="goal_custom">هدف مخصص…</string>
     <string name="goal_custom_ask">كم صفحة تقرأ في اليوم؟</string>
-    <string name="goal_custom_hint">عدد الصفحات</string>
+    <string name="goal_custom_hint">العدد</string>
     <string name="goal_keep">حفظ الهدف</string>
+    <string name="goal_title">هدفك</string>
+    <string name="goal_today">هدف اليوم</string>
+    <string name="goal_none_today">لا هدف لهذا اليوم</string>
+    <string name="goal_every_day">كل يوم</string>
+    <string name="goal_plan">%1$s %2$s</string>
+    <string name="goal_plan_days">%1$s أيام %2$s</string>
+    <string name="goal_with_kahf">%1$s، والكهف يوم الجمعة</string>
+    <string name="and_join">" و"</string>
+    <string name="list_join">"، "</string>
+    <string name="goal_kind_ask">ماذا تقرأ؟</string>
+    <string name="goal_kind_pages">عدد من الصفحات</string>
+    <string name="goal_kind_juz">عدد من الأجزاء</string>
+    <string name="goal_kind_surah">سورة</string>
+    <string name="goal_juz_ask">كم جزءًا تقرأ؟</string>
+    <string name="goal_surah_ask">أي سورة؟</string>
+    <string name="goal_days_ask">في أي الأيام؟</string>
+    <string name="goal_add_kahf">وسورة الكهف يوم الجمعة</string>
+    <string name="goal_next">التالي</string>
+    <string-array name="weekdays">
+        <item>الأحد</item>
+        <item>الاثنين</item>
+        <item>الثلاثاء</item>
+        <item>الأربعاء</item>
+        <item>الخميس</item>
+        <item>الجمعة</item>
+        <item>السبت</item>
+    </string-array>
 </resources>

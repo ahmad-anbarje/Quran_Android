@@ -283,12 +283,9 @@ class SurahListActivity : LanguageActivity() {
             .setText(if (reciting) R.string.resume_reciter else R.string.resume)
 
         val surah = Surahs.ofPage(page)
-        surah?.let { fillSurahTitle(findViewById(R.id.resume_title), it.id, R.dimen.surah_title) }
-        val at = getString(R.string.head_page, figures(page, resources))
-        // Page first, so a cramped line drops the name rather than the page; the name is isolated so it keeps the separator out of its run
-        findViewById<TextView>(R.id.resume_detail).text = surah?.let {
-            getString(R.string.surah_meta, at, android.text.BidiFormatter.getInstance().unicodeWrap(it.english))
-        } ?: at
+        surah?.let { fillSurahTitle(findViewById(R.id.resume_title), it.id, R.dimen.surah_title_row) }
+        // The title already names the surah, so the line beside it is only the page
+        findViewById<TextView>(R.id.resume_detail).text = getString(R.string.head_page, figures(page, resources))
 
         // Page 0 tells the reader to follow the live recitation rather than open a fixed page
         card.setOnClickListener { answer(if (reciting) 0 else page) }

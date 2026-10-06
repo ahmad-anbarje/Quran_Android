@@ -21,7 +21,6 @@
 
     <string name="juz_range">Juz %1$s–%2$s</string>
     <string name="pages_range">Pages %1$s–%2$s</string>
-    <string name="surah_meta">%1$s · %2$s</string>
 
     <string name="tab_index">Index</string>
     <string name="tab_search">Search</string>

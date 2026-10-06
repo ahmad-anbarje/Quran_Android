@@ -30,7 +30,6 @@
     <!-- The quiet line under a surah's name: its English name, then its length. -->
     <string name="juz_range">الجزء %1$s–%2$s</string>
     <string name="pages_range">الصفحات %1$s–%2$s</string>
-    <string name="surah_meta">%1$s · %2$s</string>
     <!-- Arabic noun forms change with the count; the figure arrives as an Arabic-numeral string -->
 
     <!-- Bottom nav tabs. -->

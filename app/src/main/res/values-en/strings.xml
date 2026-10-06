@@ -188,7 +188,7 @@
     <string name="credits_text">Quran text used for search: Tanzil Project, tanzil.net, under Creative Commons Attribution 3.0, unmodified.\n\nMushaf page and surah name fonts: King Fahd Glorious Quran Printing Complex.\n\nRecitation audio: rights belong to the reciters and their recording publishers.\n\nWord-by-word recitation: Tafsir Center for Quranic Studies, via Quran.com.\n\nTransliteration: Quran.com.\n\nCairo font: SIL Open Font License 1.1, with an enlarged zero.\n\nAndroidX and Media3 libraries by Google, and ColorPicker by Jared Rummler: Apache License 2.0.</string>
 
     <!-- Statistics -->
-    <string name="stats_title">Statistics</string>
+    <string name="tab_wird">My Wird</string>
     <string name="stats_today">Today</string>
     <string name="stats_read_time">Reading time</string>
     <string name="stats_listen_time">Listening time</string>

@@ -237,7 +237,6 @@
     <string name="stats_listen_time">وقت الاستماع اليوم</string>
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
     <string name="stats_goal">الهدف اليومي</string>
-    <string name="stats_goal_none">بلا هدف</string>
     <string name="stats_goal_reached">بلغت هدف اليوم</string>
     <string name="stats_goal_juz">جزء واحد</string>
     <string name="stats_goal_juz2">جزءان</string>
@@ -274,7 +273,6 @@
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
     <string name="stats_pages_today">صفحات اليوم</string>
-    <string name="stats_goal_hint">اختر هدفًا يوميًا من الأسفل لتمتلئ هذه الدائرة.</string>
     <string name="of_count">%1$s من %2$s</string>
     <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
     <string name="stats_finish_on">الختم المتوقع %1$s</string>
@@ -362,4 +360,9 @@
         <item quantity="other">%1$s حزب</item>
     </plurals>
     <string name="stats_per_hour_today">أي %1$s، تقديرًا بحسب سرعتك اليوم</string>
+    <string name="goal_zahrawan">البقرة وآل عمران</string>
+    <string name="goal_custom">هدف مخصص…</string>
+    <string name="goal_custom_ask">كم صفحة تقرأ في اليوم؟</string>
+    <string name="goal_custom_hint">عدد الصفحات</string>
+    <string name="goal_keep">حفظ الهدف</string>
 </resources>

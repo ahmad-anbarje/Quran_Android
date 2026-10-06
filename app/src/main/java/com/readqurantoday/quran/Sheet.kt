@@ -40,6 +40,35 @@ fun Activity.sheet(title: String, choices: List<Choice>, pick: (Int) -> Unit) {
     raise(dialog, view)
 }
 
+/** A sheet that asks for a whole number in [range], prefilled with [current]; [keep] is the action's label. */
+fun Activity.askNumber(title: String, keep: String, current: Int, range: IntRange, done: (Int) -> Unit) {
+    val dialog = Dialog(this, R.style.SheetDialog)
+    val view = layoutInflater.inflate(R.layout.part_sheet, null)
+    view.findViewById<TextView>(R.id.sheet_title).text = title
+    val rows = view.findViewById<LinearLayout>(R.id.sheet_rows)
+    val part = layoutInflater.inflate(R.layout.part_sheet_number, rows, false)
+    rows.addView(part)
+
+    val box = part.findViewById<android.widget.EditText>(R.id.sheet_number)
+    box.setText(figures(current, resources))
+    box.setSelection(box.text.length)
+    val save = {
+        // Out of range or empty is not kept; the sheet stays open for another try
+        val n = latinDigits(box.text.toString()).toIntOrNull()
+        if (n != null && n in range) { dialog.dismiss(); done(n) }
+    }
+    part.findViewById<TextView>(R.id.sheet_keep).apply {
+        text = keep
+        setOnClickListener { save() }
+    }
+    box.setOnEditorActionListener { _, _, _ -> save(); true }
+
+    raise(dialog, view)
+    // The sheet is for typing, so the keyboard comes up with it
+    box.requestFocus()
+    dialog.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+}
+
 /** A sheet with nothing to choose — it only has something to say. */
 fun Activity.notice(said: String) {
     val dialog = Dialog(this, R.style.SheetDialog)

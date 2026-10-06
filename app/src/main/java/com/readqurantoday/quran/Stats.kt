@@ -151,8 +151,14 @@ object Stats {
 
     fun setCelebrated(ctx: Context) = store(ctx).edit { putLong(CELEBRATED, today()) }
 
-    /** Pages a day the reader aims for; 0 is no goal. */
-    fun goal(ctx: Context) = store(ctx).getInt(GOAL, 0)
+    /** Pages a day the reader aims for; until one is chosen, Al-Baqarah and Al-Imran together. */
+    fun goal(ctx: Context): Int = store(ctx).getInt(GOAL, 0).takeIf { it > 0 } ?: zahrawan(ctx)
+
+    /** The pages of Al-Baqarah and Al-Imran, the two surahs read together as a day's portion. */
+    fun zahrawan(ctx: Context): Int {
+        Surahs.load(ctx)
+        return Surahs.list().filter { it.id == 2 || it.id == 3 }.sumOf { it.to - it.from + 1 }
+    }
 
     fun setGoal(ctx: Context, pages: Int) = store(ctx).edit { putInt(GOAL, pages) }
 

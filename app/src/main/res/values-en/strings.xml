@@ -199,7 +199,6 @@
     <string name="stats_listen_time">Listening time today</string>
     <string name="stats_none_today">Nothing read yet today</string>
     <string name="stats_goal">Daily goal</string>
-    <string name="stats_goal_none">No goal</string>
     <string name="stats_goal_reached">Today\'s goal reached</string>
     <string name="stats_goal_juz">One juz</string>
     <string name="stats_goal_juz2">Two juz</string>
@@ -228,7 +227,6 @@
         <item quantity="other">%1$s minutes</item>
     </plurals>
     <string name="stats_pages_today">Pages today</string>
-    <string name="stats_goal_hint">Pick a daily goal below to fill this circle.</string>
     <string name="of_count">%1$s of %2$s</string>
     <string name="stats_days_read">Days you read this month</string>
     <string name="stats_finish_on">Expected to finish %1$s</string>
@@ -294,4 +292,9 @@
         <item quantity="other">%1$s hizb</item>
     </plurals>
     <string name="stats_per_hour_today">That is %1$s, an estimate from your speed today</string>
+    <string name="goal_zahrawan">Al-Baqarah and Al-Imran</string>
+    <string name="goal_custom">Custom goal…</string>
+    <string name="goal_custom_ask">How many pages a day?</string>
+    <string name="goal_custom_hint">Pages</string>
+    <string name="goal_keep">Save goal</string>
 </resources>

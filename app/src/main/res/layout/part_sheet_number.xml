@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A number of pages to type on a sheet: the box, then the action that keeps it -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="8dp">
+
+    <EditText
+        android:id="@+id/sheet_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_bg"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:inputType="number"
+        android:imeOptions="actionDone"
+        android:maxLength="3"
+        android:maxLines="1"
+        android:textColor="@color/text"
+        android:textColorHint="@color/text_mute"
+        android:textSize="@dimen/row_title"
+        android:hint="@string/goal_custom_hint"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/sheet_keep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:minHeight="48dp"
+        android:gravity="center"
+        android:background="@drawable/row_flat"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@color/accent"
+        android:textSize="@dimen/row_title"
+        android:textStyle="bold" />
+</LinearLayout>

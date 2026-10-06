@@ -5,6 +5,10 @@ import android.content.res.Resources
 /** Arabic-Eastern figures in Arabic locale, Latin digits elsewhere. */
 fun figures(n: Int, resources: Resources): String = localDigits(n.toString(), resources)
 
+/** [text] with Arabic-Indic digits made Latin, so a number typed on an Arabic keyboard can be read. */
+fun latinDigits(text: String): String =
+    text.map { if (it in '٠'..'٩') '0' + (it - '٠') else it }.joinToString("")
+
 /** [text] with its Latin digits written as the locale writes them, e.g. a system-formatted date. */
 fun localDigits(text: String, resources: Resources): String {
     if (resources.configuration.locales[0].language != "ar") return text

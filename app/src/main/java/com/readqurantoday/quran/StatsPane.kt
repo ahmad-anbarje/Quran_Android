@@ -88,7 +88,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
     // The first look at the day's reached goal is met with a celebration; later looks are quiet
     private fun celebrateOnce(today: Stats.Day, goal: Int) {
-        if (goal == 0 || today.pages.size < goal || Stats.celebrated(host)) return
+        if (today.pages.size < goal || Stats.celebrated(host)) return
         Stats.setCelebrated(host)
         val over = host.findViewById<ViewGroup>(android.R.id.content)
         over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
@@ -106,11 +106,10 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             title = host.getString(R.string.stats_pages_today),
             line = when {
                 read == 0 -> host.getString(R.string.stats_none_today)
-                goal == 0 -> pagesSaid(read, res)
                 read >= goal -> host.getString(R.string.stats_goal_reached)
                 else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
             },
-            note = if (goal == 0) host.getString(R.string.stats_goal_hint) else ""
+            note = ""
         ).also {
             fillRing(it, TODAY, read.toFloat(), goal.toFloat())
             showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
@@ -167,13 +166,14 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
     // --- daily goal ---
 
+    // The fixed goals; a custom one is typed, and is shown by its pages
     private val goals by lazy {
         listOf(
-            0 to Choice(host.getString(R.string.stats_goal_none)),
             5 to Choice(pagesSaid(5, res)),
             10 to Choice(pagesSaid(10, res)),
             20 to Choice(host.getString(R.string.stats_goal_juz), host.getString(R.string.stats_goal_month)),
-            40 to Choice(host.getString(R.string.stats_goal_juz2), host.getString(R.string.stats_goal_half_month))
+            40 to Choice(host.getString(R.string.stats_goal_juz2), host.getString(R.string.stats_goal_half_month)),
+            Stats.zahrawan(host) to Choice(host.getString(R.string.goal_zahrawan), pagesSaid(Stats.zahrawan(host), res))
         )
     }
 
@@ -182,12 +182,22 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         return row(host.getString(R.string.stats_goal), said).apply {
             isClickable = true
             setOnClickListener {
-                host.sheet(host.getString(R.string.stats_goal), goals.map { (pages, c) -> c.copy(on = pages == goal) }) { i ->
-                    Stats.setGoal(host, goals[i].first)
-                    build()
+                val fixed = goals.map { (pages, c) -> c.copy(on = pages == goal) }
+                val custom = Choice(host.getString(R.string.goal_custom), on = goals.none { it.first == goal })
+                host.sheet(host.getString(R.string.stats_goal), fixed + custom) { i ->
+                    if (i < goals.size) setGoal(goals[i].first)
+                    else host.askNumber(
+                        host.getString(R.string.goal_custom_ask),
+                        host.getString(R.string.goal_keep), goal, 1..Mushaf.PAGES, ::setGoal
+                    )
                 }
             }
         }
+    }
+
+    private fun setGoal(pages: Int) {
+        Stats.setGoal(host, pages)
+        build()
     }
 
     // --- khatma ---

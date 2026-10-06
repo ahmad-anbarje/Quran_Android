@@ -90,6 +90,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.8.0")
     // The pager and the index lists
     implementation("androidx.recyclerview:recyclerview:1.4.0")
+    // The index lists, a swipe apart
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     // WindowInsetsControllerCompat for the system bars
     implementation("androidx.core:core-ktx:1.19.0")
     // ExoPlayer seeks accurately in VBR MP3s, where MediaPlayer.seekTo() fails silently

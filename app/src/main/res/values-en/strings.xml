@@ -22,7 +22,11 @@
     <string name="surah_meta_juz">%1$s %2$s</string>
     <string name="surah_meta">%1$s · %2$s</string>
 
-    <string name="tab_index">Surahs</string>
+    <string name="tab_index">Index</string>
+    <string name="tab_search">Search</string>
+    <string name="list_surahs">Surahs</string>
+    <string name="list_hizb">Hizb</string>
+    <string name="list_pages">Pages</string>
     <string name="tab_juz">Juz</string>
     <string name="tab_marks">Bookmarks</string>
     <string name="tab_settings">Settings</string>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One tab of the index switch; its look for on and off is set by IndexPane -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/seg_height"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:maxLines="1"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:textSize="@dimen/seg_text"
+    app:autoSizeTextType="uniform"
+    app:autoSizeMinTextSize="@dimen/icon_label_min"
+    app:autoSizeMaxTextSize="@dimen/seg_text" />

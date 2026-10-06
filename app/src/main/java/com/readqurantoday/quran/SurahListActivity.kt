@@ -17,19 +17,19 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-/** Index screen: surah list (with play+download), bookmarks, and settings. Returns a page number. */
+/** The menu: the index lists, search, places, achievements and settings. Returns a page number. */
 class SurahListActivity : LanguageActivity() {
 
-    /* Pane index matches the nav order: 0=surahs, 1=marks, 2=statistics, 3=settings. */
-    private val paneIds      = intArrayOf(R.id.pane_index, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings)
-    private val navIds       = intArrayOf(R.id.nav_surahs, R.id.nav_marks, R.id.nav_stats, R.id.nav_settings)
-    private val navNames     = intArrayOf(R.string.tab_index, R.string.tab_marks, R.string.tab_achievements, R.string.tab_settings)
-    private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_bookmark, R.drawable.ic_stats, R.drawable.ic_settings)
-    private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
-
+    /* Pane index matches the nav order: 0=index, 1=search, 2=marks, 3=achievements, 4=settings. */
+    private val paneIds      = intArrayOf(R.id.pane_index, R.id.pane_search, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings)
+    private val navIds       = intArrayOf(R.id.nav_surahs, R.id.nav_search, R.id.nav_marks, R.id.nav_stats, R.id.nav_settings)
+    private val navNames     = intArrayOf(R.string.tab_index, R.string.tab_search, R.string.tab_marks, R.string.tab_achievements, R.string.tab_settings)
+    private val iconsFilled  = intArrayOf(R.drawable.ic_surahs, R.drawable.ic_search_filled, R.drawable.ic_bookmark, R.drawable.ic_stats, R.drawable.ic_settings)
+    private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_search, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 
     // Kept, not made anew, so it remembers where its rings stood
     private val statsPane by lazy { StatsPane(this, findViewById(R.id.stats_groups)) }
@@ -43,19 +43,20 @@ class SurahListActivity : LanguageActivity() {
     /* This screen's player listener, kept so it can clear only itself from Recite's slot. */
     private val heard: () -> Unit = { runOnUiThread { refreshLists() } }
 
-    /* The juz being recited changes as the recitation moves, which no state change announces. */
+    /* The juz, hizb and page being recited change as the recitation moves, which no state change announces. */
     private val follow = object : Runnable {
         override fun run() {
-            if (byJuz && Recite.playing != 0) juzAdapter?.notifyDataSetChanged()
-            if (Recite.playing != 0) window.decorView.postDelayed(this, FOLLOW_MS)
+            if (Recite.playing == 0) return
+            index.refresh()
+            window.decorView.postDelayed(this, FOLLOW_MS)
         }
     }
 
     // Read before restyling so weight changes keep the theme's font family
     private val labelFace by lazy { navLabels[0].typeface }
-    private var surahAdapter: SurahAdapter? = null
-    private var byJuz = false
-    private var juzAdapter: JuzAdapter? = null
+    private lateinit var index: IndexPane
+    // Search keeps its own surah list, so typing never disturbs the index
+    private lateinit var found: SurahAdapter
 
     /* The keyboard is up. */
     private var typing = false
@@ -68,7 +69,7 @@ class SurahListActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_index)
-        keepToColumn(R.id.search_head, R.id.segments, R.id.list, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings, R.id.card_resume)
+        keepToColumn(R.id.search_head, R.id.segments, R.id.search_list, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings, R.id.card_resume)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
         watchKeyboard()
@@ -79,11 +80,10 @@ class SurahListActivity : LanguageActivity() {
         navLabels = tabs.map { it.findViewById<TextView>(R.id.nav_label) }
         navLabels.forEachIndexed { i, label -> label.setText(navNames[i]) }
 
+        buildLists()
+        wireSearch()
         navIds.forEachIndexed { i, id -> findViewById<View>(id).setOnClickListener { choose(i) } }
         choose(savedInstanceState?.getInt(TAB) ?: 0)
-
-        buildSurahList()
-        wireSearch()
         wireResume()
     }
 
@@ -124,6 +124,7 @@ class SurahListActivity : LanguageActivity() {
             pane.visibility = if (i == which) View.VISIBLE else View.GONE
         }
         if (paneIds[which] == R.id.pane_stats) statsPane.build(StatsPane.Motion.OPEN)
+        sayKeyboard(paneIds[which] == R.id.pane_search)
         val accent = getColor(R.color.accent)
         val muted  = getColor(R.color.text_mute)
         for (i in navIds.indices) {
@@ -183,93 +184,52 @@ class SurahListActivity : LanguageActivity() {
         window.decorView.removeCallbacks(follow)
     }
 
-    private fun buildSurahList() {
-        val adapter = SurahAdapter(
-            all        = Surahs.list(),
-            names      = Mushaf.nameTypeface(this),
-            onOpen     = { s ->
-                // Already playing: the reader jumps to the current word itself
-                if (Recite.playing == s.id && Recite.wantsToPlay()) answer(0)
-                else answer(s.from)
-            },
-            onPage     = { page -> answer(page) },
-            onVerse    = { surah, ayah -> answer(pageOfAyah(surah, ayah), surah, ayah) },
-            onPlay     = { s ->
-                if (Recite.playing == s.id) Recite.toggle() else Recite.start(this, s.id)
-                refreshLists()
-            },
-            onReciter  = { s -> pickReciter(s) },
-            playingId  = { Recite.playing }
-        )
-        val list = findViewById<RecyclerView>(R.id.list)
-        list.layoutManager = LinearLayoutManager(this)
-        list.adapter = adapter
-        surahAdapter = adapter
-        wireListKind()
+    private fun buildLists() {
+        index = IndexPane(this, surahList(), open = { page -> answer(page) }, pickReciter = ::pickReciter, played = ::refreshLists)
+        found = surahList()
+        findViewById<RecyclerView>(R.id.search_list).apply {
+            layoutManager = LinearLayoutManager(this@SurahListActivity)
+            adapter = found
+        }
     }
 
-    // The list holds the surahs or the thirty juz; searching is about surahs, so typing brings them back
-    private fun wireListKind() {
-        val surahs = findViewById<TextView>(R.id.seg_surahs)
-        val juz = findViewById<TextView>(R.id.seg_juz)
-        surahs.setOnClickListener { showJuz(false) }
-        juz.setOnClickListener { showJuz(true) }
-        showJuz(byJuz)
-    }
+    private fun surahList() = SurahAdapter(
+        all        = Surahs.list(),
+        names      = Mushaf.nameTypeface(this),
+        onOpen     = { s ->
+            // Already playing: the reader jumps to the current word itself
+            if (Recite.playing == s.id && Recite.wantsToPlay()) answer(0)
+            else answer(s.from)
+        },
+        onPage     = { page -> answer(page) },
+        onVerse    = { surah, ayah -> answer(pageOfAyah(surah, ayah), surah, ayah) },
+        onPlay     = { s ->
+            if (Recite.playing == s.id) Recite.toggle() else Recite.start(this, s.id)
+            refreshLists()
+        },
+        onReciter  = { s -> pickReciter(s) },
+        playingId  = { Recite.playing }
+    )
 
     private fun refreshLists() {
-        surahAdapter?.notifyDataSetChanged()
-        juzAdapter?.notifyDataSetChanged()
+        index.refresh()
+        found.notifyDataSetChanged()
         wireResume()
         // Only follows while there is something to follow
         window.decorView.removeCallbacks(follow)
         if (Recite.playing != 0) window.decorView.postDelayed(follow, FOLLOW_MS)
     }
 
-    private fun juzList(): JuzAdapter {
-        val made = juzAdapter ?: JuzAdapter(
-            onOpen     = { page -> answer(page) },
-            onPlay     = { page -> playJuz(page) },
-            onReciter  = { page -> pickReciter(Surahs.ofPage(page)) },
-            // Read from where the recitation actually is, so both lists agree wherever it was started
-            playingJuz = { Surahs.juzOfPage(Recite.playingPage(this)) }
-        )
-        juzAdapter = made
-        return made
-    }
-
-    // A juz is part of a surah's recording, so it plays from its first ayah rather than the surah's
-    private fun playJuz(page: Int) {
-        val juz = Surahs.juzOfPage(page)
-        // Already reciting this juz: the button is a pause, as it is on a surah row
-        if (juz != 0 && juz == Surahs.juzOfPage(Recite.playingPage(this))) {
-            Recite.toggle()
-            refreshLists()
-            return
-        }
-        val surah = if (Ayat.ready) Ayat.surahAt(page) else Surahs.ofPage(page)?.id ?: 0
-        if (surah <= 0) return
-        val ayah = if (Ayat.ready) Ayat.ayahAt(page).coerceAtLeast(1) else 1
-        val voice = Recite.chosen(this)?.id
-        val from = voice?.let { Timing.of(this, surah, it)?.startOf(ayah) } ?: 0
-        Recite.start(this, surah, from)
-        refreshLists()
-    }
-
-    /* The switch's own face, read before the first bolding, so the app font survives it. */
-    private val segFace by lazy { findViewById<TextView>(R.id.seg_surahs).typeface }
-
-    private fun showJuz(on: Boolean) {
-        byJuz = on
-        val list = findViewById<RecyclerView>(R.id.list)
-        list.adapter = if (on) juzList() else surahAdapter
-        for ((seg, isOn) in listOf(R.id.seg_surahs to !on, R.id.seg_juz to on)) {
-            findViewById<TextView>(seg).apply {
-                setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-                setTextColor(getColor(if (isOn) R.color.accent else R.color.text_mute))
-                // Built from the theme's own face: defaultFromStyle would put the system font here
-                typeface = Typeface.create(segFace, if (isOn) Typeface.BOLD else Typeface.NORMAL)
-            }
+    // The search tab opens ready to type; any other tab puts the keyboard away
+    private fun sayKeyboard(searching: Boolean) {
+        val box = findViewById<EditText>(R.id.search)
+        val keys = WindowInsetsControllerCompat(window, box)
+        if (searching) {
+            box.requestFocus()
+            keys.show(WindowInsetsCompat.Type.ime())
+        } else {
+            box.clearFocus()
+            keys.hide(WindowInsetsCompat.Type.ime())
         }
     }
 
@@ -285,8 +245,7 @@ class SurahListActivity : LanguageActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                if (byJuz && !s.isNullOrEmpty()) showJuz(false)
-                surahAdapter?.submit(s?.toString().orEmpty())
+                found.submit(s?.toString().orEmpty())
             }
         })
     }
@@ -325,7 +284,7 @@ class SurahListActivity : LanguageActivity() {
         ) { i ->
             Recite.choose(this, voices[i].id)
             if (Recite.playing != 0) Recite.start(this, Recite.playing)
-            surahAdapter?.notifyDataSetChanged()
+            refreshLists()
         }
     }
 
@@ -353,7 +312,7 @@ class SurahListActivity : LanguageActivity() {
     }
 
     companion object {
-        // The juz rows follow the recitation across juz boundaries
+        // The juz, hizb and page rows follow the recitation across their boundaries
         private const val FOLLOW_MS = 1000L
 
         const val PAGE = "page"

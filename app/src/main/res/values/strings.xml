@@ -35,7 +35,12 @@
     <!-- Arabic noun forms change with the count; the figure arrives as an Arabic-numeral string -->
 
     <!-- Bottom nav tabs. -->
-    <string name="tab_index">السور</string>
+    <!-- The first tab: surahs, juz, hizb and pages -->
+    <string name="tab_index">الفهرس</string>
+    <string name="tab_search">البحث</string>
+    <string name="list_surahs">السور</string>
+    <string name="list_hizb">الأحزاب</string>
+    <string name="list_pages">الصفحات</string>
     <string name="tab_juz">الأجزاء</string>
     <string name="tab_marks">المواضع</string>
     <string name="tab_settings">الإعدادات</string>

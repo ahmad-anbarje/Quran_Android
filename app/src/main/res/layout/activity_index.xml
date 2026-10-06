@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- Pane 0: surah list with search. -->
+        <!-- Pane 0: the index, four lists a swipe apart; filled by IndexPane -->
         <LinearLayout
             android:id="@+id/pane_index"
             android:layout_width="match_parent"
@@ -22,7 +22,71 @@
             android:orientation="vertical"
             android:background="@color/surface_2">
 
-            <!-- Head strip is the pane's first child, which paintBars reads for the status bar colour -->
+            <!-- Which list: tap or swipe. First child, so the status bar takes its colour -->
+            <LinearLayout
+                android:id="@+id/segments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:layoutDirection="locale"
+                android:background="@drawable/strip_head"
+                android:paddingStart="@dimen/screen_margin"
+                android:paddingEnd="@dimen/screen_margin"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <include
+                    android:id="@+id/seg_surahs"
+                    layout="@layout/part_seg"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/seg_height"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/seg_juz"
+                    layout="@layout/part_seg"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/seg_height"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp" />
+
+                <include
+                    android:id="@+id/seg_hizb"
+                    layout="@layout/part_seg"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/seg_height"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp" />
+
+                <include
+                    android:id="@+id/seg_pages"
+                    layout="@layout/part_seg"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/seg_height"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
+
+            <!-- Weighted, not match_parent, or the last rows hang below the screen out of reach -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/lists"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layoutDirection="locale" />
+        </LinearLayout>
+
+        <!-- Search: the box, then surahs, pages and ayahs that match -->
+        <LinearLayout
+            android:id="@+id/pane_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/surface_2"
+            android:visibility="gone">
+
+            <!-- First child, which paintBars reads for the status bar colour -->
             <FrameLayout
                 android:id="@+id/search_head"
                 android:layout_width="match_parent"
@@ -69,50 +133,14 @@
             </LinearLayout>
             </FrameLayout>
 
-            <!-- What the list holds: the surahs or the thirty juz -->
-            <LinearLayout
-                android:id="@+id/segments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layoutDirection="locale"
-                android:paddingStart="@dimen/screen_margin"
-                android:paddingEnd="@dimen/screen_margin"
-                android:paddingTop="8dp"
-                android:paddingBottom="4dp">
-
-                <TextView
-                    android:id="@+id/seg_surahs"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="@string/tab_index"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/seg_juz"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="@string/tab_juz"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
             <!-- Weighted, not match_parent, or the last results hang below the screen out of reach -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/search_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:clipToPadding="false"
-                android:paddingBottom="8dp" />
+                android:paddingBottom="@dimen/list_end_pad" />
         </LinearLayout>
 
         <!-- Places pane: recent surahs and saved pages, filled by PlacesPane -->
@@ -259,6 +287,12 @@
 
         <include
             android:id="@+id/nav_surahs"
+            layout="@layout/part_nav_tab"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <include
+            android:id="@+id/nav_search"
             layout="@layout/part_nav_tab"
             android:layout_width="0dp"
             android:layout_height="match_parent"

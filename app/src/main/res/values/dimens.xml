@@ -48,6 +48,11 @@
     <dimen name="row_value">14sp</dimen>
     <dimen name="icon_label">10sp</dimen>
     <dimen name="nav_label">11sp</dimen>
+    <!-- Room under a list's last row -->
+    <dimen name="list_end_pad">8dp</dimen>
+    <!-- The index switch above the lists -->
+    <dimen name="seg_height">36dp</dimen>
+    <dimen name="seg_text">14sp</dimen>
     <dimen name="icon_label_min">7sp</dimen>
     <!-- Smallest the reader bar's juz and page may shrink to under a large font -->
     <dimen name="bar_place_min">8sp</dimen>

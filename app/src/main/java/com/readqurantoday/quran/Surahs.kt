@@ -75,6 +75,9 @@ object Surahs {
     /** First page of each juz, in order; empty until loaded. */
     fun juzStarts(): IntArray = juz
 
+    /** First page of each hizb, in order; empty until loaded. */
+    fun hizbStarts(): IntArray = hizb
+
     /** Which juz this page is in (1–30), or 0 if not yet loaded. */
     fun juzOfPage(page: Int): Int = countUpTo(juz, page)
 

@@ -283,7 +283,7 @@ class SurahListActivity : LanguageActivity() {
             .setText(if (reciting) R.string.resume_reciter else R.string.resume)
 
         val surah = Surahs.ofPage(page)
-        surah?.let { fillSurahTitle(findViewById(R.id.resume_title), it.id, R.dimen.surah_title_row) }
+        surah?.let { fillSurahTitle(findViewById(R.id.resume_title), it.id, R.dimen.surah_title) }
         // The title already names the surah, so the line beside it is only the page
         findViewById<TextView>(R.id.resume_detail).text = getString(R.string.head_page, figures(page, resources))
 

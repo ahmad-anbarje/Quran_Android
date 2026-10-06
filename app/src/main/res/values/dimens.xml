@@ -89,7 +89,10 @@
     <dimen name="tile_disc">34dp</dimen>
     <dimen name="tile_icon">18dp</dimen>
     <dimen name="tile_gap">10dp</dimen>
+    <!-- Room for a tile with a two-line label and a trend chip, so every tile on the tab is one size -->
+    <dimen name="tile_min_height">166dp</dimen>
     <dimen name="trend_icon">14dp</dimen>
+    <dimen name="pill_radius">12dp</dimen>
     <dimen name="section_title">18sp</dimen>
     <dimen name="section_gap">22dp</dimen>
     <!-- Lines the section title up with the cards' own titles -->

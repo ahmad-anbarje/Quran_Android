@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This week against the week before: an arrow up or down, and by how much. Filled by showTrend() -->
+<!-- This week against the week before: an arrow up or down, and by how much; wraps in a narrow tile rather than cutting off. Filled by showTrend() -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:background="@drawable/chip_soft"
+    android:background="@drawable/pill_soft"
     android:paddingStart="8dp"
     android:paddingEnd="10dp"
     android:paddingTop="3dp"
@@ -25,5 +25,5 @@
         android:textColor="@color/accent"
         android:textSize="@dimen/row_meta"
         android:includeFontPadding="false"
-        android:maxLines="1" />
+        android:maxLines="2" />
 </LinearLayout>

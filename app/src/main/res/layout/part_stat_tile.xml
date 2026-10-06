@@ -8,6 +8,7 @@
     android:orientation="vertical"
     android:layoutDirection="locale"
     android:background="@drawable/card_group"
+    android:minHeight="@dimen/tile_min_height"
     android:padding="@dimen/tile_pad">
 
     <FrameLayout

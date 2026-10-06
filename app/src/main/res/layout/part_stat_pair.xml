@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Two tiles side by side, kept to the same margins as the cards -->
+<!-- Two tiles side by side, kept to the same margins as the cards; one minimum height keeps every tile one size -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

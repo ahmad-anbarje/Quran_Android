@@ -47,7 +47,7 @@ Set Build Variants back to **debug** before running the app from Android Studio 
    …
    </en-US>
    ```
-4. **Next** (the "no deobfuscation file" warning is expected: shrinking is off) → **Save and publish**.
+4. **Next** → **Save and publish**. The release build is shrunk with R8, and the bundle carries its own mapping file, so Play needs no separate deobfuscation upload.
 5. Update the app on your phone from Play and check it.
 6. When it's good, add the same build to **Closed testing** (or **Production**):
    **Create new release → Add from library → pick the version**, then

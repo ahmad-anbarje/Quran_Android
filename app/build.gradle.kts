@@ -66,7 +66,10 @@ android {
             applicationIdSuffix = ".dev"
         }
         release {
-            isMinifyEnabled = false
+            // R8: a smaller app, and the code optimisation Play's vitals measure; the bundle carries its own mapping
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (keystore != null) signingConfig = signingConfigs.getByName("upload")
         }
     }

@@ -19,6 +19,8 @@ class SurahAdapter(
     private val onPage: (Int) -> Unit,
     private val onVerse: (Int, Int) -> Unit,
     private val onPlay: (Surahs.Surah) -> Unit,
+    private val onPlayPage: (Int) -> Unit,
+    private val onPlayVerse: (Int, Int) -> Unit,
     private val onReciter: (Surahs.Surah) -> Unit,
     private val playingId: () -> Int
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -103,6 +105,12 @@ class SurahAdapter(
             ctx.getString(R.string.search_ayah_ref, name, figures(a.ayah, ctx.resources))
 
         row.setOnClickListener { onVerse(a.surah, a.ayah) }
+        row.findViewById<View>(R.id.btn_play).setOnClickListener { onPlayVerse(a.surah, a.ayah) }
+        Surahs.list().firstOrNull { it.id == a.surah }?.let { s ->
+            row.findViewById<View>(R.id.btn_reciter).setOnClickListener { onReciter(s) }
+        }
+        val here = Recite.playing == a.surah && Recite.playingAyah(ctx) == a.ayah
+        sayPlayButton(row, playing = here && Recite.wantsToPlay(), waiting = here && Recite.waiting())
     }
 
     private fun bindPage(row: View, page: Int) {
@@ -115,6 +123,10 @@ class SurahAdapter(
             ctx.getString(R.string.search_page_in, surah.name)
         where.visibility = if (surah == null) View.GONE else View.VISIBLE
         row.setOnClickListener { onPage(page) }
+        row.findViewById<View>(R.id.btn_play).setOnClickListener { onPlayPage(page) }
+        Surahs.ofPage(page)?.let { s -> row.findViewById<View>(R.id.btn_reciter).setOnClickListener { onReciter(s) } }
+        val here = Recite.playingPage(ctx) == page
+        sayPlayButton(row, playing = here && Recite.wantsToPlay(), waiting = here && Recite.waiting())
     }
 
     private fun bindSurah(holder: SurahRow, s: Surahs.Surah, position: Int) {

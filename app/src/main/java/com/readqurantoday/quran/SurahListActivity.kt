@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -123,8 +124,14 @@ class SurahListActivity : LanguageActivity() {
         panes.forEachIndexed { i, pane ->
             pane.visibility = if (i == which) View.VISIBLE else View.GONE
         }
-        if (paneIds[which] == R.id.pane_stats) statsPane.build(StatsPane.Motion.OPEN)
-        sayKeyboard(paneIds[which] == R.id.pane_search)
+        // Every tab comes in the same way; achievements also fills its rings, so it brings itself in
+        when (paneIds[which]) {
+            R.id.pane_stats -> statsPane.build(StatsPane.Motion.OPEN)
+            R.id.pane_marks -> findViewById<ViewGroup>(R.id.places_groups).riseChildren()
+            R.id.pane_settings -> findViewById<ViewGroup>(R.id.settings_groups).riseChildren()
+            else -> panes[which].riseWhole()
+        }
+        if (paneIds[which] != R.id.pane_search) putKeyboardAway()
         val accent = getColor(R.color.accent)
         val muted  = getColor(R.color.text_mute)
         for (i in navIds.indices) {
@@ -207,6 +214,16 @@ class SurahListActivity : LanguageActivity() {
             if (Recite.playing == s.id) Recite.toggle() else Recite.start(this, s.id)
             refreshLists()
         },
+        // A second tap on what is already reciting pauses it, as on every row
+        onPlayPage = { page ->
+            if (page == Recite.playingPage(this)) Recite.toggle() else Recite.startPage(this, page)
+            refreshLists()
+        },
+        onPlayVerse = { surah, ayah ->
+            if (Recite.playing == surah && Recite.playingAyah(this) == ayah) Recite.toggle()
+            else Recite.startAyah(this, surah, ayah)
+            refreshLists()
+        },
         onReciter  = { s -> pickReciter(s) },
         playingId  = { Recite.playing }
     )
@@ -220,18 +237,13 @@ class SurahListActivity : LanguageActivity() {
         if (Recite.playing != 0) window.decorView.postDelayed(follow, FOLLOW_MS)
     }
 
-    // The search tab opens ready to type; any other tab puts the keyboard away
-    private fun sayKeyboard(searching: Boolean) {
+    // The search tab keeps its last results and waits for a tap on the box; other tabs put the keyboard away
+    private fun putKeyboardAway() {
         val box = findViewById<EditText>(R.id.search)
-        val keys = WindowInsetsControllerCompat(window, box)
-        if (searching) {
-            box.requestFocus()
-            keys.show(WindowInsetsCompat.Type.ime())
-        } else {
-            box.clearFocus()
-            keys.hide(WindowInsetsCompat.Type.ime())
-        }
+        box.clearFocus()
+        WindowInsetsControllerCompat(window, box).hide(WindowInsetsCompat.Type.ime())
     }
+
 
     // Exact once Ayat has walked the pages; until then the surah's first page
     private fun pageOfAyah(surah: Int, ayah: Int): Int {
@@ -241,11 +253,16 @@ class SurahListActivity : LanguageActivity() {
     }
 
     private fun wireSearch() {
-        findViewById<EditText>(R.id.search).addTextChangedListener(object : TextWatcher {
+        val box = findViewById<EditText>(R.id.search)
+        val clear = findViewById<ImageView>(R.id.search_clear)
+        clear.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
+        clear.setOnClickListener { box.text.clear() }
+        box.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
                 found.submit(s?.toString().orEmpty())
+                clear.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
         })
     }

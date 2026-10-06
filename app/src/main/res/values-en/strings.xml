@@ -19,11 +19,13 @@
     <string name="search_page_in">Surah %1$s</string>
     <string name="search_ayah_ref">%1$s · ayah %2$s</string>
 
-    <string name="surah_meta_juz">%1$s %2$s</string>
+    <string name="juz_range">Juz %1$s–%2$s</string>
+    <string name="pages_range">Pages %1$s–%2$s</string>
     <string name="surah_meta">%1$s · %2$s</string>
 
     <string name="tab_index">Index</string>
     <string name="tab_search">Search</string>
+    <string name="search_clear">Clear search</string>
     <string name="list_surahs">Surahs</string>
     <string name="list_hizb">Hizb</string>
     <string name="list_pages">Pages</string>
@@ -193,12 +195,9 @@
 
     <!-- Statistics -->
     <string name="tab_achievements">My Achievements</string>
-    <string name="stats_today">Today</string>
     <string name="stats_read_time">Reading time</string>
     <string name="stats_listen_time">Listening time</string>
     <string name="stats_none_today">Nothing read yet today</string>
-    <string name="stats_what">What you read today</string>
-    <string name="stats_pages_range">Pages %1$s–%2$s</string>
     <string name="stats_goal">Daily goal</string>
     <string name="stats_goal_none">No goal</string>
     <string name="stats_goal_reached">Today\'s goal reached</string>
@@ -206,7 +205,6 @@
     <string name="stats_goal_juz2">Two juz</string>
     <string name="stats_goal_month">A khatma in about a month</string>
     <string name="stats_goal_half_month">A khatma in about 15 days</string>
-    <string name="stats_khatma">Khatma</string>
     <string name="stats_khatma_read">%1$s of %2$s pages read</string>
     <string name="stats_left">Left</string>
     <string name="stats_finish_unknown">Read for a few days to see when you\'ll finish.</string>
@@ -214,11 +212,9 @@
     <string name="stats_new_khatma">Start a new khatma</string>
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
-    <string name="stats_days">Last %1$s days</string>
     <string name="stats_week">Last %1$s days</string>
     <string name="stats_avg">Daily average</string>
     <string name="stats_chart_desc">Pages read each day for the last %1$s days; most in a day: %2$s</string>
-    <string name="stats_listening">Listening</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
     <string name="stats_private">These numbers stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
     <string name="percent">%1$s%%</string>
@@ -246,4 +242,15 @@
         <item quantity="one">page</item>
         <item quantity="other">pages</item>
     </plurals>
+    <string name="sec_goal">My goal</string>
+    <string name="sec_reading">My reading</string>
+    <string name="sec_khatma">My khatma</string>
+    <string name="sec_listening">My listening</string>
+    <string name="stats_page_avg">Average per page today</string>
+    <string name="stats_page_times">Time on each page today</string>
+    <string name="stats_days">Pages read, last %1$s days</string>
+    <string name="chart_today">Today</string>
+    <string name="chart_goal">Goal</string>
+    <string name="time_s">%1$s s</string>
+    <string name="time_ms">%1$s min %2$s s</string>
 </resources>

@@ -37,10 +37,18 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         val week = fortnight.takeLast(WEEK)
         val before = fortnight.take(WEEK)
 
-        blow.card(into, R.string.stats_today, listOf(todayHero(today, goal, week, before)))
+        val month = Stats.lastDays(host, Stats.CHART_DAYS)
+
+        section(R.string.sec_goal)
+        blow.card(into, 0, listOf(todayHero(today, goal, week, before), goalRow(goal)))
+
+        section(R.string.sec_reading)
+        val read = today.pages
         into.addView(pair(
             Tile(R.drawable.ic_clock, spent(today.readSec, res), host.getString(R.string.stats_read_time)),
-            Tile(R.drawable.ic_headphones, spent(today.listenSec, res), host.getString(R.string.stats_listen_time))
+            Tile(R.drawable.ic_surahs_outline,
+                if (read.isEmpty()) "–" else spentExact(read.sumOf { today.pageSec.getValue(it) } / read.size, res),
+                host.getString(R.string.stats_page_avg))
         ))
         into.addView(pair(
             Tile(R.drawable.ic_calendar,
@@ -50,20 +58,26 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
                 pagesSaid(Stats.average(host, Stats.CHART_DAYS).roundToInt(), res),
                 host.getString(R.string.stats_avg))
         ))
-
-        blow.card(into, 0, listOf(goalRow(goal)))
-        if (today.pages.isNotEmpty()) blow.card(into, R.string.stats_what, readRows(today.pages))
-        blow.card(into, R.string.stats_khatma, khatmaRows())
-
-        val month = Stats.lastDays(host, Stats.CHART_DAYS)
+        if (read.isNotEmpty()) blow.card(into, R.string.stats_page_times, pageRows(today))
         blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
-        blow.card(into, R.string.stats_listening, listeningRows(week, before))
+
+        section(R.string.sec_khatma)
+        blow.card(into, 0, khatmaRows())
+
+        section(R.string.sec_listening)
+        val weekSec = week.sumOf { it.listenSec }
+        into.addView(pair(
+            Tile(R.drawable.ic_headphones, spent(today.listenSec, res), host.getString(R.string.stats_listen_time)),
+            Tile(R.drawable.ic_headphones, spent(weekSec, res), host.getString(R.string.stats_week, figures(WEEK, res))) {
+                // Minutes, not seconds, so a few seconds either way is not called a change
+                showTrend(it, (weekSec + 30) / 60, (before.sumOf { d -> d.listenSec } + 30) / 60)
+            }
+        ))
+        mostHeard(week)?.let { blow.card(into, host.getString(R.string.stats_most_heard, figures(WEEK, res)), it) }
+
         blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
 
-        // Card after card, a beat apart, top first
-        if (moving && motion == Motion.OPEN) {
-            for (i in 0 until into.childCount) into.getChildAt(i).riseIn(i * STAGGER_MS)
-        }
+        if (motion == Motion.OPEN) into.riseChildren()
     }
 
     // --- today ---
@@ -89,18 +103,9 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         }
     }
 
-    /* Pages read in unbroken runs, so 22, 23, 24 reads as one stretch. */
-    private fun readRows(pages: List<Int>): List<View> {
-        val runs = mutableListOf<Pair<Int, Int>>()
-        for (p in pages) {
-            val last = runs.lastOrNull()
-            if (last != null && last.second == p - 1) runs[runs.size - 1] = last.first to p else runs += p to p
-        }
-        return runs.map { (from, to) ->
-            val label = if (from == to) host.getString(R.string.head_page, figures(from, res))
-                else host.getString(R.string.stats_pages_range, figures(from, res), figures(to, res))
-            row(label, pagesSaid(to - from + 1, res), surahsOn(from, to))
-        }
+    // Each page read today, in mushaf order, with how long it was on screen
+    private fun pageRows(today: Stats.Day): List<View> = today.pages.map { page ->
+        row(host.getString(R.string.head_page, figures(page, res)), spentExact(today.pageSec.getValue(page), res), surahsOn(page, page))
     }
 
     // Plain names in the meta line; the calligraphy is for titles
@@ -181,7 +186,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
         val chart = DayBars(host).apply {
             setPadding(pad, pad, pad, pad)
-            show(counts, goal, grow = moving && motion == Motion.OPEN)
+            show(counts, goal, host.getString(R.string.chart_goal), ::dayName, grow = moving && motion == Motion.OPEN)
             contentDescription = host.getString(
                 R.string.stats_chart_desc, figures(month.size, res), pagesSaid(counts.max(), res)
             )
@@ -189,22 +194,16 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         return listOf(chart, row(host.getString(R.string.stats_total), pagesSaid(counts.sum(), res)))
     }
 
+    private fun dayName(ago: Int): String =
+        if (ago == 0) host.getString(R.string.chart_today) else res.getQuantityString(R.plurals.ago_days, ago, figures(ago, res))
+
     // --- listening ---
 
-    private fun listeningRows(week: List<Stats.Day>, before: List<Stats.Day>): List<View> {
+    private fun mostHeard(week: List<Stats.Day>): List<View>? {
         val heard = HashMap<Int, Int>()
         week.forEach { d -> d.surahSec.forEach { (s, sec) -> heard[s] = (heard[s] ?: 0) + sec } }
-        val weekSec = week.sumOf { it.listenSec }
-
-        val rows = mutableListOf<View>()
-        rows += row(host.getString(R.string.stats_week, figures(WEEK, res)), spent(weekSec, res)).also {
-            // Minutes, not seconds, so a few seconds either way is not called a change
-            showTrend(it.findViewById(R.id.prog_trend), (weekSec + 30) / 60, (before.sumOf { d -> d.listenSec } + 30) / 60)
-        }
         val top = heard.entries.sortedByDescending { it.value }.take(TOP_HEARD)
-        if (top.isNotEmpty()) rows += quiet(host.getString(R.string.stats_most_heard, figures(WEEK, res)))
-        top.forEach { (surah, sec) -> rows += heardRow(surah, sec) }
-        return rows
+        return top.map { (surah, sec) -> heardRow(surah, sec) }.ifEmpty { null }
     }
 
     // A surah heading its own row is written as the mushaf writes it
@@ -263,7 +262,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         figuresShown[key] = value
     }
 
-    private data class Tile(val icon: Int, val value: String, val label: String)
+    private class Tile(val icon: Int, val value: String, val label: String, val trend: ((View) -> Unit)? = null)
 
     private fun pair(a: Tile, b: Tile): View =
         blow.inflate(R.layout.part_stat_pair, into, false).apply {
@@ -278,6 +277,14 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         }
         tile.findViewById<TextView>(R.id.tile_value).text = t.value
         tile.findViewById<TextView>(R.id.tile_label).text = t.label
+        t.trend?.invoke(tile.findViewById(R.id.tile_trend))
+    }
+
+    private fun section(title: Int) {
+        (blow.inflate(R.layout.part_section_head, into, false) as TextView).also {
+            it.setText(title)
+            into.addView(it)
+        }
     }
 
     private fun row(label: String, value: String, note: String = ""): View =
@@ -301,7 +308,6 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private companion object {
         const val WEEK = 7
         const val TOP_HEARD = 3
-        const val STAGGER_MS = 60L
         const val TODAY = "today"
         const val KHATMA = "khatma"
     }

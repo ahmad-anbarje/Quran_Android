@@ -243,15 +243,33 @@ object Recite {
 
     fun isPlaying() = player?.isPlaying == true
 
+    /** The ayah of [playing] the recitation is on, or 0 when nothing is playing. */
+    fun playingAyah(context: Context): Int {
+        val surah = playing
+        if (surah == 0) return 0
+        val timing = chosen(context)?.id?.let { Timing.of(context, surah, it) }
+        return timing?.ayahAt(at())?.coerceAtLeast(1) ?: 1
+    }
+
     /** The mushaf page the recitation is on, or 0 when nothing is playing. */
     fun playingPage(context: Context): Int {
         val surah = playing
         if (surah == 0) return 0
-        val voice = chosen(context)?.id
-        val timing = voice?.let { Timing.of(context, surah, it) }
-        val ayah = timing?.ayahAt(at())?.coerceAtLeast(1) ?: 1
-        val page = if (Ayat.ready) Ayat.pageOf(surah, ayah) else 0
+        val page = if (Ayat.ready) Ayat.pageOf(surah, playingAyah(context)) else 0
         return if (page > 0) page else Surahs.list().firstOrNull { it.id == surah }?.from ?: 0
+    }
+
+    /** Recite [surah] from [ayah]: an ayah is a stretch of its surah's recording. */
+    fun startAyah(context: Context, surah: Int, ayah: Int) {
+        val from = chosen(context)?.id?.let { Timing.of(context, surah, it)?.startOf(ayah) } ?: 0
+        start(context, surah, from)
+    }
+
+    /** Recite from the first ayah that begins on [page]. */
+    fun startPage(context: Context, page: Int) {
+        val surah = if (Ayat.ready) Ayat.surahAt(page) else Surahs.ofPage(page)?.id ?: 0
+        if (surah <= 0) return
+        startAyah(context, surah, if (Ayat.ready) Ayat.ayahAt(page).coerceAtLeast(1) else 1)
     }
 
     // Play pressed but no sound yet; shows the spinner

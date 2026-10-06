@@ -42,7 +42,7 @@
             android:paddingTop="@dimen/row_pad_v"
             android:paddingBottom="@dimen/row_pad_v">
 
-            <!-- Baseline-aligned, so the two glyphs sit on one line of writing; always read right to left. -->
+            <!-- Baseline-aligned, so the glyphs and the English name sit on one line of writing; always read right to left. -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,6 +66,16 @@
                     android:textColor="@color/text"
                     android:includeFontPadding="false"
                     android:textSize="@dimen/surah_title" />
+
+                <TextView
+                    android:id="@+id/english"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@color/text_mute"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/row_meta"
+                    android:maxLines="1" />
             </LinearLayout>
 
             <TextView

@@ -30,7 +30,8 @@
     <string name="search_ayah_ref">%1$s · آية %2$s</string>
 
     <!-- The quiet line under a surah's name: its English name, then its length. -->
-    <string name="surah_meta_juz">%1$s %2$s</string>
+    <string name="juz_range">الجزء %1$s–%2$s</string>
+    <string name="pages_range">الصفحات %1$s–%2$s</string>
     <string name="surah_meta">%1$s · %2$s</string>
     <!-- Arabic noun forms change with the count; the figure arrives as an Arabic-numeral string -->
 
@@ -38,6 +39,7 @@
     <!-- The first tab: surahs, juz, hizb and pages -->
     <string name="tab_index">الفهرس</string>
     <string name="tab_search">البحث</string>
+    <string name="search_clear">مسح البحث</string>
     <string name="list_surahs">السور</string>
     <string name="list_hizb">الأحزاب</string>
     <string name="list_pages">الصفحات</string>
@@ -233,12 +235,9 @@
     <!-- Statistics: kept on the phone only. Figures arrive already written in Arabic figures -->
     <!-- The tab of reading and listening numbers, told as what the reader has done -->
     <string name="tab_achievements">إنجازي</string>
-    <string name="stats_today">اليوم</string>
     <string name="stats_read_time">وقت القراءة</string>
     <string name="stats_listen_time">وقت الاستماع</string>
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
-    <string name="stats_what">ما قرأت اليوم</string>
-    <string name="stats_pages_range">الصفحات %1$s–%2$s</string>
     <string name="stats_goal">الهدف اليومي</string>
     <string name="stats_goal_none">بلا هدف</string>
     <string name="stats_goal_reached">بلغت هدف اليوم</string>
@@ -246,7 +245,6 @@
     <string name="stats_goal_juz2">جزءان</string>
     <string name="stats_goal_month">ختمة في شهر تقريبًا</string>
     <string name="stats_goal_half_month">ختمة في نحو ١٥ يومًا</string>
-    <string name="stats_khatma">الختمة</string>
     <string name="stats_khatma_read">قرأت %1$s من %2$s صفحة</string>
     <string name="stats_left">المتبقي</string>
     <string name="stats_finish_unknown">اقرأ بضعة أيام ليظهر موعد الختم المتوقع.</string>
@@ -254,11 +252,9 @@
     <string name="stats_new_khatma">ابدأ ختمة جديدة</string>
     <string name="stats_new_khatma_ask">تبدأ الختمة من أولها، وتبقى الختمات المكتملة محسوبة.</string>
     <string name="stats_new_khatma_do">ابدأ من جديد</string>
-    <string name="stats_days">آخر %1$s يومًا</string>
     <string name="stats_week">آخر %1$s أيام</string>
     <string name="stats_avg">المعدل اليومي</string>
     <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s يومًا، وأكثرها في يوم %2$s</string>
-    <string name="stats_listening">الاستماع</string>
     <string name="stats_most_heard">الأكثر استماعًا في آخر %1$s أيام</string>
     <string name="stats_private">تُحفظ هذه الأرقام في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
     <string name="percent">%1$s٪</string>
@@ -298,4 +294,15 @@
         <item quantity="many">صفحة</item>
         <item quantity="other">صفحة</item>
     </plurals>
+    <string name="sec_goal">هدفي</string>
+    <string name="sec_reading">قراءتي</string>
+    <string name="sec_khatma">ختمتي</string>
+    <string name="sec_listening">استماعي</string>
+    <string name="stats_page_avg">متوسط وقت الصفحة اليوم</string>
+    <string name="stats_page_times">وقت كل صفحة اليوم</string>
+    <string name="stats_days">صفحاتك في آخر %1$s يومًا</string>
+    <string name="chart_today">اليوم</string>
+    <string name="chart_goal">الهدف</string>
+    <string name="time_s">%1$s ث</string>
+    <string name="time_ms">%1$s د %2$s ث</string>
 </resources>

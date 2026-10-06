@@ -24,6 +24,12 @@ abstract class CardsActivity(private val title: Int) : LanguageActivity() {
         cards = findViewById(R.id.cards)
     }
 
+    // Subclasses fill the cards in onCreate, so they are all there to come in by now
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (savedInstanceState == null) cards.riseChildren()
+    }
+
     protected fun sayBars() {
         showBars(roof = groundOf(findViewById(R.id.cards_head)), floor = groundOf(findViewById(R.id.cards_root)))
     }

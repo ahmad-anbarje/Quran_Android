@@ -77,4 +77,10 @@
     <dimen name="tile_icon">18dp</dimen>
     <dimen name="tile_gap">10dp</dimen>
     <dimen name="trend_icon">14dp</dimen>
+    <dimen name="section_title">18sp</dimen>
+    <dimen name="section_gap">22dp</dimen>
+    <!-- Lines the section title up with the cards' own titles -->
+    <dimen name="section_inset">18dp</dimen>
+    <dimen name="chart_label">10sp</dimen>
+    <dimen name="chart_gap">6dp</dimen>
 </resources>

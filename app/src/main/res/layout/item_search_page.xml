@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Page result, built like the resume strip since it also jumps to a page -->
+<!-- Page result: opens the page, or recites from it, as a surah row does -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:baselineAligned="false"
     android:gravity="center_vertical"
     android:layoutDirection="locale"
     android:background="@drawable/row_bg"
     android:paddingStart="@dimen/screen_margin"
-    android:paddingEnd="@dimen/screen_margin"
-    android:paddingTop="9dp"
-    android:paddingBottom="9dp"
+    android:paddingEnd="6dp"
     android:clickable="true"
     android:focusable="true">
 
@@ -28,12 +27,15 @@
             android:contentDescription="@null" />
     </FrameLayout>
 
+    <!-- Padding here so the buttons can match the full row height -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="6dp"
+        android:paddingTop="@dimen/row_pad_v"
+        android:paddingBottom="@dimen/row_pad_v"
         android:orientation="vertical">
 
         <TextView
@@ -59,10 +61,5 @@
             android:ellipsize="end" />
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:src="@drawable/ic_chevron"
-        android:tint="@color/text_mute"
-        android:contentDescription="@null" />
+    <include layout="@layout/part_row_actions" />
 </LinearLayout>

@@ -1,42 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Ayah result: the plain searchable text leads, the reference follows -->
+<!-- Ayah result: the plain searchable text leads, the reference follows; play recites from this ayah -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layoutDirection="locale"
     android:background="@drawable/row_bg"
-    android:paddingStart="@dimen/screen_margin"
-    android:paddingEnd="@dimen/screen_margin"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/ayah_text"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/text"
-        android:textSize="14sp"
-        android:textDirection="rtl"
-        android:lineSpacingExtra="3dp"
-        android:maxLines="2"
-        android:ellipsize="end" />
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:layoutDirection="locale"
+        android:paddingStart="@dimen/screen_margin"
+        android:paddingEnd="6dp">
 
-    <TextView
-        android:id="@+id/ayah_ref"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/accent"
-        android:textSize="@dimen/row_meta"
-        android:includeFontPadding="false"
-        android:maxLines="1" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ayah_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text"
+                android:textSize="14sp"
+                android:textDirection="rtl"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/ayah_ref"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/accent"
+                android:textSize="@dimen/row_meta"
+                android:includeFontPadding="false"
+                android:maxLines="1" />
+        </LinearLayout>
+
+        <include layout="@layout/part_row_actions" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="10dp"
         android:background="@color/line" />
 </LinearLayout>

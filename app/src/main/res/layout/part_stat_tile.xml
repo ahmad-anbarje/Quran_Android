@@ -40,4 +40,12 @@
         android:textColor="@color/text_mute"
         android:textSize="@dimen/row_meta"
         android:maxLines="2" />
+
+    <include
+        android:id="@+id/tile_trend"
+        layout="@layout/part_trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:visibility="gone" />
 </LinearLayout>

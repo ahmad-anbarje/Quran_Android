@@ -81,21 +81,11 @@ class IndexPane(
         return host.getString(R.string.place_line, host.getString(R.string.surah_named, surah.name), after)
     }
 
-    // A part is a stretch of a surah's recording, so it plays from its first ayah rather than the surah's
     private fun play(page: Int, numberOf: (Int) -> Int) {
         val here = numberOf(page)
         // Already reciting this part: the button is a pause, as it is on a surah row
-        if (here != 0 && here == numberOf(Recite.playingPage(host))) {
-            Recite.toggle()
-            played()
-            return
-        }
-        val surah = if (Ayat.ready) Ayat.surahAt(page) else Surahs.ofPage(page)?.id ?: 0
-        if (surah <= 0) return
-        val ayah = if (Ayat.ready) Ayat.ayahAt(page).coerceAtLeast(1) else 1
-        val voice = Recite.chosen(host)?.id
-        val from = voice?.let { Timing.of(host, surah, it)?.startOf(ayah) } ?: 0
-        Recite.start(host, surah, from)
+        if (here != 0 && here == numberOf(Recite.playingPage(host))) Recite.toggle()
+        else Recite.startPage(host, page)
         played()
     }
 

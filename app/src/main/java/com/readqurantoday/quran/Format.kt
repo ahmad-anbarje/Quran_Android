@@ -37,3 +37,8 @@ fun spent(sec: Int, resources: Resources): String {
         else -> resources.getString(R.string.time_hm, figures(minutes / 60, resources), figures(minutes % 60, resources))
     }
 }
+
+/** Time to the second, for one page: "45 s", or minutes and seconds. */
+fun spentExact(sec: Int, resources: Resources): String =
+    if (sec < 60) resources.getString(R.string.time_s, figures(sec, resources))
+    else resources.getString(R.string.time_ms, figures(sec / 60, resources), figures(sec % 60, resources))

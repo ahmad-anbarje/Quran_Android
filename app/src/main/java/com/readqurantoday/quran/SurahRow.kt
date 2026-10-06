@@ -2,7 +2,6 @@ package com.readqurantoday.quran
 
 import android.graphics.Paint
 import android.graphics.Typeface
-import android.text.BidiFormatter
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -18,6 +17,7 @@ class SurahRow(v: View, names: Typeface?) : RecyclerView.ViewHolder(v) {
     val num: TextView  = v.findViewById(R.id.num)
     val word: TextView = v.findViewById(R.id.word)
     val name: TextView = v.findViewById(R.id.name)
+    private val english: TextView = v.findViewById(R.id.english)
     val meta: TextView = v.findViewById(R.id.meta)
 
     /* Containers are the click targets; ImageViews are for icon/tint changes. */
@@ -36,14 +36,20 @@ class SurahRow(v: View, names: Typeface?) : RecyclerView.ViewHolder(v) {
         name.text = String(Character.toChars(Mushaf.nameCode(s.id)))
         name.contentDescription = res.getString(R.string.surah_named, s.name)
 
-        // Isolated so bidi does not pull the juz into the English run
-        val english = BidiFormatter.getInstance().unicodeWrap(s.english)
-        val juz = res.getString(R.string.head_juz, figures(Surahs.juzOfPage(s.from), res))
+        english.text = s.english
+
+        // Where it lies: its juz, then the pages it spans
+        val from = Surahs.juzOfPage(s.from)
+        val to = Surahs.juzOfPage(s.to)
+        val juz = if (from == to) res.getString(R.string.head_juz, figures(from, res))
+            else res.getString(R.string.juz_range, figures(from, res), figures(to, res))
+        val pages = if (s.from == s.to) res.getString(R.string.head_page, figures(s.from, res))
+            else res.getString(R.string.pages_range, figures(s.from, res), figures(s.to, res))
         // The juz is for finding your way, so it stands out in the accent
-        val line = SpannableString(res.getString(R.string.surah_meta_juz, english, juz))
-        val at = line.lastIndexOf(juz)
-        line.setSpan(ForegroundColorSpan(itemView.context.getColor(R.color.accent)), at, at + juz.length, 0)
-        line.setSpan(StyleSpan(Typeface.BOLD), at, at + juz.length, 0)
+        // A wide space, not a dot, after the juz figure: see head_pair
+        val line = SpannableString(res.getString(R.string.head_pair, juz, pages))
+        line.setSpan(ForegroundColorSpan(itemView.context.getColor(R.color.accent)), 0, juz.length, 0)
+        line.setSpan(StyleSpan(Typeface.BOLD), 0, juz.length, 0)
         meta.text = line
     }
 

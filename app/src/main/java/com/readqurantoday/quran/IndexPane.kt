@@ -96,12 +96,10 @@ class IndexPane(
         override fun getItemCount() = lists.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Page(
-            RecyclerView(parent.context).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            (host.layoutInflater.inflate(R.layout.part_list, parent, false) as RecyclerView).apply {
                 layoutManager = LinearLayoutManager(parent.context)
-                clipToPadding = false
-                setPaddingRelative(0, 0, 0, res.getDimensionPixelSize(R.dimen.list_end_pad))
                 keepToColumn()
+                addHandle()
             }
         )
 

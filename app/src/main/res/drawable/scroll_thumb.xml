@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The thin scrollbar on every scrolling screen: a soft pill in the muted text colour -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/scroll_thumb" />
+    <corners android:radius="2dp" />
+    <size android:width="@dimen/scroll_thin" />
+</shape>

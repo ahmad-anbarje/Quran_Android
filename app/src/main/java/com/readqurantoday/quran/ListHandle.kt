@@ -1,0 +1,125 @@
+package com.readqurantoday.quran
+
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.view.MotionEvent
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+/**
+ * A handle to drag a long list by: one size however long the list, shown while it moves and held,
+ * and kept out of the system's edge-swipe so dragging it never goes back.
+ */
+fun RecyclerView.addHandle() {
+    val handle = ListHandle(this)
+    addItemDecoration(handle)
+    addOnItemTouchListener(handle)
+    addOnScrollListener(handle.onScroll)
+}
+
+private class ListHandle(private val list: RecyclerView) : RecyclerView.ItemDecoration(), RecyclerView.OnItemTouchListener {
+
+    private val res = list.resources
+    private val wide = res.getDimension(R.dimen.scroll_handle)
+    private val tall = res.getDimension(R.dimen.scroll_handle_tall)
+    private val inset = res.getDimension(R.dimen.scroll_handle_inset)
+    // Wider than it looks, so a thumb finds it at once
+    private val reach = res.getDimension(R.dimen.row_button)
+
+    private val pill = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val rest = list.context.getColor(R.color.scroll_thumb)
+    private val held = list.context.getColor(R.color.accent)
+    private val box = RectF()
+    private val keepOut = Rect()
+
+    private var shown = false
+    private var dragging = false
+
+    private val hide = Runnable {
+        shown = false
+        list.invalidate()
+    }
+
+    val onScroll = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(view: RecyclerView, dx: Int, dy: Int) {
+            if (dy != 0 || dragging) show()
+        }
+    }
+
+    // Only worth a handle when the list runs well past one screen
+    private fun long() = list.computeVerticalScrollRange() > list.height * 2
+
+    private fun show() {
+        if (!long()) return
+        shown = true
+        list.removeCallbacks(hide)
+        if (!dragging) list.postDelayed(hide, HIDE_MS)
+        list.invalidate()
+    }
+
+    private fun place() {
+        val range = list.computeVerticalScrollRange() - list.computeVerticalScrollExtent()
+        val share = if (range > 0) list.computeVerticalScrollOffset().toFloat() / range else 0f
+        val top = list.paddingTop + inset
+        val travel = list.height - list.paddingBottom - inset - top - tall
+        val y = top + travel * share.coerceIn(0f, 1f)
+        // Always the right edge, in Arabic as in English, where the hand expects a scrollbar
+        val x = list.width - inset - wide
+        box.set(x, y, x + wide, y + tall)
+    }
+
+    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        if (!shown) return
+        place()
+        pill.color = if (dragging) held else rest
+        c.drawRoundRect(box, wide / 2f, wide / 2f, pill)
+        // The system leaves this strip to the handle, rather than taking it as a back swipe
+        keepOut.set((box.centerX() - reach).toInt(), box.top.toInt(), (box.centerX() + reach).toInt(), box.bottom.toInt())
+        ViewCompat.setSystemGestureExclusionRects(list, listOf(keepOut))
+    }
+
+    private fun onHandle(e: MotionEvent): Boolean {
+        if (!shown) return false
+        place()
+        return e.x in box.centerX() - reach..box.centerX() + reach && e.y in box.top - inset..box.bottom + inset
+    }
+
+    override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+        if (e.actionMasked == MotionEvent.ACTION_DOWN && onHandle(e)) {
+            dragging = true
+            // Holding the handle is not a swipe to the next list
+            list.parent?.requestDisallowInterceptTouchEvent(true)
+            list.removeCallbacks(hide)
+            list.invalidate()
+            return true
+        }
+        return false
+    }
+
+    override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+        when (e.actionMasked) {
+            MotionEvent.ACTION_MOVE -> {
+                val top = list.paddingTop + inset + tall / 2f
+                val bottom = list.height - list.paddingBottom - inset - tall / 2f
+                val share = ((e.y - top) / (bottom - top)).coerceIn(0f, 1f)
+                val count = list.adapter?.itemCount ?: return
+                (list.layoutManager as? LinearLayoutManager)
+                    ?.scrollToPositionWithOffset((share * (count - 1)).toInt(), 0)
+                list.invalidate()
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                dragging = false
+                show()
+            }
+        }
+    }
+
+    override fun onRequestDisallowInterceptTouchEvent(disallow: Boolean) = Unit
+
+    private companion object {
+        const val HIDE_MS = 1200L
+    }
+}

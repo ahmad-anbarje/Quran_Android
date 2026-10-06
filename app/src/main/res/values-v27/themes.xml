@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Draws into the camera cutout so showing the bars never resizes the page. Replaces values/Theme.Quran, so every item is repeated -->
+<!-- Draws into the camera cutout so showing the bars never resizes the page -->
 <resources>
-    <style name="Theme.Quran" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/paper</item>
-        <item name="android:fontFamily">@font/cairo</item>
+    <style name="Theme.Quran" parent="Base.Theme.Quran">
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 </resources>

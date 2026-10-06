@@ -54,6 +54,11 @@
     <dimen name="nav_label">11sp</dimen>
     <!-- Room under a list's last row -->
     <dimen name="list_end_pad">8dp</dimen>
+    <!-- Scrollbars: the thin one, and the handle a long list can be dragged by -->
+    <dimen name="scroll_thin">4dp</dimen>
+    <dimen name="scroll_handle">6dp</dimen>
+    <dimen name="scroll_handle_tall">48dp</dimen>
+    <dimen name="scroll_handle_inset">4dp</dimen>
     <!-- The index switch above the lists -->
     <dimen name="seg_height">36dp</dimen>
     <dimen name="seg_text">14sp</dimen>

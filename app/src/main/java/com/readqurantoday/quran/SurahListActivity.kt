@@ -193,14 +193,14 @@ class SurahListActivity : LanguageActivity() {
 
     private fun buildLists() {
         index = IndexPane(this, surahList(), open = { page -> answer(page) }, pickReciter = ::pickReciter, played = ::refreshLists)
-        found = surahList()
+        found = surahList(blankShowsAll = false)
         findViewById<RecyclerView>(R.id.search_list).apply {
             layoutManager = LinearLayoutManager(this@SurahListActivity)
             adapter = found
         }
     }
 
-    private fun surahList() = SurahAdapter(
+    private fun surahList(blankShowsAll: Boolean = true) = SurahAdapter(
         all        = Surahs.list(),
         names      = Mushaf.nameTypeface(this),
         onOpen     = { s ->
@@ -225,7 +225,8 @@ class SurahListActivity : LanguageActivity() {
             refreshLists()
         },
         onReciter  = { s -> pickReciter(s) },
-        playingId  = { Recite.playing }
+        playingId  = { Recite.playing },
+        blankShowsAll = blankShowsAll
     )
 
     private fun refreshLists() {
@@ -256,6 +257,7 @@ class SurahListActivity : LanguageActivity() {
         val box = findViewById<EditText>(R.id.search)
         val clear = findViewById<ImageView>(R.id.search_clear)
         clear.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
+        val empty = findViewById<View>(R.id.search_empty)
         clear.setOnClickListener { box.text.clear() }
         box.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -263,6 +265,7 @@ class SurahListActivity : LanguageActivity() {
             override fun afterTextChanged(s: Editable?) {
                 found.submit(s?.toString().orEmpty())
                 clear.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                empty.visibility = if (s.isNullOrEmpty()) View.VISIBLE else View.GONE
             }
         })
     }

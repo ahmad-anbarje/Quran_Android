@@ -22,7 +22,9 @@ class SurahAdapter(
     private val onPlayPage: (Int) -> Unit,
     private val onPlayVerse: (Int, Int) -> Unit,
     private val onReciter: (Surahs.Surah) -> Unit,
-    private val playingId: () -> Int
+    private val playingId: () -> Int,
+    // The index shows every surah until something is typed; search shows nothing until then
+    private val blankShowsAll: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -39,12 +41,12 @@ class SurahAdapter(
     class Verse(v: View) : RecyclerView.ViewHolder(v)
 
     private val whole = all.map { Search.Hit.Name(it) }
-    private var shown: List<Search.Hit> = whole
+    private var shown: List<Search.Hit> = if (blankShowsAll) whole else emptyList()
 
-    /** Hand the box's contents over; an unnarrowed box shows the whole index. */
+    /** Hand the box's contents over; an empty box shows the whole index, or nothing. */
     fun submit(query: String) {
         val plan = Search.plan(query, all)
-        shown = plan.ifEmpty { whole }
+        shown = plan.ifEmpty { if (blankShowsAll) whole else emptyList() }
         notifyDataSetChanged()
     }
 

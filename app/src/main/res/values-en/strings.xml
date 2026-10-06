@@ -26,6 +26,7 @@
     <string name="tab_index">Index</string>
     <string name="tab_search">Search</string>
     <string name="search_clear">Clear search</string>
+    <string name="search_empty">Search by surah name, page number, or words from an ayah</string>
     <string name="list_surahs">Surahs</string>
     <string name="list_hizb">Hizb</string>
     <string name="list_pages">Pages</string>

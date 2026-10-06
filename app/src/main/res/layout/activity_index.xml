@@ -147,6 +147,20 @@
             </LinearLayout>
             </FrameLayout>
 
+            <!-- What can be searched, until something is typed -->
+            <TextView
+                android:id="@+id/search_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/section_inset"
+                android:paddingEnd="@dimen/section_inset"
+                android:paddingTop="@dimen/section_gap"
+                android:gravity="center"
+                android:text="@string/search_empty"
+                android:textColor="@color/text_mute"
+                android:textSize="@dimen/row_title"
+                android:lineSpacingMultiplier="1.3" />
+
             <!-- Weighted, not match_parent, or the last results hang below the screen out of reach -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/search_list"

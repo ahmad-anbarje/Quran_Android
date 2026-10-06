@@ -40,6 +40,7 @@
     <string name="tab_index">الفهرس</string>
     <string name="tab_search">البحث</string>
     <string name="search_clear">مسح البحث</string>
+    <string name="search_empty">ابحث باسم سورة، أو رقم صفحة، أو كلمات من آية</string>
     <string name="list_surahs">السور</string>
     <string name="list_hizb">الأحزاب</string>
     <string name="list_pages">الصفحات</string>

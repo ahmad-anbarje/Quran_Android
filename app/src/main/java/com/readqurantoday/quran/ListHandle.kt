@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,8 +27,8 @@ private class ListHandle(private val list: RecyclerView) : RecyclerView.ItemDeco
     private val wide = res.getDimension(R.dimen.scroll_handle)
     private val tall = res.getDimension(R.dimen.scroll_handle_tall)
     private val inset = res.getDimension(R.dimen.scroll_handle_inset)
-    // Wider than it looks, so a thumb finds it at once
-    private val reach = res.getDimension(R.dimen.row_button)
+    // A little wider than it looks, but only at the edge, so a flick through the list never takes it
+    private val reach = res.getDimension(R.dimen.scroll_handle_reach)
 
     private val pill = Paint(Paint.ANTI_ALIAS_FLAG)
     private val rest = list.context.getColor(R.color.scroll_thumb)
@@ -66,8 +67,9 @@ private class ListHandle(private val list: RecyclerView) : RecyclerView.ItemDeco
         val top = list.paddingTop + inset
         val travel = list.height - list.paddingBottom - inset - top - tall
         val y = top + travel * share.coerceIn(0f, 1f)
-        // Always the right edge, in Arabic as in English, where the hand expects a scrollbar
-        val x = list.width - inset - wide
+        // The side Android gives a scrollbar: left in Arabic, right in English
+        val rtl = list.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val x = if (rtl) inset else list.width - inset - wide
         box.set(x, y, x + wide, y + tall)
     }
 
@@ -77,15 +79,20 @@ private class ListHandle(private val list: RecyclerView) : RecyclerView.ItemDeco
         pill.color = if (dragging) held else rest
         c.drawRoundRect(box, wide / 2f, wide / 2f, pill)
         // The system leaves this strip to the handle, rather than taking it as a back swipe
-        keepOut.set((box.centerX() - reach).toInt(), box.top.toInt(), (box.centerX() + reach).toInt(), box.bottom.toInt())
+        keepOut.set(edgeStart(), box.top.toInt(), edgeStart() + reach.toInt(), box.bottom.toInt())
         ViewCompat.setSystemGestureExclusionRects(list, listOf(keepOut))
     }
 
     private fun onHandle(e: MotionEvent): Boolean {
         if (!shown) return false
         place()
-        return e.x in box.centerX() - reach..box.centerX() + reach && e.y in box.top - inset..box.bottom + inset
+        val from = edgeStart().toFloat()
+        return e.x in from..from + reach && e.y in box.top - inset..box.bottom + inset
     }
+
+    // Where the touch strip begins: the screen edge on the handle's side
+    private fun edgeStart(): Int =
+        if (list.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0 else (list.width - reach).toInt()
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
         if (e.actionMasked == MotionEvent.ACTION_DOWN && onHandle(e)) {

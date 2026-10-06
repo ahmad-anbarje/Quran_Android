@@ -59,6 +59,8 @@
     <dimen name="scroll_handle">6dp</dimen>
     <dimen name="scroll_handle_tall">48dp</dimen>
     <dimen name="scroll_handle_inset">4dp</dimen>
+    <!-- The strip at the edge that takes hold of the handle -->
+    <dimen name="scroll_handle_reach">28dp</dimen>
     <!-- The index switch above the lists -->
     <dimen name="seg_height">36dp</dimen>
     <dimen name="seg_text">14sp</dimen>

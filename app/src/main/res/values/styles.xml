@@ -16,8 +16,4 @@
     </style>
 
 
-    <!-- A screen that scrolls: its bar on the right in Arabic too, like the list handles -->
-    <style name="RightScroll" parent="android:Widget.ScrollView">
-        <item name="android:verticalScrollbarPosition">right</item>
-    </style>
 </resources>

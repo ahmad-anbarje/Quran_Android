@@ -5,9 +5,8 @@
         <!-- Paper before the first draw, so nothing flashes -->
         <item name="android:windowBackground">@color/paper</item>
         <item name="android:fontFamily">@font/cairo</item>
-        <!-- One scrollbar look for every scrolling screen, on the right as the list handles are -->
+        <!-- One scrollbar look for every scrolling screen; Android puts it on the reading side's end -->
         <item name="android:scrollbarThumbVertical">@drawable/scroll_thumb</item>
-        <item name="android:scrollViewStyle">@style/RightScroll</item>
     </style>
 
     <!-- values-v27 adds cutout drawing on top of the same base -->

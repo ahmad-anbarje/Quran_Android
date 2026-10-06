@@ -83,6 +83,8 @@
     <dimen name="ring_stroke">8dp</dimen>
     <dimen name="hero_value">26sp</dimen>
     <dimen name="tile_value">20sp</dimen>
+    <!-- A long figure, such as hours and minutes, shrinks to this rather than being cut -->
+    <dimen name="tile_value_min">12sp</dimen>
     <dimen name="tile_pad">14dp</dimen>
     <dimen name="tile_disc">34dp</dimen>
     <dimen name="tile_icon">18dp</dimen>

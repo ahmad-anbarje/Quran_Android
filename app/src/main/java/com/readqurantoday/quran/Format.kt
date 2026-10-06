@@ -24,21 +24,30 @@ fun ago(at: Long, resources: Resources): String {
     }
 }
 
-/** "12 pages", in the locale's figures and Arabic's count forms. */
+/** "12 pages", in the locale's figures and Arabic's count forms; none is a dash. */
 fun pagesSaid(n: Int, resources: Resources): String =
-    resources.getQuantityString(R.plurals.pages_count, n, figures(n, resources))
+    if (n == 0) none(resources) else resources.getQuantityString(R.plurals.pages_count, n, figures(n, resources))
 
-/** Time spent, to the minute: "24 minutes", or hours and minutes past an hour. */
+/** Nothing yet, as a dash: an Arabic zero is a lone dot, which reads as stray punctuation. */
+fun none(resources: Resources): String = resources.getString(R.string.none_yet)
+
+/** Time spent, to the minute, in words: "24 minutes", or "2 hours and 10 minutes" past an hour. */
 fun spent(sec: Int, resources: Resources): String {
     val minutes = (sec + 30) / 60
-    return when {
-        minutes == 0 && sec > 0 -> resources.getString(R.string.time_under_minute)
-        minutes < 60 -> resources.getQuantityString(R.plurals.minutes_count, minutes, figures(minutes, resources))
-        else -> resources.getString(R.string.time_hm, figures(minutes / 60, resources), figures(minutes % 60, resources))
-    }
+    if (minutes == 0) return if (sec > 0) resources.getString(R.string.time_under_minute) else none(resources)
+    if (minutes < 60) return counted(R.plurals.minutes_count, minutes, resources)
+    return joined(counted(R.plurals.hours_count, minutes / 60, resources), R.plurals.minutes_count, minutes % 60, resources)
 }
 
-/** Time to the second, for one page: "45 s", or minutes and seconds. */
-fun spentExact(sec: Int, resources: Resources): String =
-    if (sec < 60) resources.getString(R.string.time_s, figures(sec, resources))
-    else resources.getString(R.string.time_ms, figures(sec / 60, resources), figures(sec % 60, resources))
+/** Time to the second, for one page: "45 seconds", or "3 minutes and 51 seconds". */
+fun spentExact(sec: Int, resources: Resources): String {
+    if (sec < 60) return counted(R.plurals.seconds_count, sec, resources)
+    return joined(counted(R.plurals.minutes_count, sec / 60, resources), R.plurals.seconds_count, sec % 60, resources)
+}
+
+private fun counted(plural: Int, n: Int, resources: Resources): String =
+    resources.getQuantityString(plural, n, figures(n, resources))
+
+// The larger amount, then "and" the smaller one unless it is nothing
+private fun joined(first: String, plural: Int, n: Int, resources: Resources): String =
+    if (n == 0) first else resources.getString(R.string.time_and, first, counted(plural, n, resources))

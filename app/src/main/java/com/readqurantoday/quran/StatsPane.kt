@@ -53,7 +53,9 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         ))
         into.addView(pair(
             Tile(R.drawable.ic_calendar,
-                host.getString(R.string.of_count, figures(thisMonth.count { it.pages.isNotEmpty() }, res), figures(thisMonth.size, res)),
+                thisMonth.count { it.pages.isNotEmpty() }.let { n ->
+                    if (n == 0) none(res) else host.getString(R.string.of_count, figures(n, res), figures(thisMonth.size, res))
+                },
                 host.getString(R.string.stats_days_read)),
             Tile(R.drawable.ic_stats_outline,
                 pagesSaid((thisMonth.sumOf { it.pages.size }.toFloat() / thisMonth.size).roundToInt(), res),
@@ -99,11 +101,11 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         return hero(
             key = TODAY,
             count = read,
-            say = { figures(it, res) },
-            unit = res.getQuantityString(R.plurals.pages_unit, read),
+            say = { if (it == 0) none(res) else figures(it, res) },
+            unit = if (read == 0) "" else res.getQuantityString(R.plurals.pages_unit, read),
             title = host.getString(R.string.stats_pages_today),
             line = when {
-                goal == 0 && read == 0 -> host.getString(R.string.stats_none_today)
+                read == 0 -> host.getString(R.string.stats_none_today)
                 goal == 0 -> pagesSaid(read, res)
                 read >= goal -> host.getString(R.string.stats_goal_reached)
                 else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
@@ -137,17 +139,21 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         val monthSec = thisMonth.sumOf { onPages(it) }
         val rows = mutableListOf(
             row(host.getString(R.string.stats_page_avg),
-                if (today.pages.isEmpty()) "–" else spentExact(onPages(today) / today.pages.size, res)),
+                if (today.pages.isEmpty()) none(res) else perPage(onPages(today) / today.pages.size)),
             row(host.getString(R.string.stats_page_avg_month),
-                if (monthPages == 0) "–" else spentExact(monthSec / monthPages, res)),
+                if (monthPages == 0) none(res) else perPage(monthSec / monthPages)),
+            // A rate, not a promise: what the month's pace would come to over an hour
             row(host.getString(R.string.stats_per_hour),
-                if (monthSec == 0) "–" else pagesSaid((monthPages * 3600f / monthSec).roundToInt(), res))
+                if (monthSec == 0) none(res) else pagesSaid((monthPages * 3600f / monthSec).roundToInt(), res),
+                host.getString(R.string.stats_per_hour_note))
         )
         if (today.pages.isNotEmpty()) rows += action(
             host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))
         ) { host.startActivity(android.content.Intent(host, PageTimesActivity::class.java)) }
         return rows
     }
+
+    private fun perPage(sec: Int) = host.getString(R.string.per_page, spentExact(sec, res))
 
     // Time on the pages that were read, leaving out pages only passed over
     private fun onPages(day: Stats.Day): Int = day.pages.sumOf { day.pageSec.getValue(it) }
@@ -191,11 +197,12 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         rows += hero(
             key = KHATMA,
             count = k.read * 100 / all,
-            say = { host.getString(R.string.percent, figures(it, res)) },
+            say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
             unit = "",
             // The card is already headed «khatma»
             title = "",
-            line = host.getString(R.string.stats_khatma_read, figures(k.read, res), figures(all, res)),
+            line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
+                else host.getString(R.string.stats_khatma_read, pagesSaid(k.read, res), figures(all, res)),
             note = finish
         ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
         rows += row(host.getString(R.string.stats_left), pagesSaid(all - k.read, res))
@@ -227,7 +234,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
                 R.string.stats_chart_desc, figures(month.size, res), pagesSaid(counts.max(), res)
             )
         }
-        return listOf(chart, row(host.getString(R.string.stats_total), pagesSaid(counts.sum(), res)))
+        return listOf(chart, row(host.getString(R.string.stats_total, figures(month.size, res)), pagesSaid(counts.sum(), res)))
     }
 
     private fun dayName(ago: Int): String =
@@ -265,13 +272,17 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             setImageResource(if (up) R.drawable.ic_trend_up else R.drawable.ic_trend_down)
             imageTintList = ColorStateList.valueOf(host.getColor(R.color.accent))
         }
+        // The arrow already says up or down, so the chip says only by how much; a screen reader hears it whole
+        val pct = if (then == 0) "" else host.getString(R.string.percent, figures(kotlin.math.abs(now - then) * 100 / then, res))
         chip.findViewById<TextView>(R.id.trend_text).text = when {
             now == then -> host.getString(R.string.trend_same)
             then == 0 -> host.getString(R.string.trend_new)
-            else -> {
-                val pct = host.getString(R.string.percent, figures(kotlin.math.abs(now - then) * 100 / then, res))
-                host.getString(if (up) R.string.trend_up else R.string.trend_down, pct)
-            }
+            else -> host.getString(R.string.trend_by, pct)
+        }
+        chip.contentDescription = when {
+            now == then -> host.getString(R.string.trend_same)
+            then == 0 -> host.getString(R.string.trend_new)
+            else -> host.getString(if (up) R.string.trend_up else R.string.trend_down, pct)
         }
     }
 

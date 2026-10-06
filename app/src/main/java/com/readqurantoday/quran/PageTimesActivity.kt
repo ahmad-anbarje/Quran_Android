@@ -4,27 +4,65 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 
-/** Every page read today with the time it took, in mushaf order: a screen of its own, since a day may hold hundreds. */
+/** Every page read today with the time it took: a screen of its own, since a day may hold hundreds. */
 class PageTimesActivity : CardsActivity(R.string.stats_page_times) {
+
+    private var longestFirst = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Surahs.load(this)
-        val today = Stats.day(this, Stats.today())
-        val pages = today.pages
-        val total = pages.sumOf { today.pageSec.getValue(it) }
-        layoutInflater.card(cards, 0, listOf(
-            row(pagesSaid(pages.size, resources), spent(total, resources), "")
-        ))
-        layoutInflater.card(cards, 0, pages.map { page ->
-            // Plain name in the quiet line; the calligraphy is for titles
-            row(getString(R.string.head_page, figures(page, resources)),
-                spentExact(today.pageSec.getValue(page), resources), Surahs.ofPage(page)?.name.orEmpty())
-        })
+        build()
         sayBars()
     }
 
-    private fun row(label: String, value: String, note: String): View =
+    private fun build() {
+        cards.removeAllViews()
+        val today = Stats.day(this, Stats.today())
+        val sec = today.pages.associateWith { today.pageSec.getValue(it) }
+        if (sec.isEmpty()) return
+
+        // The day at a glance: how long in all, the usual page, and the two ends
+        val total = sec.values.sum()
+        val quickest = sec.minBy { it.value }
+        val longest = sec.maxBy { it.value }
+        layoutInflater.card(cards, 0, listOf(
+            row(getString(R.string.pt_total), spent(total, resources), pagesSaid(sec.size, resources)),
+            row(getString(R.string.pt_average), spentExact(total / sec.size, resources)),
+            row(getString(R.string.pt_fastest), spentExact(quickest.value, resources), where(quickest.key)),
+            row(getString(R.string.pt_slowest), spentExact(longest.value, resources), where(longest.key))
+        ))
+
+        layoutInflater.card(cards, 0, listOf(sortRow()))
+
+        val order = if (longestFirst) sec.entries.sortedByDescending { it.value } else sec.entries.sortedBy { it.key }
+        layoutInflater.card(cards, 0, order.map { (page, s) ->
+            row(getString(R.string.head_page, figures(page, resources)), spentExact(s, resources), Surahs.ofPage(page)?.name.orEmpty())
+        })
+    }
+
+    private fun sortRow(): View =
+        row(getString(R.string.pt_sort), getString(if (longestFirst) R.string.pt_by_time else R.string.pt_by_page)).apply {
+            isClickable = true
+            setOnClickListener {
+                sheet(getString(R.string.pt_sort), listOf(
+                    Choice(getString(R.string.pt_by_page), on = !longestFirst),
+                    Choice(getString(R.string.pt_by_time), on = longestFirst)
+                )) { i ->
+                    longestFirst = i == 1
+                    build()
+                }
+            }
+        }
+
+    // The page, then its surah after an Arabic comma: a dot beside a figure reads as a zero
+    private fun where(page: Int): String {
+        val at = getString(R.string.head_page, figures(page, resources))
+        val surah = Surahs.ofPage(page)?.name ?: return at
+        return getString(R.string.page_in_surah, at, surah)
+    }
+
+    private fun row(label: String, value: String, note: String = ""): View =
         layoutInflater.inflate(R.layout.row_progress, cards, false).apply {
             findViewById<TextView>(R.id.prog_label).text = label
             findViewById<TextView>(R.id.prog_value).text = value

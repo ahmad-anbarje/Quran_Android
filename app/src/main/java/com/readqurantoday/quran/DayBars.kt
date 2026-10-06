@@ -42,6 +42,8 @@ class DayBars(context: Context) : View(context) {
         typeface = ResourcesCompat.getFont(context, R.font.cairo)
     }
     private val gap = resources.getDimension(R.dimen.chart_gap)
+    private val chipPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.surface) }
+    private val chip = android.graphics.RectF()
 
     /**
      * [pages] oldest first; [dayName] names a day by how many days ago it was; [goalSaid] labels the goal line.
@@ -72,10 +74,14 @@ class DayBars(context: Context) : View(context) {
         return 1f - (1f - local) * (1f - local)
     }
 
-    // A scale that ends on a round number, so its marks read as counts, not fractions
+    // A scale that ends on a round number with a whole number halfway, so its marks read as counts
     private fun scaleTop(): Int {
         val top = maxOf(pages.maxOrNull() ?: 0, goal, 1)
-        return if (top <= 4) top else (ceil(top / 5.0) * 5).toInt()
+        return when {
+            top <= 4 -> top
+            top <= 10 -> (top + 1) / 2 * 2
+            else -> (ceil(top / 10.0) * 10).toInt()
+        }
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
@@ -135,8 +141,13 @@ class DayBars(context: Context) : View(context) {
         if (goal > 0) {
             val y = base - room * goal / top
             canvas.drawLine(left, y, right, y, goalPen)
-            label.textAlign = if (rtl) Paint.Align.LEFT else Paint.Align.RIGHT
-            canvas.drawText(goalSaid, if (rtl) left else right, y - gap / 2f, label)
+            // On a chip of the card's own colour, so tall bars behind it never hide the word
+            val wide = label.measureText(goalSaid)
+            val x = if (rtl) left else right - wide
+            chip.set(x - gap / 2f, y - label.textSize - gap / 2f, x + wide + gap / 2f, y - gap / 4f)
+            canvas.drawRoundRect(chip, gap, gap, chipPaint)
+            label.textAlign = Paint.Align.LEFT
+            canvas.drawText(goalSaid, x, y - gap / 2f, label)
         }
     }
 

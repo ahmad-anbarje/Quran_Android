@@ -205,7 +205,7 @@
     <string name="stats_goal_juz2">Two juz</string>
     <string name="stats_goal_month">A khatma in about a month</string>
     <string name="stats_goal_half_month">A khatma in about 15 days</string>
-    <string name="stats_khatma_read">%1$s of %2$s pages read</string>
+    <string name="stats_khatma_read">%1$s of %2$s</string>
     <string name="stats_left">Left</string>
     <string name="stats_finish_unknown">Read for a few days to see when you\'ll finish.</string>
     <string name="stats_done">Khatmas completed</string>
@@ -213,13 +213,12 @@
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
     <string name="stats_week">Listening, last %1$s days</string>
-    <string name="stats_avg">Pages a day this month</string>
+    <string name="stats_avg">Your pages a day this month</string>
     <string name="stats_chart_desc">Pages read each day for the last %1$s days; most in a day: %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
     <string name="stats_private">These numbers stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
     <string name="percent">%1$s%%</string>
     <string name="time_under_minute">Under a minute</string>
-    <string name="time_hm">%1$s h %2$s min</string>
     <plurals name="pages_count">
         <item quantity="one">%1$s page</item>
         <item quantity="other">%1$s pages</item>
@@ -229,11 +228,12 @@
         <item quantity="other">%1$s minutes</item>
     </plurals>
     <string name="stats_pages_today">Pages today</string>
-    <string name="stats_goal_hint">Pick a daily goal below to fill this ring.</string>
+    <string name="stats_goal_hint">Pick a daily goal below to fill this circle.</string>
     <string name="of_count">%1$s of %2$s</string>
-    <string name="stats_days_read">Days read this month</string>
+    <string name="stats_days_read">Days you read this month</string>
     <string name="stats_finish_on">Expected to finish %1$s</string>
-    <string name="stats_total">Pages in all</string>
+    <string name="stats_total">In all, %1$s days</string>
+    <string name="trend_by">%1$s on last week</string>
     <string name="trend_up">%1$s more than last week</string>
     <string name="trend_down">%1$s less than last week</string>
     <string name="trend_same">Same as last week</string>
@@ -246,21 +246,39 @@
     <string name="sec_reading">My reading</string>
     <string name="sec_khatma">My khatma</string>
     <string name="sec_listening">My listening</string>
-    <string name="stats_page_avg">Average per page today</string>
+    <string name="stats_page_avg">Today</string>
     <string name="stats_page_times">Time on each page today</string>
     <string name="stats_days">Pages read, last %1$s days</string>
     <string name="chart_today">Today</string>
     <string name="chart_goal">Goal</string>
-    <string name="time_s">%1$s s</string>
-    <string name="time_ms">%1$s min %2$s s</string>
     <string name="stats_read_month">Reading time this month</string>
     <string name="stats_month">This month</string>
     <string name="stats_calendar">Calendar</string>
     <string name="cal_hijri">Hijri</string>
     <string name="cal_greg">Gregorian</string>
-    <string name="stats_speed">Reading speed</string>
-    <string name="stats_page_avg_month">Average per page this month</string>
-    <string name="stats_per_hour">Pages an hour</string>
+    <string name="stats_speed">Your reading speed</string>
+    <string name="stats_page_avg_month">This month</string>
+    <string name="stats_per_hour">In an hour you read about</string>
     <string name="stats_page_times_open">Time on each page today (%1$s)</string>
     <string name="goal_done">Today\'s goal is done</string>
+    <string name="time_and">%1$s %2$s</string>
+    <string name="per_page">%1$s a page</string>
+    <string name="stats_per_hour_note">An estimate from your speed this month</string>
+    <string name="pt_sort">Order</string>
+    <string name="pt_by_page">By page</string>
+    <string name="pt_by_time">Longest first</string>
+    <string name="pt_total">Today in all</string>
+    <string name="pt_average">Average page</string>
+    <string name="pt_fastest">Quickest page</string>
+    <string name="pt_slowest">Longest page</string>
+    <plurals name="hours_count">
+        <item quantity="one">%1$s hour</item>
+        <item quantity="other">%1$s hours</item>
+    </plurals>
+    <plurals name="seconds_count">
+        <item quantity="one">%1$s second</item>
+        <item quantity="other">%1$s seconds</item>
+    </plurals>
+    <string name="page_in_surah">%1$s, %2$s</string>
+    <string name="stats_khatma_none">This khatma has not begun yet</string>
 </resources>

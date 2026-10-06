@@ -243,7 +243,7 @@
     <string name="stats_goal_juz2">جزءان</string>
     <string name="stats_goal_month">ختمة في شهر تقريبًا</string>
     <string name="stats_goal_half_month">ختمة في نحو ١٥ يومًا</string>
-    <string name="stats_khatma_read">قرأت %1$s من %2$s صفحة</string>
+    <string name="stats_khatma_read">%1$s من %2$s</string>
     <string name="stats_left">المتبقي</string>
     <string name="stats_finish_unknown">اقرأ بضعة أيام ليظهر موعد الختم المتوقع.</string>
     <string name="stats_done">ختمات مكتملة</string>
@@ -251,13 +251,12 @@
     <string name="stats_new_khatma_ask">تبدأ الختمة من أولها، وتبقى الختمات المكتملة محسوبة.</string>
     <string name="stats_new_khatma_do">ابدأ من جديد</string>
     <string name="stats_week">وقت الاستماع في آخر %1$s أيام</string>
-    <string name="stats_avg">معدل الصفحات يوميًا هذا الشهر</string>
+    <string name="stats_avg">معدل صفحاتك في اليوم هذا الشهر</string>
     <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s يومًا، وأكثرها في يوم %2$s</string>
     <string name="stats_most_heard">الأكثر استماعًا في آخر %1$s أيام</string>
     <string name="stats_private">تُحفظ هذه الأرقام في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
     <string name="percent">%1$s٪</string>
     <string name="time_under_minute">أقل من دقيقة</string>
-    <string name="time_hm">%1$s س %2$s د</string>
     <plurals name="pages_count">
         <item quantity="zero">%1$s صفحة</item>
         <item quantity="one">صفحة واحدة</item>
@@ -268,18 +267,19 @@
     </plurals>
     <plurals name="minutes_count">
         <item quantity="zero">%1$s دقيقة</item>
-        <item quantity="one">دقيقة واحدة</item>
+        <item quantity="one">دقيقة</item>
         <item quantity="two">دقيقتان</item>
         <item quantity="few">%1$s دقائق</item>
         <item quantity="many">%1$s دقيقة</item>
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
     <string name="stats_pages_today">صفحات اليوم</string>
-    <string name="stats_goal_hint">اختر هدفًا يوميًا من الأسفل ليمتلئ هذا الحلق.</string>
+    <string name="stats_goal_hint">اختر هدفًا يوميًا من الأسفل لتمتلئ هذه الدائرة.</string>
     <string name="of_count">%1$s من %2$s</string>
-    <string name="stats_days_read">أيام القراءة هذا الشهر</string>
+    <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
     <string name="stats_finish_on">الختم المتوقع %1$s</string>
-    <string name="stats_total">مجموع الصفحات</string>
+    <string name="stats_total">المجموع في %1$s يومًا</string>
+    <string name="trend_by">%1$s عن الأسبوع الماضي</string>
     <string name="trend_up">%1$s أكثر من الأسبوع الماضي</string>
     <string name="trend_down">%1$s أقل من الأسبوع الماضي</string>
     <string name="trend_same">مثل الأسبوع الماضي</string>
@@ -296,21 +296,49 @@
     <string name="sec_reading">قراءتي</string>
     <string name="sec_khatma">ختمتي</string>
     <string name="sec_listening">استماعي</string>
-    <string name="stats_page_avg">متوسط وقت الصفحة اليوم</string>
+    <string name="stats_page_avg">اليوم</string>
     <string name="stats_page_times">وقت كل صفحة اليوم</string>
     <string name="stats_days">صفحاتك في آخر %1$s يومًا</string>
     <string name="chart_today">اليوم</string>
     <string name="chart_goal">الهدف</string>
-    <string name="time_s">%1$s ث</string>
-    <string name="time_ms">%1$s د %2$s ث</string>
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
     <string name="stats_month">هذا الشهر</string>
     <string name="stats_calendar">التقويم</string>
     <string name="cal_hijri">هجري</string>
     <string name="cal_greg">ميلادي</string>
-    <string name="stats_speed">سرعة القراءة</string>
-    <string name="stats_page_avg_month">متوسط وقت الصفحة هذا الشهر</string>
-    <string name="stats_per_hour">الصفحات في الساعة</string>
+    <string name="stats_speed">سرعة قراءتك</string>
+    <string name="stats_page_avg_month">هذا الشهر</string>
+    <string name="stats_per_hour">في ساعة تقرأ نحو</string>
     <string name="stats_page_times_open">وقت كل صفحة اليوم (%1$s)</string>
     <string name="goal_done">أتممت هدف اليوم</string>
+    <string name="time_and">%1$s و%2$s</string>
+    <string name="per_page">%1$s للصفحة</string>
+    <string name="stats_per_hour_note">تقدير بحسب سرعتك هذا الشهر</string>
+    <string name="pt_sort">الترتيب</string>
+    <string name="pt_by_page">بالصفحة</string>
+    <string name="pt_by_time">الأطول وقتًا أولًا</string>
+    <string name="pt_total">مجموع اليوم</string>
+    <string name="pt_average">متوسط الصفحة</string>
+    <string name="pt_fastest">أسرع صفحة</string>
+    <string name="pt_slowest">أطول صفحة</string>
+    <plurals name="hours_count">
+        <item quantity="zero">%1$s ساعة</item>
+        <item quantity="one">ساعة</item>
+        <item quantity="two">ساعتان</item>
+        <item quantity="few">%1$s ساعات</item>
+        <item quantity="many">%1$s ساعة</item>
+        <item quantity="other">%1$s ساعة</item>
+    </plurals>
+    <plurals name="seconds_count">
+        <item quantity="zero">%1$s ثانية</item>
+        <item quantity="one">ثانية</item>
+        <item quantity="two">ثانيتان</item>
+        <item quantity="few">%1$s ثوانٍ</item>
+        <item quantity="many">%1$s ثانية</item>
+        <item quantity="other">%1$s ثانية</item>
+    </plurals>
+    <string name="page_in_surah">%1$s، %2$s</string>
+    <string name="stats_khatma_none">لم تبدأ هذه الختمة بعد</string>
+    <!-- Nothing yet: a dash, since an Arabic zero is a lone dot -->
+    <string name="none_yet" translatable="false">—</string>
 </resources>

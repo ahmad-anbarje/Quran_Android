@@ -26,7 +26,7 @@ object Stats {
     private const val KEEP_DAYS = 60
     private const val DAY_MS = 86_400_000L
 
-    private const val PREFS = "stats"
+    internal const val PREFS = "stats"
     private const val DAY = "d."
     private const val KHATMA = "khatma"
     private const val KHATMA_FROM = "khatma_from"
@@ -161,6 +161,18 @@ object Stats {
         putString(KHATMA, "")
         putLong(KHATMA_FROM, today())
     }
+
+    // --- sample data, written by the debug build only ---
+
+    internal fun writeDay(ctx: Context, day: Long, record: Day) = save(ctx, day, record)
+
+    internal fun writeKhatma(ctx: Context, pages: Set<Int>, fromDay: Long, done: Int) = store(ctx).edit {
+        putString(KHATMA, String(CharArray(Mushaf.PAGES) { if (it + 1 in pages) '1' else '0' }))
+        putLong(KHATMA_FROM, fromDay)
+        putInt(KHATMAS, done)
+    }
+
+    internal fun writeSince(ctx: Context, day: Long) = store(ctx).edit { putLong(SINCE, day) }
 
     // --- storage ---
 

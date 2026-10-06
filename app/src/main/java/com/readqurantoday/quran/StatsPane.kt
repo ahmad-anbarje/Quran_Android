@@ -13,11 +13,23 @@ import kotlin.math.roundToInt
 // Statistics tab: today told large, tiles beside it, the goal, the khatma, recent days, and what was heard
 class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
+    /** [OPEN] plays the whole entrance; [UPDATE] moves rings and figures from where they last stood. */
+    enum class Motion { OPEN, UPDATE }
+
     private val blow = host.layoutInflater
     private val res = host.resources
 
+    // Where each ring and figure last stood, so an update moves on from there
+    private val shares = HashMap<String, Float>()
+    private val figuresShown = HashMap<String, Int>()
+
+    private var motion = Motion.UPDATE
+    private var moving = false
+
     // Rebuilt whole after any change: the cards are few and every number may move together
-    fun build() {
+    fun build(motion: Motion = Motion.UPDATE) {
+        this.motion = motion
+        moving = motionOn(host)
         into.removeAllViews()
         val today = Stats.day(host, Stats.today())
         val goal = Stats.goal(host)
@@ -47,6 +59,11 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
         blow.card(into, R.string.stats_listening, listeningRows(week, before))
         blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
+
+        // Card after card, a beat apart, top first
+        if (moving && motion == Motion.OPEN) {
+            for (i in 0 until into.childCount) into.getChildAt(i).riseIn(i * STAGGER_MS)
+        }
     }
 
     // --- today ---
@@ -54,7 +71,9 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private fun todayHero(today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>): View {
         val read = today.pages.size
         return hero(
-            value = figures(read, res),
+            key = TODAY,
+            count = read,
+            say = { figures(it, res) },
             unit = res.getQuantityString(R.plurals.pages_unit, read),
             title = host.getString(R.string.stats_pages_today),
             line = when {
@@ -65,7 +84,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
             },
             note = if (goal == 0) host.getString(R.string.stats_goal_hint) else ""
         ).also {
-            it.findViewById<RingView>(R.id.hero_ring).show(read.toFloat(), goal.toFloat())
+            fillRing(it, TODAY, read.toFloat(), goal.toFloat())
             showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
         }
     }
@@ -129,12 +148,14 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
         val rows = mutableListOf<View>()
         rows += hero(
-            value = host.getString(R.string.percent, figures(k.read * 100 / all, res)),
+            key = KHATMA,
+            count = k.read * 100 / all,
+            say = { host.getString(R.string.percent, figures(it, res)) },
             unit = "",
             title = host.getString(R.string.stats_khatma),
             line = host.getString(R.string.stats_khatma_read, figures(k.read, res), figures(all, res)),
             note = finish
-        ).also { it.findViewById<RingView>(R.id.hero_ring).show(k.read.toFloat(), all.toFloat()) }
+        ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
         rows += row(host.getString(R.string.stats_left), pagesSaid(all - k.read, res))
         if (k.done > 0) rows += row(host.getString(R.string.stats_done), figures(k.done, res))
         rows += action(host.getString(R.string.stats_new_khatma)) {
@@ -159,7 +180,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
         val chart = DayBars(host).apply {
             setPadding(pad, pad, pad, pad)
-            show(counts, goal)
+            show(counts, goal, grow = moving && motion == Motion.OPEN)
             contentDescription = host.getString(
                 R.string.stats_chart_desc, figures(month.size, res), pagesSaid(counts.max(), res)
             )
@@ -218,14 +239,28 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         }
     }
 
-    private fun hero(value: String, unit: String, title: String, line: String, note: String): View =
+    private fun hero(key: String, count: Int, say: (Int) -> String, unit: String, title: String, line: String, note: String): View =
         blow.inflate(R.layout.part_stat_hero, into, false).apply {
-            findViewById<TextView>(R.id.hero_value).text = value
+            countFigure(findViewById(R.id.hero_value), key, count, say)
             findViewById<TextView>(R.id.hero_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
             findViewById<TextView>(R.id.hero_title).text = title
             findViewById<TextView>(R.id.hero_line).text = line
             findViewById<TextView>(R.id.hero_note).apply { text = note; visibility = if (note.isEmpty()) View.GONE else View.VISIBLE }
         }
+
+    // From empty when the tab opens, from where it stood on an update, at once when motion is off
+    private fun fillRing(hero: View, key: String, done: Float, total: Float) {
+        val share = if (total > 0f) (done / total).coerceIn(0f, 1f) else 0f
+        val from = if (!moving) null else if (motion == Motion.OPEN) 0f else shares[key] ?: 0f
+        hero.findViewById<RingView>(R.id.hero_ring).show(done, total, from)
+        shares[key] = share
+    }
+
+    private fun countFigure(view: TextView, key: String, value: Int, say: (Int) -> String) {
+        val from = if (motion == Motion.OPEN) 0 else figuresShown[key] ?: 0
+        if (moving && from != value) view.countTo(from, value, say) else view.text = say(value)
+        figuresShown[key] = value
+    }
 
     private data class Tile(val icon: Int, val value: String, val label: String)
 
@@ -265,5 +300,8 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private companion object {
         const val WEEK = 7
         const val TOP_HEARD = 3
+        const val STAGGER_MS = 60L
+        const val TODAY = "today"
+        const val KHATMA = "khatma"
     }
 }

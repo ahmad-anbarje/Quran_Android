@@ -1,16 +1,19 @@
 package com.readqurantoday.quran
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 
 /** A progress ring: the full track, then the share done drawn over it from the top. */
 class RingView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
     private var share = 0f
+    private var filling: ValueAnimator? = null
 
     private val stroke = resources.getDimension(R.dimen.ring_stroke)
     private val track = pen(R.color.line)
@@ -24,10 +27,24 @@ class RingView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         color = context.getColor(colour)
     }
 
-    /** [done] of [total]; nothing drawn over the track when [total] is 0. */
-    fun show(done: Float, total: Float) {
-        share = if (total > 0f) (done / total).coerceIn(0f, 1f) else 0f
-        invalidate()
+    /** [done] of [total], filling from the share [from] when given; nothing over the track when [total] is 0. */
+    fun show(done: Float, total: Float, from: Float? = null) {
+        val target = if (total > 0f) (done / total).coerceIn(0f, 1f) else 0f
+        filling?.cancel()
+        if (from == null || from == target) {
+            share = target
+            invalidate()
+            return
+        }
+        filling = ValueAnimator.ofFloat(from, target).apply {
+            duration = FILL_MS
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                share = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

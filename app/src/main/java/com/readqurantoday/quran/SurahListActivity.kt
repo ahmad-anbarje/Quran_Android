@@ -31,6 +31,9 @@ class SurahListActivity : LanguageActivity() {
     private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 
 
+    // Kept, not made anew, so it remembers where its rings stood
+    private val statsPane by lazy { StatsPane(this, findViewById(R.id.stats_groups)) }
+
     private lateinit var panes: List<View>
     private lateinit var navIcons: List<ImageView>
     private lateinit var navLabels: List<TextView>
@@ -120,6 +123,7 @@ class SurahListActivity : LanguageActivity() {
         panes.forEachIndexed { i, pane ->
             pane.visibility = if (i == which) View.VISIBLE else View.GONE
         }
+        if (paneIds[which] == R.id.pane_stats) statsPane.build(StatsPane.Motion.OPEN)
         val accent = getColor(R.color.accent)
         val muted  = getColor(R.color.text_mute)
         for (i in navIds.indices) {
@@ -339,10 +343,8 @@ class SurahListActivity : LanguageActivity() {
         PlacesPane(this, findViewById(R.id.places_groups)) { page -> answer(page) }.build()
     }
 
-    // Rebuilt on every return: reading and listening move the numbers
-    private fun stats() {
-        StatsPane(this, findViewById(R.id.stats_groups)).build()
-    }
+    // Rebuilt on every return: reading and listening move the numbers, and the rings move with them
+    private fun stats() = statsPane.build()
 
     // [surah] and [ayah] are set when an ayah was picked, so the reader can highlight it
     private fun answer(page: Int, surah: Int = 0, ayah: Int = 0) {

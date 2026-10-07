@@ -19,19 +19,14 @@ import androidx.core.view.WindowInsetsControllerCompat
 /** Paint the status bar [roof] and the navigation bar [floor], icons to suit. Null leaves a bar as it is. */
 fun Activity.paintBars(roof: Int?, floor: Int?) {
     val under = floor ?: roof
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-        // Bar colours are ignored from Android 15, so coloured strips sit behind the bars instead
+    // Every screen is edge-to-edge, so the bars are see-through and coloured strips sit behind them
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         window.isNavigationBarContrastEnforced = false
         window.isStatusBarContrastEnforced = false
-        val content = findViewById<ViewGroup>(android.R.id.content)
-        if (roof != null) strip(content, Edge.TOP).setBackgroundColor(roof)
-        if (under != null) for (edge in listOf(Edge.BOTTOM, Edge.LEFT, Edge.RIGHT)) strip(content, edge).setBackgroundColor(under)
-    } else {
-        @Suppress("DEPRECATION")
-        if (roof != null) window.statusBarColor = roof
-        @Suppress("DEPRECATION")
-        if (under != null) window.navigationBarColor = under
     }
+    val content = findViewById<ViewGroup>(android.R.id.content)
+    if (roof != null) strip(content, Edge.TOP).setBackgroundColor(roof)
+    if (under != null) for (edge in listOf(Edge.BOTTOM, Edge.LEFT, Edge.RIGHT)) strip(content, edge).setBackgroundColor(under)
 
     // Icon contrast follows the colour, so a new palette stays legible
     WindowInsetsControllerCompat(window, window.decorView).apply {

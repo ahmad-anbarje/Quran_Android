@@ -152,6 +152,7 @@
     <string name="dl_group_actions">الإجراءات</string>
     <string name="dl_kept">المنزّل</string>
     <string name="dl_kept_value">%1$s من %2$s · %3$s</string>
+    <string name="dl_kept_none">لا تنزيلات بعد</string>
     <string name="dl_whole">المصحف كاملًا</string>
     <!-- A total still being added up: the figure so far, marked as not final. -->
     <string name="dl_counting">%1$s+ …</string>

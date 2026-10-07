@@ -108,6 +108,7 @@
     <string name="dl_group_actions">Actions</string>
     <string name="dl_kept">Downloaded</string>
     <string name="dl_kept_value">%1$s of %2$s · %3$s</string>
+    <string name="dl_kept_none">Nothing downloaded yet</string>
     <string name="dl_whole">Whole Quran</string>
     <string name="dl_counting">%1$s+ …</string>
     <string name="dl_get_all">Download all</string>

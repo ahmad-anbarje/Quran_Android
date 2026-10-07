@@ -13,11 +13,9 @@
     <style name="Theme.Quran" parent="Base.Theme.Quran" />
 
     <!-- No title bar: the bottom nav already names each pane -->
-    <!-- Parented on Theme.Quran so the v27 cutout mode applies here too; bar colours are only the launch guess -->
+    <!-- Parented on Theme.Quran so the v27 cutout mode applies here too; the bars are coloured by paintBars -->
     <style name="Theme.Quran.Index" parent="Theme.Quran">
         <item name="android:windowBackground">@color/paper</item>
-        <item name="android:statusBarColor">@color/surface</item>
-        <item name="android:navigationBarColor">@color/surface</item>
     </style>
 
     <!-- Bottom sheet dialog: no frame and no title -->

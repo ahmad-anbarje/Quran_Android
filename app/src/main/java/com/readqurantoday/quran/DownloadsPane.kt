@@ -81,10 +81,11 @@ class DownloadsPane(
 
         reciterValue.text = reciter.nameAr
 
-        val used = Downloads.keptBytes(host, reciter.id, kept)
-        keptValue.text = host.getString(
+        // Nothing kept is said in words: zero surahs and zero bytes read as stray dots in Arabic figures
+        keptValue.text = if (kept.isEmpty()) host.getString(R.string.dl_kept_none) else host.getString(
             R.string.dl_kept_value,
-            figures(kept.size, host.resources), figures(Downloads.SURAHS, host.resources), bytes(used)
+            figures(kept.size, host.resources), figures(Downloads.SURAHS, host.resources),
+            bytes(Downloads.keptBytes(host, reciter.id, kept))
         )
 
         // Marked as still counting until every surah size is known

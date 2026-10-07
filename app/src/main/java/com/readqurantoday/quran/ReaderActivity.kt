@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -448,9 +447,8 @@ class ReaderActivity : LanguageActivity() {
 
     // --- window ---
 
-    /* Edge-to-edge: system bars hidden while reading, shown on tap. Player is independent. */
+    /* Edge-to-edge, as every screen is: system bars hidden while reading, shown on tap. Player is independent. */
     private fun dressWindow() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         // The system and AppCompat layers around the page may still pad for the bars (some devices, or after a theme change), which made the page jump
         var layer = findViewById<View>(R.id.root).parent
         while (layer is View && layer !== window.decorView) {

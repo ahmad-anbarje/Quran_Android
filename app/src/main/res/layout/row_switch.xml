@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A row that is on or off: tap anywhere on it, or slide the switch -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layoutDirection="locale"
+    android:background="@drawable/row_flat"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="56dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="@dimen/row_pad_v"
+    android:paddingBottom="@dimen/row_pad_v">
+
+    <TextView
+        android:id="@+id/switch_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_title" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:thumb="@drawable/switch_thumb"
+        app:track="@drawable/switch_track"
+        app:switchMinWidth="@dimen/switch_width"
+        android:showText="false" />
+</LinearLayout>

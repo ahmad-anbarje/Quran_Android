@@ -106,8 +106,10 @@
     <dimen name="mark_button_height">36dp</dimen>
     <dimen name="mark_button_text">13sp</dimen>
     <dimen name="mark_button_icon">16dp</dimen>
-    <!-- The arrow or switch at the end of a tappable statistics row -->
+    <!-- The arrow at the end of a tappable statistics row -->
     <dimen name="row_go">18dp</dimen>
-    <dimen name="row_toggle_w">36dp</dimen>
-    <dimen name="row_toggle_h">24dp</dimen>
+    <!-- A switch the size Android's own is: a rounded track, a knob that slides -->
+    <dimen name="switch_width">52dp</dimen>
+    <dimen name="switch_height">32dp</dimen>
+    <dimen name="switch_radius">16dp</dimen>
 </resources>

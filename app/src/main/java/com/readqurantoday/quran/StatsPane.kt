@@ -130,12 +130,13 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             ))
         )
         // Read away from the app, from a printed mushaf: the switch counts today's goal as done
-        if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += row(host.getString(R.string.paper_read), "").apply {
-            toggles(today.doneByHand) {
-                Stats.setDoneByHand(host, !today.doneByHand)
+        if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
+            Stats.setDoneByHand(host, on)
+            // The knob finishes its slide before the numbers move
+            parent.postDelayed({
                 build()
-                if (!today.doneByHand) celebrateOnce(Stats.day(host, Stats.today()), goal)
-            }
+                if (on) celebrateOnce(Stats.day(host, Stats.today()), goal)
+            }, SWITCH_SETTLE_MS)
         }
         return rows
     }
@@ -461,6 +462,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val TOP_HEARD = 3
         // Long enough for the cards to have come in first
         const val CELEBRATE_AFTER_MS = 450L
+        const val SWITCH_SETTLE_MS = 250L
         const val TODAY = "today"
         const val HIFZ = "hifz"
         const val KHATMA = "khatma"

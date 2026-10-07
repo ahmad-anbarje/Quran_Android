@@ -369,6 +369,6 @@
     <string name="goal_over">Goal done, and %1$s more</string>
     <string name="goal_left">%1$s to go</string>
     <string name="hifz_none_today">Nothing memorised yet today</string>
-    <string name="paper_read">I read today\'s goal from a printed mushaf</string>
+    <string name="paper_read">Read from a printed mushaf</string>
     <string name="percent_under_one">under 1%</string>
 </resources>

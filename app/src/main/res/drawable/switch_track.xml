@@ -13,7 +13,7 @@
             <corners android:radius="@dimen/switch_radius" />
             <size android:width="@dimen/switch_width" android:height="@dimen/switch_height" />
             <solid android:color="@color/surface_2" />
-            <stroke android:width="2dp" android:color="@color/text_mute" />
+            <stroke android:width="1.5dp" android:color="@color/text_mute" />
         </shape>
     </item>
 </selector>

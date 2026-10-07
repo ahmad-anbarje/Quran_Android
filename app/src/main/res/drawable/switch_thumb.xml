@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The switch's knob: large and light when on, small and muted when off; both sit in the track's height -->
+<!-- The switch's knob: large and light when on, small and muted when off. Its box is half the track wide,
+     which is what sets the switch's width -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_checked="true">
         <layer-list>
-            <item android:width="@dimen/switch_height" android:height="@dimen/switch_height">
+            <item android:width="@dimen/switch_knob_box" android:height="@dimen/switch_height">
                 <shape android:shape="oval"><solid android:color="#00000000" /></shape>
             </item>
-            <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
+            <item android:left="1dp" android:top="3dp" android:right="1dp" android:bottom="3dp">
                 <shape android:shape="oval"><solid android:color="@color/on_dark" /></shape>
             </item>
         </layer-list>
     </item>
     <item>
         <layer-list>
-            <item android:width="@dimen/switch_height" android:height="@dimen/switch_height">
+            <item android:width="@dimen/switch_knob_box" android:height="@dimen/switch_height">
                 <shape android:shape="oval"><solid android:color="#00000000" /></shape>
             </item>
-            <item android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp">
+            <item android:left="4dp" android:top="6dp" android:right="4dp" android:bottom="6dp">
                 <shape android:shape="oval"><solid android:color="@color/text_mute" /></shape>
             </item>
         </layer-list>

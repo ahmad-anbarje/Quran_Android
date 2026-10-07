@@ -10,7 +10,7 @@
     android:background="@drawable/row_flat"
     android:clickable="true"
     android:focusable="true"
-    android:minHeight="56dp"
+    android:minHeight="52dp"
     android:paddingStart="14dp"
     android:paddingEnd="14dp"
     android:paddingTop="@dimen/row_pad_v"

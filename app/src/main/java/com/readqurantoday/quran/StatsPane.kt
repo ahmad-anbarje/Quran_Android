@@ -350,13 +350,14 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     // From empty when the tab opens, from where it stood on an update, at once when motion is off
     private fun fillRing(hero: View, key: String, done: Float, total: Float) {
         val share = if (total > 0f) (done / total).coerceIn(0f, 1f) else 0f
-        val from = if (!moving) null else if (motion == Motion.OPEN) 0f else shares[key] ?: 0f
+        // A first build, with nothing shown before it, simply shows the value
+        val from = if (!moving) null else if (motion == Motion.OPEN) 0f else shares[key]
         hero.findViewById<RingView>(R.id.hero_ring).show(done, total, from)
         shares[key] = share
     }
 
     private fun countFigure(view: TextView, key: String, value: Int, say: (Int) -> String) {
-        val from = if (motion == Motion.OPEN) 0 else figuresShown[key] ?: 0
+        val from = if (motion == Motion.OPEN) 0 else figuresShown[key] ?: value
         if (moving && from != value) view.countTo(from, value, say) else view.text = say(value)
         figuresShown[key] = value
     }

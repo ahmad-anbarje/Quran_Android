@@ -83,8 +83,10 @@ class SurahListActivity : LanguageActivity() {
 
         buildLists()
         wireSearch()
-        navIds.forEachIndexed { i, id -> findViewById<View>(id).setOnClickListener { choose(i) } }
-        choose(savedInstanceState?.getInt(TAB) ?: 0)
+        // A tab already open stays as it is: no second entrance, no rebuild
+        navIds.forEachIndexed { i, id -> findViewById<View>(id).setOnClickListener { if (i != tab) choose(i, enter = true) } }
+        // The app opens on its first screen at once, without an entrance
+        choose(savedInstanceState?.getInt(TAB) ?: 0, enter = false)
         wireResume()
     }
 
@@ -119,13 +121,13 @@ class SurahListActivity : LanguageActivity() {
     }
 
     /* Active tab: filled icon + flat accent. Inactive: outlined icon + accent on press, muted at rest. */
-    private fun choose(which: Int) {
+    private fun choose(which: Int, enter: Boolean) {
         tab = which
         panes.forEachIndexed { i, pane ->
             pane.visibility = if (i == which) View.VISIBLE else View.GONE
         }
         // Every tab comes in the same way; achievements also fills its rings, so it brings itself in
-        when (paneIds[which]) {
+        if (enter) when (paneIds[which]) {
             R.id.pane_stats -> statsPane.build(StatsPane.Motion.OPEN)
             R.id.pane_marks -> findViewById<ViewGroup>(R.id.places_groups).riseChildren()
             R.id.pane_settings -> findViewById<ViewGroup>(R.id.settings_groups).riseChildren()

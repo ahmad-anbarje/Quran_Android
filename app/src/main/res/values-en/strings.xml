@@ -217,7 +217,7 @@
     <string name="stats_avg">Your pages a day this month</string>
     <string name="stats_chart_desc">Pages read each day for the last %1$s days; most in a day: %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
-    <string name="stats_private">These numbers stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
+    <string name="stats_private">Your reading and memorising statistics stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
     <string name="percent">%1$s%%</string>
     <string name="time_under_minute">Under a minute</string>
     <plurals name="pages_count">
@@ -367,4 +367,5 @@
     <string name="ring_week">Days this week</string>
     <string name="ring_month">Days this month</string>
     <string name="ring_of">of %1$s</string>
+    <string name="set_calendar">Calendar</string>
 </resources>

@@ -255,7 +255,7 @@
     <string name="stats_avg">معدل صفحاتك في اليوم هذا الشهر</string>
     <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s يومًا، وأكثرها في يوم %2$s</string>
     <string name="stats_most_heard">الأكثر استماعًا في آخر %1$s أيام</string>
-    <string name="stats_private">تُحفظ هذه الأرقام في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
+    <string name="stats_private">إحصاءات قراءتك وحفظك تبقى في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
     <string name="percent">%1$s٪</string>
     <string name="time_under_minute">أقل من دقيقة</string>
     <plurals name="pages_count">
@@ -436,4 +436,5 @@
     <string name="ring_week">أيام هذا الأسبوع</string>
     <string name="ring_month">أيام هذا الشهر</string>
     <string name="ring_of">من %1$s</string>
+    <string name="set_calendar">التقويم</string>
 </resources>

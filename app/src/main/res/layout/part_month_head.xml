@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Which month the numbers below count, with the calendar it is counted by -->
+<!-- Which month the numbers below count -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,15 +21,4 @@
         android:textColor="@color/text"
         android:textSize="@dimen/row_title"
         android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/month_hijri"
-        style="@style/CalendarChoice"
-        android:text="@string/cal_hijri" />
-
-    <TextView
-        android:id="@+id/month_greg"
-        style="@style/CalendarChoice"
-        android:layout_marginStart="4dp"
-        android:text="@string/cal_greg" />
 </LinearLayout>

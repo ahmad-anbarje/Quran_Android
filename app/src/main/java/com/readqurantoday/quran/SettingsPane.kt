@@ -40,6 +40,11 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
             }) {
                 Settings.setLanguage(host, if (Settings.language(host) == "en") "ar" else "en")
             })
+            rows.add(valueRow(R.string.set_calendar, {
+                if (Stats.hijri(host)) R.string.cal_hijri else R.string.cal_greg
+            }) {
+                Stats.setHijri(host, !Stats.hijri(host))
+            })
             rows.add(valueRow(R.string.set_page_motion, {
                 if (Settings.pageTurn(host)) R.string.motion_turn else R.string.motion_slide
             }) {
@@ -54,6 +59,7 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
             rows.add(linkRow(R.string.set_about, { host.startActivity(Intent(host, AboutActivity::class.java)) }, emptyList()))
             rows.add(linkRow(R.string.set_report, { host.startActivity(Intent(host, FeedbackActivity::class.java)) }, emptyList()))
             rows.add(linkRow(R.string.set_privacy, { host.openLink(PRIVACY_URL) }, emptyList()))
+            rows.add((blow.inflate(R.layout.row_setting_note, into, false) as TextView).apply { setText(R.string.stats_private) })
         }
     }
 

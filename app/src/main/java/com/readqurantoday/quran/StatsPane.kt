@@ -104,7 +104,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, R.string.stats_speed, speedRows(today, thisMonth))
         val month = Stats.lastDays(host, Stats.CHART_DAYS)
         blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
-        blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
     }
 
     private fun wirdRows(today: Stats.Day, goal: Int): List<View> {
@@ -138,12 +137,11 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             fillGoalRing(findViewById(R.id.ring_today), "$key.day", todayDone, goal, R.string.ring_today,
                 unit = if (goal > 0) host.getString(R.string.ring_of, figures(goal, res))
                     else res.getQuantityString(R.plurals.pages_unit, todayDone))
-            val monthFrom = Stats.today() - Stats.monthDays(host).size + 1
-            for ((id, from, label) in listOf(
-                Triple(R.id.ring_week, Stats.today() - WEEK + 1, R.string.ring_week),
-                Triple(R.id.ring_month, monthFrom, R.string.ring_month)
+            for ((id, span, label) in listOf(
+                Triple(R.id.ring_week, weekSpan(), R.string.ring_week),
+                Triple(R.id.ring_month, monthSpan(), R.string.ring_month)
             )) {
-                val (met, had) = metDays(from, want, done)
+                val (met, had) = metDays(span, want, done)
                 fillGoalRing(findViewById(id), "$key.$label", met, had, label,
                     unit = if (had > 0) host.getString(R.string.ring_of, figures(had, res)) else "")
             }
@@ -157,17 +155,32 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         fillRing(ring.findViewById(R.id.ring), key, done.toFloat(), total.toFloat())
     }
 
-    // Days from [from] to today that met their goal, and how many had a goal at all
-    private fun metDays(from: Long, want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): Pair<Int, Int> {
+    // This week, Saturday to Friday as the app's week runs
+    private fun weekSpan(): LongRange {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = Stats.noonOf(Stats.today())
+        val start = Stats.today() - (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SATURDAY + WEEK) % WEEK
+        return start until start + WEEK
+    }
+
+    // The whole of this month by the chosen calendar; a month's length is where the next one starts
+    private fun monthSpan(): LongRange {
+        val hijri = Stats.hijri(host)
+        val start = monthStart(Stats.today(), hijri)
+        return start until monthStart(start + LONGEST_MONTH, hijri)
+    }
+
+    // Days of [span] that had a goal, and how many of those up to today met it
+    private fun metDays(span: LongRange, want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): Pair<Int, Int> {
         val cal = Calendar.getInstance()
         var had = 0
         var met = 0
-        for (day in from..Stats.today()) {
+        for (day in span) {
             cal.timeInMillis = Stats.noonOf(day)
             val wanted = want(day, cal.get(Calendar.DAY_OF_WEEK))
             if (wanted > 0) {
                 had++
-                if (done(day) >= wanted) met++
+                if (day <= Stats.today() && done(day) >= wanted) met++
             }
         }
         return met to had
@@ -224,24 +237,10 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun changeRow(said: String, change: () -> Unit): View =
         row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply { opens(change) }
 
-    // Which month the numbers below count, and a switch between the Hijri and Gregorian calendars
+    // Which month the numbers below count; the calendar is chosen in the settings
     private fun monthHead(hijri: Boolean): View =
         blow.inflate(R.layout.part_month_head, parent, false).apply {
             findViewById<TextView>(R.id.month_name).text = monthName(Stats.today(), hijri, res)
-            for ((id, isHijri) in listOf(R.id.month_hijri to true, R.id.month_greg to false)) {
-                val on = isHijri == hijri
-                findViewById<TextView>(id).apply {
-                    setBackgroundResource(if (on) R.drawable.seg_on else R.drawable.row_flat)
-                    setTextColor(host.getColor(if (on) R.color.accent else R.color.text_mute))
-                    isSelected = on
-                    setOnClickListener {
-                        if (!on) {
-                            Stats.setHijri(host, isHijri)
-                            build()
-                        }
-                    }
-                }
-            }
         }
 
     // How long a page takes, today and this month; every page's own time is a screen of its own, for days of many pages
@@ -459,6 +458,8 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val LISTENING = 3
 
         const val WEEK = 7
+        // Past the end of any month, Hijri or Gregorian, counted from its first day
+        const val LONGEST_MONTH = 31
         const val TOP_HEARD = 3
         // Long enough for the cards to have come in first
         const val CELEBRATE_AFTER_MS = 450L

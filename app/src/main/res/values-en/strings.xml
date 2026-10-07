@@ -337,7 +337,7 @@
     <string name="hifz_goal_title">Memorising goal</string>
     <string name="hifz_custom_ask">How many pages a day?</string>
     <string name="hifz_stop">Remove the memorising goal</string>
-    <string name="hifz_mine">What I know by heart</string>
+    <string name="hifz_mine">Memorising record</string>
     <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
     <string name="hifz_mine_pages">%1$s of the Quran</string>
     <string name="hifz_keep">Done</string>

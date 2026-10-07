@@ -402,7 +402,7 @@
     <string name="hifz_goal_title">هدف الحفظ</string>
     <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
     <string name="hifz_stop">إلغاء هدف الحفظ</string>
-    <string name="hifz_mine">ما أحفظه</string>
+    <string name="hifz_mine">سجلّ الحفظ</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
     <string name="hifz_mine_pages">%1$s من القرآن</string>
     <string name="hifz_keep">تم</string>

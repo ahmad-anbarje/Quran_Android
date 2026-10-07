@@ -25,13 +25,13 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
 
     // Filled again in place after each change, so the list keeps where it was scrolled to
     private fun refresh() {
-        val kept = Hifz.pages(this)
+        val kept = Hifz.bySurah(this)
         Surahs.list().forEachIndexed { i, surah -> fill(rows[i], surah, kept) }
     }
 
-    private fun fill(row: View, surah: Surahs.Surah, kept: Map<Int, Long>) {
+    private fun fill(row: View, surah: Surahs.Surah, kept: Map<Int, Map<Int, Long>>) {
         val all = surah.to - surah.from + 1
-        val done = Hifz.knownOf(this, surah, kept)
+        val done = Hifz.knownOf(surah, kept)
         val whole = done == all
         row.findViewById<TextView>(R.id.hifz_count).text =
             if (done == 0 || whole) pagesSaid(all, resources)
@@ -69,11 +69,10 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
     }
 
     private fun pickPages(surah: Surahs.Surah) {
-        val kept = Hifz.pages(this)
+        val was = Hifz.bySurah(this)[surah.id]?.keys.orEmpty()
         val pages = (surah.from..surah.to).toList()
-        val was = pages.filter { it in kept }.toSet()
         pickPages(getString(R.string.surah_named, surah.name), getString(R.string.hifz_pages_ask), pages, was) { now ->
-            Hifz.setPages(this, marked = now - was, unmarked = was - now)
+            Hifz.setPages(this, surah, marked = now - was, unmarked = was - now)
             refresh()
         }
     }

@@ -33,7 +33,7 @@ class SurahListActivity : LanguageActivity() {
     private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_search, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 
     // Kept, not made anew, so it remembers where its rings stood
-    private val statsPane by lazy { StatsPane(this, findViewById(R.id.stats_groups)) }
+    private val statsPane by lazy { StatsPane(this, findViewById(R.id.stats_segments), findViewById(R.id.stats_pages)) }
 
     private lateinit var panes: List<View>
     private lateinit var navIcons: List<ImageView>
@@ -70,7 +70,7 @@ class SurahListActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_index)
-        keepToColumn(R.id.search_head, R.id.segments, R.id.search_list, R.id.pane_marks, R.id.pane_stats, R.id.pane_settings, R.id.card_resume)
+        keepToColumn(R.id.search_head, R.id.segments, R.id.search_list, R.id.pane_marks, R.id.stats_segments, R.id.pane_settings, R.id.card_resume)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
         watchKeyboard()

@@ -71,7 +71,7 @@ def walk():
     shell('monkey', '-p', APP, '-c', 'android.intent.category.LAUNCHER', '1')
     time.sleep(3)
     shot(frames)
-    tap('seg_juz'); shot(frames)
+    tap('seg_2'); shot(frames)
     tap('nav_marks'); shot(frames)
     tap('nav_stats'); shot(frames)
     tap('nav_settings'); shot(frames)

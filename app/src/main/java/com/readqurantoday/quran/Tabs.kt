@@ -1,0 +1,79 @@
+package com.readqurantoday.quran
+
+import android.graphics.Typeface
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+
+/**
+ * The switch over a pager, as the index and achievements both have it: tap a segment or swipe, and the segment of
+ * the page in view is marked. [shown] hears each page as it comes into view.
+ */
+class SwipeTabs(
+    private val pager: ViewPager2,
+    strip: View,
+    names: IntArray,
+    pages: RecyclerView.Adapter<*>,
+    private val shown: (Int) -> Unit = {}
+) {
+
+    private val segs = SEGMENTS.map { strip.findViewById<TextView>(it) }
+
+    /* The switch's own face, read before the first bolding, so the app font survives it. */
+    private val face = segs[0].typeface
+
+    private var on = pager.currentItem
+
+    init {
+        segs.forEachIndexed { i, seg ->
+            seg.setText(names[i])
+            seg.setOnClickListener { pager.currentItem = i }
+        }
+        pager.adapter = pages
+        // Every page kept laid out, so a swipe back finds one where it was left
+        pager.offscreenPageLimit = names.size - 1
+        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                // The pager names its first page on first layout too; only a real move is heard
+                if (position == on) return
+                on = position
+                mark(position)
+                shown(position)
+            }
+        })
+        mark(pager.currentItem)
+    }
+
+    val current: Int get() = pager.currentItem
+
+    private fun mark(on: Int) = segs.forEachIndexed { i, seg ->
+        val isOn = i == on
+        seg.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
+        seg.setTextColor(seg.context.getColor(if (isOn) R.color.accent else R.color.text_mute))
+        // Built from the theme's own face: defaultFromStyle would put the system font here
+        seg.typeface = Typeface.create(face, if (isOn) Typeface.BOLD else Typeface.NORMAL)
+    }
+
+    private companion object {
+        val SEGMENTS = intArrayOf(R.id.seg_1, R.id.seg_2, R.id.seg_3, R.id.seg_4)
+    }
+}
+
+/** Pages made beforehand, one view each, for a pager whose pages are not lists of rows. */
+class ViewPages(private val views: List<View>) : RecyclerView.Adapter<ViewPages.Page>() {
+
+    class Page(v: View) : RecyclerView.ViewHolder(v)
+
+    override fun getItemCount() = views.size
+
+    // One view type a page, so each made view is handed out once and only once
+    override fun getItemViewType(position: Int) = position
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Page(views[viewType].apply {
+        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    })
+
+    override fun onBindViewHolder(holder: Page, position: Int) = Unit
+}

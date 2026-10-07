@@ -1,12 +1,9 @@
 package com.readqurantoday.quran
 
 import android.app.Activity
-import android.graphics.Typeface
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 
 // The index tab: surahs, juz, hizb and pages, a swipe apart; every row opens or recites at its page
 class IndexPane(
@@ -18,14 +15,6 @@ class IndexPane(
 ) {
 
     private val res = host.resources
-    private val pager = host.findViewById<ViewPager2>(R.id.lists)
-    private val segs = intArrayOf(R.id.seg_surahs, R.id.seg_juz, R.id.seg_hizb, R.id.seg_pages)
-        .map { host.findViewById<TextView>(it) }
-    private val names = intArrayOf(R.string.list_surahs, R.string.tab_juz, R.string.list_hizb, R.string.list_pages)
-
-    /* The switch's own face, read before the first bolding, so the app font survives it. */
-    private val segFace = segs[0].typeface
-
     private val juz = division(Surahs.juzStarts(), R.string.head_juz, ::surahAndPage, null, Surahs::juzOfPage)
     private val hizb = division(Surahs.hizbStarts(), R.string.head_hizb, ::surahAndPage, ::quarters, Surahs::hizbOfPage)
     private val pages = division(IntArray(Mushaf.PAGES) { it + 1 }, R.string.head_page, ::surahAndJuz, null) { it }
@@ -33,29 +22,14 @@ class IndexPane(
     private val lists: List<RecyclerView.Adapter<*>> = listOf(surahs, juz, hizb, pages)
 
     init {
-        segs.forEachIndexed { i, seg ->
-            seg.setText(names[i])
-            seg.setOnClickListener { pager.currentItem = i }
-        }
-        pager.adapter = Lists()
-        // All four kept laid out, so a swipe back finds a list where it was left
-        pager.offscreenPageLimit = lists.size - 1
-        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) = mark(position)
-        })
-        mark(pager.currentItem)
+        SwipeTabs(
+            host.findViewById(R.id.lists), host.findViewById(R.id.segments),
+            intArrayOf(R.string.list_surahs, R.string.tab_juz, R.string.list_hizb, R.string.list_pages), Lists()
+        )
     }
 
     /** Rows show which part is being recited; called as the recitation moves or stops. */
     fun refresh() = lists.forEach { it.notifyDataSetChanged() }
-
-    private fun mark(on: Int) = segs.forEachIndexed { i, seg ->
-        val isOn = i == on
-        seg.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-        seg.setTextColor(host.getColor(if (isOn) R.color.accent else R.color.text_mute))
-        // Built from the theme's own face: defaultFromStyle would put the system font here
-        seg.typeface = Typeface.create(segFace, if (isOn) Typeface.BOLD else Typeface.NORMAL)
-    }
 
     private fun division(starts: IntArray, title: Int, where: (Int) -> String, more: ((Int) -> String)?, numberOf: (Int) -> Int) =
         DivisionAdapter(

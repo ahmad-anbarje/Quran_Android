@@ -1,18 +1,20 @@
 package com.readqurantoday.quran
 
 import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
-import android.text.format.DateUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.viewpager2.widget.ViewPager2
+import java.util.Calendar
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-// Statistics tab: today told large, tiles beside it, the goal, the khatma, recent days, and what was heard
-class StatsPane(private val host: Activity, private val into: LinearLayout) {
+// Achievements: four pages a swipe apart. Goals first, each telling what it is, what is done and what is left
+class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
 
     /** [OPEN] plays the whole entrance; [UPDATE] moves rings and figures from where they last stood. */
     enum class Motion { OPEN, UPDATE }
@@ -20,30 +22,176 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private val blow = host.layoutInflater
     private val res = host.resources
 
+    // Goals, reading, khatma, listening: one scrolling column each
+    private val pages = List(TABS) { blow.inflate(R.layout.part_scroll_column, pager, false).apply { keepToColumn() } }
+    private val columns = pages.map { it.findViewById<LinearLayout>(R.id.column) }
+    private val parent get() = columns[0]
+
+    private val tabs = SwipeTabs(
+        pager, strip,
+        intArrayOf(R.string.sec_goal, R.string.sec_reading, R.string.sec_khatma, R.string.sec_listening),
+        ViewPages(pages)
+    ) { page -> if (built) columns[page].riseChildren() }
+
+    private val picker = GoalPicker(host) { build() }
+
     // Where each ring and figure last stood, so an update moves on from there
     private val shares = HashMap<String, Float>()
     private val figuresShown = HashMap<String, Int>()
 
     private var motion = Motion.UPDATE
     private var moving = false
+    private var built = false
 
     // Rebuilt whole after any change: the cards are few and every number may move together
     fun build(motion: Motion = Motion.UPDATE) {
         this.motion = motion
         moving = motionOn(host)
-        into.removeAllViews()
+        columns.forEach { it.removeAllViews() }
+
         val today = Stats.day(host, Stats.today())
         val goal = Stats.goal(host)
         val fortnight = Stats.lastDays(host, WEEK * 2)
         val week = fortnight.takeLast(WEEK)
         val before = fortnight.take(WEEK)
 
-        val month = Stats.lastDays(host, Stats.CHART_DAYS)
+        goalsPage(columns[GOALS], today, goal, week, before)
+        readingPage(columns[READING], today, goal)
+        khatmaPage(columns[KHATMA_PAGE])
+        listeningPage(columns[LISTENING], today, week, before)
 
-        section(R.string.sec_goal)
-        blow.card(into, 0, listOf(todayHero(today, goal, week, before), goalRow(goal)))
+        if (motion == Motion.OPEN) {
+            columns[tabs.current].riseChildren()
+            celebrateOnce(today, goal)
+        }
+        built = true
+    }
 
-        section(R.string.sec_reading)
+    // The first look at the day's reached goal is met with a celebration; later looks are quiet
+    private fun celebrateOnce(today: Stats.Day, goal: Int) {
+        if (goal == 0 || today.pages.size < goal || Stats.celebrated(host)) return
+        Stats.setCelebrated(host)
+        val over = host.findViewById<ViewGroup>(android.R.id.content)
+        over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
+    }
+
+    // --- goals: what it is, what is done, what is left ---
+
+    private fun goalsPage(into: LinearLayout, today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>) {
+        blow.card(into, R.string.wird_title, wirdRows(today, goal, week, before))
+        blow.card(into, R.string.hifz_title, hifzRows())
+        blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
+    }
+
+    private fun wirdRows(today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>): List<View> {
+        val plan = Stats.goalPlan(host)
+        val read = today.pages.size
+        val hero = hero(
+            key = TODAY, count = read,
+            say = { if (it == 0) none(res) else figures(it, res) },
+            unit = if (read == 0) "" else res.getQuantityString(R.plurals.pages_unit, read),
+            title = host.getString(R.string.stats_pages_today),
+            line = when {
+                read == 0 -> host.getString(R.string.stats_none_today)
+                goal == 0 -> pagesSaid(read, res)
+                read >= goal -> host.getString(R.string.stats_goal_reached)
+                else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
+            },
+            note = if (goal == 0) host.getString(R.string.goal_none_today) else ""
+        ).also {
+            fillRing(it, TODAY, read.toFloat(), goal.toFloat())
+            showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
+        }
+        return listOf(
+            hero,
+            changeRow(plan.said(host)) { picker.reading(plan) },
+            row(host.getString(R.string.done_week), metOfWeek(plan, week)),
+            row(host.getString(R.string.left_today), leftSaid(read, goal), khatmaNote(plan, goal))
+        )
+    }
+
+    // Days this week that met their goal, out of the days that had one
+    private fun metOfWeek(plan: Goal, week: List<Stats.Day>): String {
+        val cal = Calendar.getInstance()
+        var had = 0
+        var met = 0
+        week.forEachIndexed { i, d ->
+            cal.timeInMillis = Stats.noonOf(Stats.today() - (week.size - 1 - i))
+            // A khatma's pages a day are only known for today, so any day of reading counts toward it
+            val want = if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(cal.get(Calendar.DAY_OF_WEEK))
+            if (want > 0) {
+                had++
+                if (d.pages.size >= want) met++
+            }
+        }
+        if (had == 0) return none(res)
+        return host.getString(R.string.of_count, figures(met, res), res.getQuantityString(R.plurals.days_count, had, figures(had, res)))
+    }
+
+    private fun leftSaid(done: Int, goal: Int): String = when {
+        goal == 0 -> none(res)
+        done >= goal -> host.getString(R.string.left_none)
+        else -> pagesSaid(goal - done, res)
+    }
+
+    // A khatma goal says what its daily pages are for
+    private fun khatmaNote(plan: Goal, goal: Int): String =
+        if (plan.kind != Goal.Kind.KHATMA || goal == 0) ""
+        else host.getString(R.string.khatma_daily, pagesSaid(goal, res), dateSaid(host, plan.amount.toLong()))
+
+    private fun hifzRows(): List<View> {
+        val plan = Stats.hifzPlan(host)
+        val mine = mineRow()
+        if (plan == null) return listOf(
+            quiet(host.getString(R.string.hifz_none)),
+            action(host.getString(R.string.hifz_add)) { picker.hifz(null) },
+            mine
+        )
+        val goal = Stats.hifzGoal(host)
+        val learned = Hifz.learnedOn(host, Stats.today())
+        val hero = hero(
+            key = HIFZ, count = learned,
+            say = { if (it == 0) none(res) else figures(it, res) },
+            unit = if (learned == 0) "" else res.getQuantityString(R.plurals.pages_unit, learned),
+            title = host.getString(R.string.hifz_today),
+            line = when {
+                goal == 0 -> if (learned == 0) host.getString(R.string.goal_none_today) else pagesSaid(learned, res)
+                learned >= goal -> host.getString(R.string.stats_goal_reached)
+                else -> host.getString(R.string.of_count, figures(learned, res), pagesSaid(goal, res))
+            },
+            note = ""
+        ).also { fillRing(it, HIFZ, learned.toFloat(), goal.toFloat()) }
+        return listOf(
+            hero,
+            changeRow(plan.said(host)) { picker.hifz(plan) },
+            row(host.getString(R.string.left_today), leftSaid(learned, goal)),
+            mine
+        )
+    }
+
+    // What is memorised in all, a tap away from the list of surahs and pages
+    private fun mineRow(): View {
+        val known = Hifz.pages(host).size
+        return row(
+            host.getString(R.string.hifz_mine),
+            if (known == 0) none(res) else host.getString(R.string.percent, figures(known * 100 / Mushaf.PAGES, res)),
+            if (known == 0) host.getString(R.string.hifz_mine_empty) else host.getString(R.string.hifz_mine_pages, pagesSaid(known, res))
+        ).apply {
+            isClickable = true
+            setOnClickListener { host.startActivity(Intent(host, MemorizedActivity::class.java)) }
+        }
+    }
+
+    // The goal as written, with the way to change it
+    private fun changeRow(said: String, change: () -> Unit): View =
+        row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply {
+            isClickable = true
+            setOnClickListener { change() }
+        }
+
+    // --- reading ---
+
+    private fun readingPage(into: LinearLayout, today: Stats.Day, goal: Int) {
         val hijri = Stats.hijri(host)
         val thisMonth = Stats.monthDays(host)
         blow.card(into, 0, listOf(calendarRow(hijri)))
@@ -62,59 +210,8 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
                 host.getString(R.string.stats_avg))
         ))
         blow.card(into, R.string.stats_speed, speedRows(today, thisMonth))
+        val month = Stats.lastDays(host, Stats.CHART_DAYS)
         blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
-
-        section(R.string.sec_khatma)
-        blow.card(into, 0, khatmaRows())
-
-        section(R.string.sec_listening)
-        val weekSec = week.sumOf { it.listenSec }
-        into.addView(pair(
-            Tile(R.drawable.ic_headphones, spent(today.listenSec, res), host.getString(R.string.stats_listen_time)),
-            Tile(R.drawable.ic_headphones, spent(weekSec, res), host.getString(R.string.stats_week, figures(WEEK, res))) {
-                // Minutes, not seconds, so a few seconds either way is not called a change
-                showTrend(it, (weekSec + 30) / 60, (before.sumOf { d -> d.listenSec } + 30) / 60)
-            }
-        ))
-        mostHeard(week)?.let { blow.card(into, host.getString(R.string.stats_most_heard, figures(WEEK, res)), it) }
-
-        blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
-
-        if (motion == Motion.OPEN) {
-            into.riseChildren()
-            celebrateOnce(today, goal)
-        }
-    }
-
-    // The first look at the day's reached goal is met with a celebration; later looks are quiet
-    private fun celebrateOnce(today: Stats.Day, goal: Int) {
-        if (goal == 0 || today.pages.size < goal || Stats.celebrated(host)) return
-        Stats.setCelebrated(host)
-        val over = host.findViewById<ViewGroup>(android.R.id.content)
-        over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
-    }
-
-    // --- today ---
-
-    private fun todayHero(today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>): View {
-        val read = today.pages.size
-        return hero(
-            key = TODAY,
-            count = read,
-            say = { if (it == 0) none(res) else figures(it, res) },
-            unit = if (read == 0) "" else res.getQuantityString(R.plurals.pages_unit, read),
-            title = host.getString(R.string.stats_pages_today),
-            line = when {
-                read == 0 -> host.getString(R.string.stats_none_today)
-                goal == 0 -> pagesSaid(read, res)
-                read >= goal -> host.getString(R.string.stats_goal_reached)
-                else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
-            },
-            note = if (goal == 0) host.getString(R.string.goal_none_today) else ""
-        ).also {
-            fillRing(it, TODAY, read.toFloat(), goal.toFloat())
-            showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
-        }
     }
 
     // Which month the numbers below belong to; a tap moves between the Hijri and Gregorian calendars
@@ -146,7 +243,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         )
         if (today.pages.isNotEmpty()) rows += action(
             host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))
-        ) { host.startActivity(android.content.Intent(host, PageTimesActivity::class.java)) }
+        ) { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
         return rows
     }
 
@@ -165,117 +262,6 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     // Time on the pages that were read, leaving out pages only passed over
     private fun onPages(day: Stats.Day): Int = day.pages.sumOf { day.pageSec.getValue(it) }
 
-    // --- daily goal ---
-
-    // Ready-made goals, the default first; anything else is built step by step under «custom»
-    private val presets by lazy {
-        listOf(
-            Goal.DEFAULT to host.getString(R.string.stats_goal_month),
-            Goal(Goal.Kind.PAGES, 5, emptyList(), Goal.ALL_DAYS, kahf = false) to "",
-            Goal(Goal.Kind.PAGES, 10, emptyList(), Goal.ALL_DAYS, kahf = false) to "",
-            Goal(Goal.Kind.JUZ, 2, emptyList(), Goal.ALL_DAYS, kahf = false) to host.getString(R.string.stats_goal_half_month),
-            Goal(Goal.Kind.SURAHS, 0, listOf(2, 3), Goal.ALL_DAYS, kahf = false) to ""
-        )
-    }
-
-    // Today's pages by the goal, with the whole plan written beneath
-    private fun goalRow(goal: Int): View {
-        val plan = Stats.goalPlan(host)
-        return row(host.getString(R.string.goal_today), if (goal == 0) none(res) else pagesSaid(goal, res), plan.said(res)).apply {
-            isClickable = true
-            setOnClickListener {
-                val choices = presets.map { (g, note) -> Choice(g.said(res), note, on = g == plan) } +
-                    Choice(host.getString(R.string.goal_custom), on = presets.none { it.first == plan })
-                host.sheet(host.getString(R.string.goal_title), choices) { i ->
-                    if (i < presets.size) setGoal(presets[i].first) else customGoal(plan)
-                }
-            }
-        }
-    }
-
-    // Custom: what to read, then how much, then on which days
-    private fun customGoal(plan: Goal) {
-        host.sheet(host.getString(R.string.goal_kind_ask), listOf(
-            Choice(host.getString(R.string.goal_kind_pages)),
-            Choice(host.getString(R.string.goal_kind_juz)),
-            Choice(host.getString(R.string.goal_kind_surah))
-        )) { i ->
-            when (i) {
-                0 -> host.askNumber(host.getString(R.string.goal_custom_ask), host.getString(R.string.goal_next),
-                    if (plan.kind == Goal.Kind.PAGES) plan.amount else 10, 1..Mushaf.PAGES) {
-                    pickDays(plan.copy(kind = Goal.Kind.PAGES, amount = it, surahs = emptyList()))
-                }
-                1 -> host.askNumber(host.getString(R.string.goal_juz_ask), host.getString(R.string.goal_next),
-                    if (plan.kind == Goal.Kind.JUZ) plan.amount else 1, 1..30) {
-                    pickDays(plan.copy(kind = Goal.Kind.JUZ, amount = it, surahs = emptyList()))
-                }
-                else -> host.sheet(host.getString(R.string.goal_surah_ask), Surahs.list().map { Choice(it.name) }) { s ->
-                    pickDays(plan.copy(kind = Goal.Kind.SURAHS, amount = 0, surahs = listOf(Surahs.list()[s].id)))
-                }
-            }
-        }
-    }
-
-    // The days of the week, Saturday first, and Al-Kahf on Friday as one more choice
-    private fun pickDays(goal: Goal) {
-        val labels = Goal.WEEK.map { Goal.weekdayName(it, res) } + host.getString(R.string.goal_add_kahf)
-        val chosen = BooleanArray(labels.size) { i ->
-            if (i < Goal.WEEK.size) goal.days and Goal.bit(Goal.WEEK[i]) != 0 else goal.kahf
-        }
-        host.pickMany(host.getString(R.string.goal_days_ask), labels, chosen, host.getString(R.string.goal_keep)) { now ->
-            val days = Goal.WEEK.indices.filter { now[it] }.fold(0) { mask, i -> mask or Goal.bit(Goal.WEEK[i]) }
-            val kahf = now.last()
-            // A goal on no day at all is no goal; the old one stays
-            if (days != 0 || kahf) setGoal(goal.copy(days = days, kahf = kahf))
-        }
-    }
-
-    private fun setGoal(goal: Goal) {
-        Stats.setGoalPlan(host, goal)
-        build()
-    }
-
-    // --- khatma ---
-
-    private fun khatmaRows(): List<View> {
-        val k = Stats.khatma(host)
-        val all = Mushaf.PAGES
-        val pace = Stats.pace(host)
-        val finish = if (pace > 0f) {
-            host.getString(R.string.stats_finish_on, date(Stats.today() + ceil((all - k.read) / pace).toLong()))
-        } else host.getString(R.string.stats_finish_unknown)
-
-        val rows = mutableListOf<View>()
-        rows += hero(
-            key = KHATMA,
-            count = k.read * 100 / all,
-            say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
-            unit = "",
-            // The card is already headed «khatma»
-            title = "",
-            line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
-                else host.getString(R.string.stats_khatma_read, pagesSaid(k.read, res), figures(all, res)),
-            note = finish
-        ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
-        rows += row(host.getString(R.string.stats_left), pagesSaid(all - k.read, res))
-        if (k.done > 0) rows += row(host.getString(R.string.stats_done), figures(k.done, res))
-        rows += action(host.getString(R.string.stats_new_khatma)) {
-            host.sheet(host.getString(R.string.stats_new_khatma_ask), listOf(Choice(host.getString(R.string.stats_new_khatma_do)))) {
-                Stats.newKhatma(host)
-                build()
-            }
-        }
-        return rows
-    }
-
-    private fun date(day: Long): String {
-        val far = day - Stats.today() > 300
-        val flags = DateUtils.FORMAT_SHOW_DATE or if (far) DateUtils.FORMAT_SHOW_YEAR else DateUtils.FORMAT_NO_YEAR
-        return localDigits(DateUtils.formatDateTime(host, Stats.noonOf(day), flags), res)
-    }
-
-    // --- recent days ---
-
     private fun monthRows(month: List<Stats.Day>, goal: Int): List<View> {
         val counts = month.map { it.pages.size }
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
@@ -292,7 +278,49 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private fun dayName(ago: Int): String =
         if (ago == 0) host.getString(R.string.chart_today) else res.getQuantityString(R.plurals.ago_days, ago, figures(ago, res))
 
+    // --- khatma ---
+
+    private fun khatmaPage(into: LinearLayout) {
+        val k = Stats.khatma(host)
+        val all = Mushaf.PAGES
+        val pace = Stats.pace(host)
+        val finish = if (pace > 0f) {
+            host.getString(R.string.stats_finish_on, dateSaid(host, Stats.today() + ceil((all - k.read) / pace).toLong()))
+        } else host.getString(R.string.stats_finish_unknown)
+
+        val rows = mutableListOf<View>()
+        rows += hero(
+            key = KHATMA, count = k.read * 100 / all,
+            say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
+            unit = "", title = "",
+            line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
+                else host.getString(R.string.stats_khatma_read, pagesSaid(k.read, res), figures(all, res)),
+            note = finish
+        ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
+        rows += row(host.getString(R.string.stats_left), pagesSaid(all - k.read, res))
+        if (k.done > 0) rows += row(host.getString(R.string.stats_done), figures(k.done, res))
+        rows += action(host.getString(R.string.stats_new_khatma)) {
+            host.sheet(host.getString(R.string.stats_new_khatma_ask), listOf(Choice(host.getString(R.string.stats_new_khatma_do)))) {
+                Stats.newKhatma(host)
+                build()
+            }
+        }
+        blow.card(into, 0, rows)
+    }
+
     // --- listening ---
+
+    private fun listeningPage(into: LinearLayout, today: Stats.Day, week: List<Stats.Day>, before: List<Stats.Day>) {
+        val weekSec = week.sumOf { it.listenSec }
+        into.addView(pair(
+            Tile(R.drawable.ic_headphones, spent(today.listenSec, res), host.getString(R.string.stats_listen_time)),
+            Tile(R.drawable.ic_headphones, spent(weekSec, res), host.getString(R.string.stats_week, figures(WEEK, res))) {
+                // Minutes, not seconds, so a few seconds either way is not called a change
+                showTrend(it, (weekSec + 30) / 60, (before.sumOf { d -> d.listenSec } + 30) / 60)
+            }
+        ))
+        mostHeard(week)?.let { blow.card(into, host.getString(R.string.stats_most_heard, figures(WEEK, res)), it) }
+    }
 
     private fun mostHeard(week: List<Stats.Day>): List<View>? {
         val heard = HashMap<Int, Int>()
@@ -303,7 +331,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
 
     // A surah heading its own row is written as the mushaf writes it
     private fun heardRow(surah: Int, sec: Int): View =
-        blow.inflate(R.layout.row_place, into, false).apply {
+        blow.inflate(R.layout.row_place, parent, false).apply {
             isClickable = false
             findViewById<ImageView>(R.id.place_icon).apply {
                 setImageResource(R.drawable.ic_headphones)
@@ -339,7 +367,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     }
 
     private fun hero(key: String, count: Int, say: (Int) -> String, unit: String, title: String, line: String, note: String): View =
-        blow.inflate(R.layout.part_stat_hero, into, false).apply {
+        blow.inflate(R.layout.part_stat_hero, parent, false).apply {
             countFigure(findViewById(R.id.hero_value), key, count, say)
             findViewById<TextView>(R.id.hero_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
             findViewById<TextView>(R.id.hero_title).apply { text = title; visibility = if (title.isEmpty()) View.GONE else View.VISIBLE }
@@ -365,7 +393,7 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
     private class Tile(val icon: Int, val value: String, val label: String, val trend: ((View) -> Unit)? = null)
 
     private fun pair(a: Tile, b: Tile): View =
-        blow.inflate(R.layout.part_stat_pair, into, false).apply {
+        blow.inflate(R.layout.part_stat_pair, parent, false).apply {
             fill(findViewById(R.id.tile_a), a)
             fill(findViewById(R.id.tile_b), b)
         }
@@ -380,36 +408,35 @@ class StatsPane(private val host: Activity, private val into: LinearLayout) {
         t.trend?.invoke(tile.findViewById(R.id.tile_trend))
     }
 
-    private fun section(title: Int) {
-        (blow.inflate(R.layout.part_section_head, into, false) as TextView).also {
-            it.setText(title)
-            into.addView(it)
-        }
-    }
-
     private fun row(label: String, value: String, note: String = ""): View =
-        blow.inflate(R.layout.row_progress, into, false).apply {
+        blow.inflate(R.layout.row_progress, parent, false).apply {
             findViewById<TextView>(R.id.prog_label).text = label
             findViewById<TextView>(R.id.prog_value).text = value
             findViewById<TextView>(R.id.prog_note).apply { text = note; visibility = if (note.isEmpty()) View.GONE else View.VISIBLE }
         }
 
     private fun quiet(text: String): View =
-        (blow.inflate(R.layout.row_setting_note, into, false) as TextView).also { it.text = text }
+        (blow.inflate(R.layout.row_setting_note, parent, false) as TextView).also { it.text = text }
 
     private fun action(label: String, act: () -> Unit): View =
-        (blow.inflate(R.layout.row_setting_action, into, false) as TextView).also {
+        (blow.inflate(R.layout.row_setting_action, parent, false) as TextView).also {
             it.text = label
             it.setOnClickListener { act() }
         }
 
-
     private companion object {
+        const val TABS = 4
+        const val GOALS = 0
+        const val READING = 1
+        const val KHATMA_PAGE = 2
+        const val LISTENING = 3
+
         const val WEEK = 7
         const val TOP_HEARD = 3
         // Long enough for the cards to have come in first
         const val CELEBRATE_AFTER_MS = 450L
         const val TODAY = "today"
+        const val HIFZ = "hifz"
         const val KHATMA = "khatma"
     }
 }

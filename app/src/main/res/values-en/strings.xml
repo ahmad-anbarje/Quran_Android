@@ -331,4 +331,35 @@
         <item>a hizb and a half</item>
         <item>a hizb and three quarters</item>
     </string-array>
+    <!-- Goals tab: what the goal is, what is done, what is left -->
+    <string name="wird_title">Your daily reading</string>
+    <string name="hifz_title">Your memorisation</string>
+    <string name="goal_change">Change</string>
+    <string name="done_week">Done this week</string>
+    <string name="left_today">Left for today</string>
+    <string name="left_none">Nothing, today\'s goal is done</string>
+    <string name="khatma_daily">%1$s a day to finish by %2$s</string>
+    <string name="goal_khatma_by">A khatma by %1$s</string>
+    <string name="goal_khatma_note">Each day\'s pages come from what is left</string>
+    <string name="goal_kind_khatma">A khatma in a number of days</string>
+    <string name="goal_khatma_ask">Finish in how many days?</string>
+    <plurals name="days_count">
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
+    </plurals>
+
+    <!-- Memorisation: pages known by heart, kept on the phone -->
+    <string name="hifz_none">No memorisation goal yet</string>
+    <string name="hifz_add">Add a memorisation goal</string>
+    <string name="hifz_goal_title">Memorisation goal</string>
+    <string name="hifz_custom_ask">How many pages a day?</string>
+    <string name="hifz_stop">Stop the memorisation goal</string>
+    <string name="hifz_today">Pages memorised today</string>
+    <string name="hifz_mine">My memorisation</string>
+    <string name="hifz_mine_empty">Tap to add what you know by heart</string>
+    <string name="hifz_mine_pages">%1$s of the mushaf</string>
+    <string name="hifz_how">Tick a whole surah you already know. Tap a surah to tick its pages; those count as memorised today.</string>
+    <string name="hifz_surah_mark">I know this whole surah</string>
+    <string name="hifz_surah_unmark">Unmark this surah</string>
+    <string name="hifz_keep">Done</string>
 </resources>

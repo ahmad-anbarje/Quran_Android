@@ -23,50 +23,9 @@
             android:background="@color/surface_2">
 
             <!-- Which list: tap or swipe. First child, so the status bar takes its colour -->
-            <LinearLayout
+            <include
                 android:id="@+id/segments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false"
-                android:layoutDirection="locale"
-                android:background="@drawable/strip_head"
-                android:paddingStart="@dimen/screen_margin"
-                android:paddingEnd="@dimen/screen_margin"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-
-                <include
-                    android:id="@+id/seg_surahs"
-                    layout="@layout/part_seg"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/seg_height"
-                    android:layout_weight="1" />
-
-                <include
-                    android:id="@+id/seg_juz"
-                    layout="@layout/part_seg"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/seg_height"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp" />
-
-                <include
-                    android:id="@+id/seg_hizb"
-                    layout="@layout/part_seg"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/seg_height"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp" />
-
-                <include
-                    android:id="@+id/seg_pages"
-                    layout="@layout/part_seg"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/seg_height"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp" />
-            </LinearLayout>
+                layout="@layout/part_segments" />
 
             <!-- Weighted, not match_parent, or the last rows hang below the screen out of reach -->
             <androidx.viewpager2.widget.ViewPager2
@@ -186,20 +145,27 @@
                 android:paddingBottom="24dp" />
         </ScrollView>
 
-        <!-- Statistics pane: filled by StatsPane -->
-        <ScrollView
+        <!-- Achievements: goal, reading, khatma and listening, a swipe apart; filled by StatsPane -->
+        <LinearLayout
             android:id="@+id/pane_stats"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/surface_2"
             android:visibility="gone">
 
-            <LinearLayout
-                android:id="@+id/stats_groups"
+            <!-- First child, so the status bar takes its colour -->
+            <include
+                android:id="@+id/stats_segments"
+                layout="@layout/part_segments" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/stats_pages"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="24dp" />
-        </ScrollView>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layoutDirection="locale" />
+        </LinearLayout>
 
         <!-- Pane 3: settings. -->
         <ScrollView

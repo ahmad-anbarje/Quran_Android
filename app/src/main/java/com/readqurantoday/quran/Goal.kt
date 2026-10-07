@@ -1,5 +1,6 @@
 package com.readqurantoday.quran
 
+import android.content.Context
 import android.content.res.Resources
 import java.util.Calendar
 
@@ -9,7 +10,8 @@ import java.util.Calendar
  */
 data class Goal(val kind: Kind, val amount: Int, val surahs: List<Int>, val days: Int, val kahf: Boolean) {
 
-    enum class Kind { PAGES, JUZ, SURAHS }
+    /** KHATMA keeps the day the khatma is to end in [amount]; its pages a day follow from what is left. */
+    enum class Kind { PAGES, JUZ, SURAHS, KHATMA }
 
     /** Pages to read on [weekday] (Calendar.SUNDAY..SATURDAY); 0 is a day without a goal. */
     fun pagesOn(weekday: Int): Int {
@@ -25,15 +27,19 @@ data class Goal(val kind: Kind, val amount: Int, val surahs: List<Int>, val days
         Kind.PAGES -> amount
         Kind.JUZ -> Math.round(amount * Mushaf.PAGES / 30f)
         Kind.SURAHS -> surahs.sumOf { surahPages(it) }
+        Kind.KHATMA -> 0
     }
 
     /** What the goal is, as the goal row says it: "One juz every day, and Al-Kahf on Friday". */
-    fun said(res: Resources): String {
+    fun said(ctx: Context): String {
+        val res = ctx.resources
+        if (kind == Kind.KHATMA) return res.getString(R.string.goal_khatma_by, dateSaid(ctx, amount.toLong()))
         val what = when (kind) {
             Kind.PAGES -> pagesSaid(amount, res)
             Kind.JUZ -> res.getQuantityString(R.plurals.juz_count, amount, figures(amount, res))
             Kind.SURAHS -> surahs.mapNotNull { id -> Surahs.list().firstOrNull { it.id == id }?.name }
                 .joinToString(res.getString(R.string.and_join))
+            Kind.KHATMA -> ""
         }
         val plan = if (everyDay()) res.getString(R.string.goal_plan, what, res.getString(R.string.goal_every_day))
             else res.getString(R.string.goal_plan_days, what, daysSaid(res))

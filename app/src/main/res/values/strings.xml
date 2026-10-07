@@ -396,4 +396,39 @@
         <item>حزب ونصف</item>
         <item>حزب وثلاثة أرباع</item>
     </string-array>
+    <!-- Goals tab: what the goal is, what is done, what is left -->
+    <string name="wird_title">وِردك</string>
+    <string name="hifz_title">حفظك</string>
+    <string name="goal_change">تغيير</string>
+    <string name="done_week">ما أنجزته هذا الأسبوع</string>
+    <string name="left_today">ما بقي اليوم</string>
+    <string name="left_none">لا شيء، أتممت هدف اليوم</string>
+    <string name="khatma_daily">%1$s كل يوم لتختم في %2$s</string>
+    <string name="goal_khatma_by">ختمة تنتهي في %1$s</string>
+    <string name="goal_khatma_note">تُحسب صفحات كل يوم مما بقي</string>
+    <string name="goal_kind_khatma">ختمة في عدد من الأيام</string>
+    <string name="goal_khatma_ask">في كم يومًا تختم؟</string>
+    <plurals name="days_count">
+        <item quantity="zero">%1$s يوم</item>
+        <item quantity="one">يوم واحد</item>
+        <item quantity="two">يومين</item>
+        <item quantity="few">%1$s أيام</item>
+        <item quantity="many">%1$s يومًا</item>
+        <item quantity="other">%1$s يوم</item>
+    </plurals>
+
+    <!-- Memorisation: pages known by heart, kept on the phone -->
+    <string name="hifz_none">لم تضع هدفًا للحفظ بعد</string>
+    <string name="hifz_add">أضف هدف حفظ</string>
+    <string name="hifz_goal_title">هدف الحفظ</string>
+    <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
+    <string name="hifz_stop">إيقاف هدف الحفظ</string>
+    <string name="hifz_today">صفحات حفظتها اليوم</string>
+    <string name="hifz_mine">محفوظي</string>
+    <string name="hifz_mine_empty">اضغط لتسجّل ما تحفظه</string>
+    <string name="hifz_mine_pages">%1$s من المصحف</string>
+    <string name="hifz_how">علّم السورة كلها إن كنت تحفظها من قبل. واضغط على السورة لتعلّم صفحاتها، فتُحسب من حفظ اليوم.</string>
+    <string name="hifz_surah_mark">أحفظ السورة كلها</string>
+    <string name="hifz_surah_unmark">ألغِ تعليم السورة</string>
+    <string name="hifz_keep">تم</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.readqurantoday.quran
 
+import android.content.Context
 import android.content.res.Resources
+import android.text.format.DateUtils
 import android.icu.text.DateFormat
 import android.icu.util.Calendar
 import android.icu.util.GregorianCalendar
@@ -21,6 +23,13 @@ fun monthStart(day: Long, hijri: Boolean): Long {
     val cal = calendar(hijri, ULocale.ROOT)
     cal.timeInMillis = Stats.noonOf(day)
     return day - (cal.get(Calendar.DAY_OF_MONTH) - 1)
+}
+
+/** A day as the phone writes a date, "12 October", with the year once it is far off; in the app's figures. */
+fun dateSaid(ctx: Context, day: Long): String {
+    val far = day - Stats.today() > 300
+    val flags = DateUtils.FORMAT_SHOW_DATE or if (far) DateUtils.FORMAT_SHOW_YEAR else DateUtils.FORMAT_NO_YEAR
+    return localDigits(DateUtils.formatDateTime(ctx, Stats.noonOf(day), flags), ctx.resources)
 }
 
 /** "Rabi al-Akhir 1448" or "October 2026", in the app's language and figures. */

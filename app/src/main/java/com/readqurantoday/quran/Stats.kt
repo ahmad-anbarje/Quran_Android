@@ -33,6 +33,7 @@ object Stats {
     private const val KHATMAS = "khatmas"
     private const val GOAL = "goal"
     private const val GOAL_PLAN = "goal_plan"
+    private const val HIFZ_GOAL = "hifz_goal"
     private const val SINCE = "since"
     private const val HIJRI = "hijri"
     private const val CELEBRATED = "celebrated"
@@ -155,7 +156,25 @@ object Stats {
     /** Pages to read today by the reader's goal; 0 on a day the goal leaves free. */
     fun goal(ctx: Context): Int {
         Surahs.load(ctx)
-        return goalPlan(ctx).pagesToday()
+        val plan = goalPlan(ctx)
+        return if (plan.kind == Goal.Kind.KHATMA) khatmaToday(ctx, plan.amount.toLong()) else plan.pagesToday()
+    }
+
+    // What is left of the khatma when today began, shared over the days until it is to end
+    private fun khatmaToday(ctx: Context, endDay: Long): Int {
+        val leftAtDawn = Mushaf.PAGES - khatma(ctx).read + day(ctx, today()).pages.size
+        val days = (endDay - today() + 1).coerceAtLeast(1L)
+        return Math.ceil(leftAtDawn.coerceAtLeast(0) / days.toDouble()).toInt()
+    }
+
+    /** Pages to learn by heart today by the memorisation goal; 0 without one, or on a day it leaves free. */
+    fun hifzGoal(ctx: Context): Int = hifzPlan(ctx)?.pagesToday() ?: 0
+
+    /** The memorisation goal, beside the reading goal; null until one is chosen. */
+    fun hifzPlan(ctx: Context): Goal? = Goal.decoded(store(ctx).getString(HIFZ_GOAL, null))
+
+    fun setHifzPlan(ctx: Context, goal: Goal?) = store(ctx).edit {
+        if (goal == null) remove(HIFZ_GOAL) else putString(HIFZ_GOAL, goal.encoded())
     }
 
     /** The goal as chosen; a goal kept as a plain number from before is that many pages every day. */

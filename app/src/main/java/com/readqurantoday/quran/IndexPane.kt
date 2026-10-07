@@ -26,9 +26,9 @@ class IndexPane(
     /* The switch's own face, read before the first bolding, so the app font survives it. */
     private val segFace = segs[0].typeface
 
-    private val juz = division(Surahs.juzStarts(), R.string.head_juz, ::surahAndPage, Surahs::juzOfPage)
-    private val hizb = division(Surahs.hizbStarts(), R.string.head_hizb, ::surahAndPage, Surahs::hizbOfPage)
-    private val pages = division(IntArray(Mushaf.PAGES) { it + 1 }, R.string.head_page, ::surahAndJuz) { it }
+    private val juz = division(Surahs.juzStarts(), R.string.head_juz, ::surahAndPage, null, Surahs::juzOfPage)
+    private val hizb = division(Surahs.hizbStarts(), R.string.head_hizb, ::surahAndPage, ::quarters, Surahs::hizbOfPage)
+    private val pages = division(IntArray(Mushaf.PAGES) { it + 1 }, R.string.head_page, ::surahAndJuz, null) { it }
 
     private val lists: List<RecyclerView.Adapter<*>> = listOf(surahs, juz, hizb, pages)
 
@@ -57,17 +57,25 @@ class IndexPane(
         seg.typeface = Typeface.create(segFace, if (isOn) Typeface.BOLD else Typeface.NORMAL)
     }
 
-    private fun division(starts: IntArray, title: Int, where: (Int) -> String, numberOf: (Int) -> Int) =
+    private fun division(starts: IntArray, title: Int, where: (Int) -> String, more: ((Int) -> String)?, numberOf: (Int) -> Int) =
         DivisionAdapter(
             starts = starts,
             title = { n -> host.getString(title, figures(n, res)) },
             where = where,
+            more = more,
             onOpen = open,
             onPlay = { page -> play(page, numberOf) },
             onReciter = { page -> pickReciter(Surahs.ofPage(page)) },
             // Read from where the recitation actually is, so every list agrees wherever it was started
             playing = { numberOf(Recite.playingPage(host)) }
         )
+
+    // Where a hizb's quarter, half and three-quarters begin, by page
+    private fun quarters(hizb: Int): String {
+        val at = Surahs.quartersOf(hizb).drop(1).map { figures(it, res) }
+        if (at.size < 3) return ""
+        return host.getString(R.string.hizb_quarters, at[0], at[1], at[2])
+    }
 
     // The surah it begins in, then the page
     private fun surahAndPage(page: Int): String = meta(page, host.getString(R.string.head_page, figures(page, res)))

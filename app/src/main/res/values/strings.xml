@@ -7,6 +7,10 @@
     <string name="head_juz">الجزء %1$s</string>
     <string name="head_page">الصفحة %1$s</string>
     <string name="head_hizb">الحزب %1$s</string>
+    <string name="head_hizb_quarter">ربع الحزب %1$s</string>
+    <string name="head_hizb_half">نصف الحزب %1$s</string>
+    <string name="head_hizb_three">ثلاثة أرباع الحزب %1$s</string>
+    <string name="hizb_quarters">الربع ص %1$s، النصف ص %2$s، ثلاثة الأرباع ص %3$s</string>
     <!-- The way back into the page the reader was left on. -->
     <string name="resume">متابعة القراءة</string>
     <string name="resume_reciter">متابعة القارئ</string>
@@ -340,7 +344,6 @@
     <string name="stats_per_hour_juz">أي %1$s، تقديرًا بحسب سرعتك هذا الشهر</string>
     <string name="about">نحو %1$s</string>
     <string name="and_half">%1$s ونصف</string>
-    <string name="under_hizb">أقل من حزب</string>
     <plurals name="juz_count">
         <item quantity="zero">%1$s جزء</item>
         <item quantity="one">جزء</item>
@@ -348,14 +351,6 @@
         <item quantity="few">%1$s أجزاء</item>
         <item quantity="many">%1$s جزءًا</item>
         <item quantity="other">%1$s جزء</item>
-    </plurals>
-    <plurals name="hizb_count">
-        <item quantity="zero">%1$s حزب</item>
-        <item quantity="one">حزب</item>
-        <item quantity="two">حزبان</item>
-        <item quantity="few">%1$s أحزاب</item>
-        <item quantity="many">%1$s حزبًا</item>
-        <item quantity="other">%1$s حزب</item>
     </plurals>
     <string name="stats_per_hour_today">أي %1$s، تقديرًا بحسب سرعتك اليوم</string>
     <string name="goal_custom">هدف مخصص…</string>
@@ -388,5 +383,16 @@
         <item>الخميس</item>
         <item>الجمعة</item>
         <item>السبت</item>
+    </string-array>
+    <string name="under_quarter">أقل من ربع حزب</string>
+    <!-- A hizb in quarters, one to seven of them; eight make a juz, said as a juz -->
+    <string-array name="hizb_parts">
+        <item>ربع حزب</item>
+        <item>نصف حزب</item>
+        <item>ثلاثة أرباع حزب</item>
+        <item>حزب</item>
+        <item>حزب وربع</item>
+        <item>حزب ونصف</item>
+        <item>حزب وثلاثة أرباع</item>
     </string-array>
 </resources>

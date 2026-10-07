@@ -56,13 +56,15 @@ private fun counted(plural: Int, n: Int, resources: Resources): String =
 private fun joined(first: String, plural: Int, n: Int, resources: Resources): String =
     if (n == 0) first else resources.getString(R.string.time_and, first, counted(plural, n, resources))
 
-/** [pages] as the parts a reader counts by: "about 4 juz", "about 4 and a half juz", or hizb under a juz. */
+/** [pages] as the parts a reader counts by: "about 4 juz", "about 4 and a half juz", or quarters of a hizb under a juz. */
 fun juzSaid(pages: Float, resources: Resources): String {
     val juz = pages / (Mushaf.PAGES / 30f)
     if (juz < 1f) {
-        val hizb = Math.round(pages / (Mushaf.PAGES / 60f))
-        if (hizb < 1) return resources.getString(R.string.under_hizb)
-        return resources.getString(R.string.about, counted(R.plurals.hizb_count, hizb, resources))
+        // A hizb is counted in its quarters, as the mushaf marks them: a quarter, half, three-quarters…
+        val quarters = Math.round(pages / (Mushaf.PAGES / 240f))
+        if (quarters < 1) return resources.getString(R.string.under_quarter)
+        val parts = resources.getStringArray(R.array.hizb_parts)
+        return resources.getString(R.string.about, parts[(quarters - 1).coerceAtMost(parts.size - 1)])
     }
     // To the nearest half, as one would say it aloud
     val halves = Math.round(juz * 2)

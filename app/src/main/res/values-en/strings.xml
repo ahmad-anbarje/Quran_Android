@@ -6,6 +6,10 @@
     <string name="head_juz">Juz %1$s</string>
     <string name="head_page">Page %1$s</string>
     <string name="head_hizb">Hizb %1$s</string>
+    <string name="head_hizb_quarter">¼ Hizb %1$s</string>
+    <string name="head_hizb_half">½ Hizb %1$s</string>
+    <string name="head_hizb_three">¾ Hizb %1$s</string>
+    <string name="hizb_quarters">¼ p. %1$s, ½ p. %2$s, ¾ p. %3$s</string>
     <string name="resume">Continue reading</string>
     <string name="resume_reciter">Follow the reciter</string>
     <string name="to_menu">Menu</string>
@@ -280,14 +284,9 @@
     <string name="stats_per_hour_juz">That is %1$s, an estimate from your speed this month</string>
     <string name="about">about %1$s</string>
     <string name="and_half">%1$s and a half</string>
-    <string name="under_hizb">under a hizb</string>
     <plurals name="juz_count">
         <item quantity="one">%1$s juz</item>
         <item quantity="other">%1$s juz</item>
-    </plurals>
-    <plurals name="hizb_count">
-        <item quantity="one">%1$s hizb</item>
-        <item quantity="other">%1$s hizb</item>
     </plurals>
     <string name="stats_per_hour_today">That is %1$s, an estimate from your speed today</string>
     <string name="goal_custom">Custom goal…</string>
@@ -321,4 +320,14 @@
         <item>Saturday</item>
     </string-array>
     <string name="and_join">" and "</string>
+    <string name="under_quarter">under a quarter of a hizb</string>
+    <string-array name="hizb_parts">
+        <item>a quarter of a hizb</item>
+        <item>half a hizb</item>
+        <item>three quarters of a hizb</item>
+        <item>a hizb</item>
+        <item>a hizb and a quarter</item>
+        <item>a hizb and a half</item>
+        <item>a hizb and three quarters</item>
+    </string-array>
 </resources>

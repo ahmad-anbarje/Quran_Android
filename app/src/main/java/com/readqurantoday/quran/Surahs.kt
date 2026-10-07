@@ -18,6 +18,8 @@ object Surahs {
     private val all = ArrayList<Surah>(114)
 
     private var juz = IntArray(0)
+    // The 240 quarters of the 60 hizb: every fourth begins a hizb
+    private var rub = IntArray(0)
     private var hizb = IntArray(0)
 
     fun load(context: Context) {
@@ -43,7 +45,8 @@ object Surahs {
         val mushaf = context.assets.open("data/mushaf.json").use { it.readBytes() }
         val root = JSONObject(String(mushaf, Charsets.UTF_8))
         juz = starts(root, "juzPages")
-        hizb = starts(root, "hizbPages")
+        rub = starts(root, "rubPages")
+        hizb = IntArray(rub.size / 4) { rub[it * 4] }
     }
 
     private fun starts(root: JSONObject, key: String): IntArray {
@@ -83,6 +86,15 @@ object Surahs {
 
     /** Which hizb this page is in (1–60), or 0 if not yet loaded. */
     fun hizbOfPage(page: Int): Int = countUpTo(hizb, page)
+
+    /** The page each quarter of [hizb] (1–60) begins on: the hizb itself, a quarter, half and three-quarters in. */
+    fun quartersOf(hizb: Int): List<Int> = (0..3).mapNotNull { rub.getOrNull((hizb - 1) * 4 + it) }
+
+    /** The hizb and quarter (0 its start, 1 a quarter, 2 half, 3 three-quarters) that begins on [page], if any. */
+    fun quarterOn(page: Int): Pair<Int, Int>? {
+        val i = rub.indexOf(page)
+        return if (i < 0) null else (i / 4 + 1) to (i % 4)
+    }
 
     private fun countUpTo(starts: IntArray, page: Int): Int {
         var n = 0

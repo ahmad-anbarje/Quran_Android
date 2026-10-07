@@ -54,6 +54,16 @@
                 android:layout_marginTop="2dp"
                 android:textColor="@color/text_mute"
                 android:textSize="@dimen/row_meta" />
+
+            <!-- A hizb's quarters, where it has them -->
+            <TextView
+                android:id="@+id/div_more"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/text_mute"
+                android:textSize="@dimen/row_meta"
+                android:visibility="gone" />
         </LinearLayout>
 
         <!-- Play starts the recitation here; the reciter is chosen for the whole app -->

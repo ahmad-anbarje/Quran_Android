@@ -11,6 +11,7 @@ class DivisionAdapter(
     private val starts: IntArray,
     private val title: (Int) -> String,
     private val where: (Int) -> String,
+    private val more: ((Int) -> String)?,
     private val onOpen: (Int) -> Unit,
     private val onPlay: (Int) -> Unit,
     private val onReciter: (Int) -> Unit,
@@ -32,6 +33,10 @@ class DivisionAdapter(
         row.findViewById<TextView>(R.id.div_num).text = figures(number, row.resources)
         row.findViewById<TextView>(R.id.div_title).text = title(number)
         row.findViewById<TextView>(R.id.div_where).text = where(page)
+        row.findViewById<TextView>(R.id.div_more).apply {
+            visibility = if (more == null) View.GONE else View.VISIBLE
+            text = more?.invoke(number)
+        }
 
         // The seam belongs between two rows, not under the last one
         row.findViewById<View>(R.id.divider).visibility =

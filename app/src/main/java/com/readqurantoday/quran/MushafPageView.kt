@@ -671,8 +671,10 @@ class MushafPageView @JvmOverloads constructor(
         val juz = Surahs.juzOfPage(page)
         headJuz = if (juz > 0) context.getString(R.string.head_juz, figures(juz, resources)) else ""
         headPage = context.getString(R.string.head_page, figures(page, resources))
-        val hizb = Surahs.hizbOfPage(page)
-        headHizb = if (hizb > 0) context.getString(R.string.head_hizb, figures(hizb, resources)) else ""
+        // As the printed mushaf's margin: named only on the page where the hizb or one of its quarters begins
+        headHizb = Surahs.quarterOn(page)?.let { (hizb, part) ->
+            context.getString(HIZB_MARKS[part], figures(hizb, resources))
+        }.orEmpty()
         // A page that opens with a surah's own title needs no name above it
         val opensWithTitle = lines.firstOrNull { it.kind == "surah" || it.kind == "ayah" }?.kind == "surah"
         headSurah = if (opensWithTitle) 0 else Surahs.headOfPage(page)?.id ?: 0
@@ -1295,6 +1297,11 @@ class MushafPageView @JvmOverloads constructor(
         const val HEAD_BAND = 30f
 
         /** Header/footer label size in dp. */
+        /** The hizb, a quarter, half and three-quarters into it, as the header names them. */
+        private val HIZB_MARKS = intArrayOf(
+            R.string.head_hizb, R.string.head_hizb_quarter, R.string.head_hizb_half, R.string.head_hizb_three
+        )
+
         const val LABEL_DP = 14f
 
         /** Smallest type size (dp) a page may be narrowed to so it fits whole; below it the page scrolls. */

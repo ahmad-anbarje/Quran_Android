@@ -404,7 +404,6 @@
     <string name="hifz_stop">إلغاء هدف الحفظ</string>
     <string name="hifz_mine">سجلّ الحفظ</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
-    <string name="hifz_mine_pages">%1$s من القرآن</string>
     <string name="hifz_keep">تم</string>
     <string name="hifz_pages_ask">اختر الصفحات التي تحفظها</string>
     <string name="pages_all">اختر الكل</string>
@@ -431,11 +430,19 @@
     <string name="goal_left">بقي %1$s</string>
     <string name="hifz_none_today">لم تحفظ اليوم بعد</string>
     <string name="paper_read">أتممت هدف اليوم</string>
-    <string name="percent_under_one">أقل من ١٪</string>
     <string name="ring_today">صفحات اليوم</string>
     <string name="ring_week">أيام هذا الأسبوع</string>
     <string name="ring_month">أيام هذا الشهر</string>
     <string name="ring_of">من %1$s</string>
     <string name="set_calendar">التقويم</string>
     <string name="about_privacy">خصوصيتك</string>
+    <string name="hifz_known_title">ما حفظته</string>
+    <plurals name="surahs_whole">
+        <item quantity="zero">%1$s سورة كاملة</item>
+        <item quantity="one">سورة واحدة كاملة</item>
+        <item quantity="two">سورتان كاملتان</item>
+        <item quantity="few">%1$s سور كاملة</item>
+        <item quantity="many">%1$s سورة كاملة</item>
+        <item quantity="other">%1$s سورة كاملة</item>
+    </plurals>
 </resources>

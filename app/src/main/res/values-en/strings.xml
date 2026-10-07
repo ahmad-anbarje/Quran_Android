@@ -339,7 +339,6 @@
     <string name="hifz_stop">Remove the memorising goal</string>
     <string name="hifz_mine">Memorising record</string>
     <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
-    <string name="hifz_mine_pages">%1$s of the Quran</string>
     <string name="hifz_keep">Done</string>
     <string name="hifz_pages_ask">Pick the pages you know</string>
     <string name="pages_all">Select all</string>
@@ -362,11 +361,15 @@
     <string name="goal_left">%1$s to go</string>
     <string name="hifz_none_today">Nothing memorised yet today</string>
     <string name="paper_read">I finished today\'s goal</string>
-    <string name="percent_under_one">under 1%</string>
     <string name="ring_today">Pages today</string>
     <string name="ring_week">Days this week</string>
     <string name="ring_month">Days this month</string>
     <string name="ring_of">of %1$s</string>
     <string name="set_calendar">Calendar</string>
     <string name="about_privacy">Your privacy</string>
+    <string name="hifz_known_title">Memorised</string>
+    <plurals name="surahs_whole">
+        <item quantity="one">%1$s whole surah</item>
+        <item quantity="other">%1$s whole surahs</item>
+    </plurals>
 </resources>

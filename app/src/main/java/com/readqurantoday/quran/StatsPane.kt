@@ -211,22 +211,30 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 changeRow(plan.said(host)) { picker.hifz(plan) }
             ))
         }
-        blow.card(into, 0, listOf(mineRow(kept.size)))
+        blow.card(into, 0, knownRows())
     }
 
-    // What is memorised in all, a tap away from the list of surahs and pages
-    private fun mineRow(known: Int): View =
-        row(
-            host.getString(R.string.hifz_mine),
-            if (known == 0) host.getString(R.string.hifz_mine_add) else pagesSaid(known, res),
-            if (known == 0) host.getString(R.string.hifz_mine_empty) else host.getString(R.string.hifz_mine_pages, shareSaid(known))
-        ).apply { opens { host.startActivity(Intent(host, MemorizedActivity::class.java)) } }
-
-    // A share of the whole mushaf; a few pages are less than one in a hundred, never nought
-    private fun shareSaid(pages: Int): String {
-        val pct = pages * 100 / Mushaf.PAGES
-        return if (pct == 0) host.getString(R.string.percent_under_one) else host.getString(R.string.percent, figures(pct, res))
+    // What is memorised in all: a ring filled by its share of the mushaf, then the way into the record
+    private fun knownRows(): List<View> {
+        val bySurah = Hifz.bySurah(host)
+        val known = Hifz.pages(host).size
+        val whole = Surahs.list().count { Hifz.knownOf(it, bySurah) == it.to - it.from + 1 }
+        val gauge = hero(
+            key = KNOWN, count = shareOf(known),
+            say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
+            unit = "",
+            title = host.getString(R.string.hifz_known_title),
+            line = if (known == 0) host.getString(R.string.hifz_mine_empty)
+                else host.getString(R.string.stats_khatma_read, pagesSaid(known, res), figures(Mushaf.PAGES, res)),
+            note = if (whole == 0) "" else res.getQuantityString(R.plurals.surahs_whole, whole, figures(whole, res))
+        ).also { fillRing(it, KNOWN, known.toFloat(), Mushaf.PAGES.toFloat()) }
+        val record = row(host.getString(R.string.hifz_mine), if (known == 0) host.getString(R.string.hifz_mine_add) else "")
+            .apply { opens { host.startActivity(Intent(host, MemorizedActivity::class.java)) } }
+        return listOf(gauge, record)
     }
+
+    // A share of the whole mushaf in hundredths; a page or two already shows, never as nought
+    private fun shareOf(pages: Int): Int = if (pages == 0) 0 else maxOf(1, pages * 100 / Mushaf.PAGES)
 
     // The goal as written, with the way to change it
     private fun changeRow(said: String, change: () -> Unit): View =
@@ -294,7 +302,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val plan = Stats.goalPlan(host)
         val rows = mutableListOf<View>()
         rows += hero(
-            key = KHATMA, count = k.read * 100 / all,
+            key = KHATMA, count = shareOf(k.read),
             say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
             unit = "", title = "",
             line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
@@ -459,6 +467,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val SWITCH_SETTLE_MS = 250L
         const val TODAY = "today"
         const val HIFZ = "hifz"
+        const val KNOWN = "known"
         const val KHATMA = "khatma"
     }
 }

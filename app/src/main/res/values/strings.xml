@@ -274,7 +274,7 @@
         <item quantity="many">%1$s دقيقة</item>
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
-    <string name="stats_pages_today">صفحات اليوم</string>
+    <string name="stats_pages_today">قرأت اليوم</string>
     <string name="of_count">%1$s من %2$s</string>
     <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
     <string name="stats_total">المجموع في %1$s يومًا</string>
@@ -300,14 +300,12 @@
     <string name="chart_today">اليوم</string>
     <string name="chart_goal">الهدف</string>
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
-    <string name="stats_month">هذا الشهر</string>
-    <string name="stats_calendar">التقويم</string>
     <string name="cal_hijri">هجري</string>
     <string name="cal_greg">ميلادي</string>
     <string name="stats_speed">سرعة قراءتك</string>
     <string name="stats_page_avg_month">هذا الشهر</string>
     <string name="stats_per_hour">في ساعة تقرأ نحو</string>
-    <string name="stats_page_times_open">وقت كل صفحة اليوم (%1$s)</string>
+    <string name="stats_page_times_open">وقت كل صفحة قرأتها اليوم</string>
     <string name="goal_done">أتممت هدف اليوم</string>
     <string name="time_and">%1$s و%2$s</string>
     <string name="per_page">%1$s للصفحة</string>
@@ -394,9 +392,7 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="goal_change">تغيير</string>
-    <string name="done_week">ما أنجزته هذا الأسبوع</string>
-    <string name="left_today">ما بقي اليوم</string>
-    <string name="left_none">لا شيء، أتممت هدف اليوم</string>
+    <string name="done_week">أتممت هدفك هذا الأسبوع</string>
     <string name="khatma_daily">%1$s كل يوم لتختم في %2$s</string>
     <string name="goal_khatma_by">ختمة تنتهي في %1$s</string>
     <string name="goal_khatma_note">تُحسب صفحات كل يوم مما بقي</string>
@@ -416,7 +412,7 @@
     <string name="hifz_goal_title">هدف الحفظ</string>
     <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
     <string name="hifz_stop">إلغاء هدف الحفظ</string>
-    <string name="hifz_today">ما حفظته اليوم</string>
+    <string name="hifz_today">حفظت اليوم</string>
     <string name="hifz_mine">ما أحفظه</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
     <string name="hifz_mine_pages">%1$s من القرآن</string>
@@ -424,11 +420,9 @@
     <string name="hifz_pages_ask">اختر الصفحات التي تحفظها</string>
     <string name="pages_all">اختر الكل</string>
     <string name="pages_none">ألغِ الكل</string>
-    <string name="done_week_none">لم تُتمّ يومًا بعد</string>
+    <string name="done_week_none">ولا يوم بعد</string>
     <string name="hifz_mine_add">أضف</string>
     <string name="sec_hifz">حفظي</string>
-    <string name="wird_done">قرأت وِردي اليوم</string>
-    <string name="wird_undo">ألغِ «قرأت وِردي اليوم»</string>
     <string name="khatma_goal">موعد الختم</string>
     <string name="khatma_expected">الختم المتوقع</string>
     <string name="khatma_per_day">%1$s كل يوم</string>
@@ -445,4 +439,9 @@
         <item quantity="many">وأتممت قبلها %1$s ختمة</item>
         <item quantity="other">وأتممت قبلها %1$s ختمة</item>
     </plurals>
+    <string name="goal_over">أتممت هدفك وزدت %1$s</string>
+    <string name="goal_left">بقي %1$s</string>
+    <string name="hifz_none_today">لم تحفظ اليوم بعد</string>
+    <string name="paper_read">قرأت هدف اليوم من مصحف ورقي</string>
+    <string name="percent_under_one">أقل من ١٪</string>
 </resources>

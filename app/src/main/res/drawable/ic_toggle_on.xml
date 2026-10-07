@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A switch that is on: filled track, knob cut out at the end. Tinted from code -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp" android:height="24dp"
+    android:viewportWidth="36" android:viewportHeight="24"
+    android:autoMirrored="true">
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M12,5H24A7,7 0 0 1 24,19H12A7,7 0 0 1 12,5ZM20,12a4,4 0 1 0 8,0a4,4 0 1 0 -8,0Z" />
+</vector>

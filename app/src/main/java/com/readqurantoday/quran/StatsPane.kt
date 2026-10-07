@@ -86,7 +86,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, 0, wirdRows(today, goal, week, before))
         val hijri = Stats.hijri(host)
         val thisMonth = Stats.monthDays(host)
-        blow.card(into, 0, listOf(calendarRow(hijri)))
+        into.addView(monthHead(hijri))
         into.addView(pair(
             Tile(R.drawable.ic_clock, spent(today.readSec, res), host.getString(R.string.stats_read_time)),
             Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
@@ -115,35 +115,44 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             say = { if (it == 0) none(res) else figures(it, res) },
             unit = if (read == 0) "" else res.getQuantityString(R.plurals.pages_unit, read),
             title = host.getString(R.string.stats_pages_today),
-            line = when {
-                read == 0 -> host.getString(R.string.stats_none_today)
-                goal == 0 -> pagesSaid(read, res)
-                read >= goal -> host.getString(R.string.stats_goal_reached)
-                else -> host.getString(R.string.of_count, figures(read, res), pagesSaid(goal, res))
-            },
-            note = if (goal == 0) host.getString(R.string.goal_none_today) else ""
+            line = todayLine(read, goal, R.string.stats_none_today),
+            note = todayNote(read, goal)
         ).also {
             fillRing(it, TODAY, read.toFloat(), goal.toFloat())
             showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
         }
         val rows = mutableListOf(
             hero,
-            changeRow(plan.said(host)) { picker.reading(plan) },
+            changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { picker.reading(plan) },
             row(host.getString(R.string.done_week), metOfWeek(
                 want = { weekday -> if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(weekday) },
                 done = { ago -> week[WEEK - 1 - ago].let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } }
-            )),
-            row(host.getString(R.string.left_today), leftSaid(read, goal), khatmaNote(plan, goal))
+            ))
         )
-        // Read away from the app, from a printed mushaf: one tap says the day's goal is done, another takes it back
-        if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += action(
-            host.getString(if (today.doneByHand) R.string.wird_undo else R.string.wird_done)
-        ) {
-            Stats.setDoneByHand(host, !today.doneByHand)
-            build()
-            if (!today.doneByHand) celebrateOnce(Stats.day(host, Stats.today()), goal)
+        // Read away from the app, from a printed mushaf: the switch counts today's goal as done
+        if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += row(host.getString(R.string.paper_read), "").apply {
+            toggles(today.doneByHand) {
+                Stats.setDoneByHand(host, !today.doneByHand)
+                build()
+                if (!today.doneByHand) celebrateOnce(Stats.day(host, Stats.today()), goal)
+            }
         }
         return rows
+    }
+
+    // Done against the goal, counting on past it
+    private fun todayLine(done: Int, goal: Int, nothingYet: Int): String = when {
+        done == 0 -> host.getString(nothingYet)
+        goal == 0 -> pagesSaid(done, res)
+        done < goal -> host.getString(R.string.of_count, figures(done, res), pagesSaid(goal, res))
+        done == goal -> host.getString(R.string.stats_goal_reached)
+        else -> host.getString(R.string.goal_over, pagesSaid(done - goal, res))
+    }
+
+    private fun todayNote(done: Int, goal: Int): String = when {
+        goal == 0 -> host.getString(R.string.goal_none_today)
+        done < goal -> host.getString(R.string.goal_left, pagesSaid(goal - done, res))
+        else -> ""
     }
 
     // Days of the last week that met their goal, out of the days that had one; a khatma's pages a day are
@@ -165,12 +174,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         return host.getString(R.string.of_count, figures(met, res), res.getQuantityString(R.plurals.days_count, had, figures(had, res)))
     }
 
-    private fun leftSaid(done: Int, goal: Int): String = when {
-        goal == 0 -> none(res)
-        done >= goal -> host.getString(R.string.left_none)
-        else -> pagesSaid(goal - done, res)
-    }
-
     // A khatma goal says what its daily pages are for
     private fun khatmaNote(plan: Goal, goal: Int): String =
         if (plan.kind != Goal.Kind.KHATMA || goal == 0) ""
@@ -190,12 +193,8 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 say = { if (it == 0) none(res) else figures(it, res) },
                 unit = if (learned == 0) "" else res.getQuantityString(R.plurals.pages_unit, learned),
                 title = host.getString(R.string.hifz_today),
-                line = when {
-                    goal == 0 -> if (learned == 0) host.getString(R.string.goal_none_today) else pagesSaid(learned, res)
-                    learned >= goal -> host.getString(R.string.stats_goal_reached)
-                    else -> host.getString(R.string.of_count, figures(learned, res), pagesSaid(goal, res))
-                },
-                note = ""
+                line = todayLine(learned, goal, R.string.hifz_none_today),
+                note = todayNote(learned, goal)
             ).also { fillRing(it, HIFZ, learned.toFloat(), goal.toFloat()) }
             blow.card(into, 0, listOf(
                 hero,
@@ -203,8 +202,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 row(host.getString(R.string.done_week), metOfWeek(
                     want = { weekday -> plan.pagesOn(weekday) },
                     done = { ago -> kept.count { it.value == Stats.today() - ago } }
-                )),
-                row(host.getString(R.string.left_today), leftSaid(learned, goal))
+                ))
             ))
         }
         blow.card(into, 0, listOf(mineRow(kept.size)))
@@ -214,32 +212,36 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun mineRow(known: Int): View =
         row(
             host.getString(R.string.hifz_mine),
-            if (known == 0) host.getString(R.string.hifz_mine_add) else host.getString(R.string.percent, figures(known * 100 / Mushaf.PAGES, res)),
-            if (known == 0) host.getString(R.string.hifz_mine_empty) else host.getString(R.string.hifz_mine_pages, pagesSaid(known, res))
-        ).apply {
-            isClickable = true
-            setOnClickListener { host.startActivity(Intent(host, MemorizedActivity::class.java)) }
-        }
+            if (known == 0) host.getString(R.string.hifz_mine_add) else pagesSaid(known, res),
+            if (known == 0) host.getString(R.string.hifz_mine_empty) else host.getString(R.string.hifz_mine_pages, shareSaid(known))
+        ).apply { opens { host.startActivity(Intent(host, MemorizedActivity::class.java)) } }
+
+    // A share of the whole mushaf; a few pages are less than one in a hundred, never nought
+    private fun shareSaid(pages: Int): String {
+        val pct = pages * 100 / Mushaf.PAGES
+        return if (pct == 0) host.getString(R.string.percent_under_one) else host.getString(R.string.percent, figures(pct, res))
+    }
 
     // The goal as written, with the way to change it
     private fun changeRow(said: String, change: () -> Unit): View =
-        row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply {
-            isClickable = true
-            setOnClickListener { change() }
-        }
+        row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply { opens(change) }
 
-    // Which month the numbers below belong to; a tap moves between the Hijri and Gregorian calendars
-    private fun calendarRow(hijri: Boolean): View =
-        row(host.getString(R.string.stats_month), monthName(Stats.today(), hijri, res),
-            host.getString(if (hijri) R.string.cal_hijri else R.string.cal_greg)).apply {
-            isClickable = true
-            setOnClickListener {
-                host.sheet(host.getString(R.string.stats_calendar), listOf(
-                    Choice(host.getString(R.string.cal_hijri), on = hijri),
-                    Choice(host.getString(R.string.cal_greg), on = !hijri)
-                )) { i ->
-                    Stats.setHijri(host, i == 0)
-                    build()
+    // Which month the numbers below count, and a switch between the Hijri and Gregorian calendars
+    private fun monthHead(hijri: Boolean): View =
+        blow.inflate(R.layout.part_month_head, parent, false).apply {
+            findViewById<TextView>(R.id.month_name).text = monthName(Stats.today(), hijri, res)
+            for ((id, isHijri) in listOf(R.id.month_hijri to true, R.id.month_greg to false)) {
+                val on = isHijri == hijri
+                findViewById<TextView>(id).apply {
+                    setBackgroundResource(if (on) R.drawable.seg_on else R.drawable.row_flat)
+                    setTextColor(host.getColor(if (on) R.color.accent else R.color.text_mute))
+                    isSelected = on
+                    setOnClickListener {
+                        if (!on) {
+                            Stats.setHijri(host, isHijri)
+                            build()
+                        }
+                    }
                 }
             }
         }
@@ -255,9 +257,9 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 if (monthPages == 0) none(res) else perPage(monthSec / monthPages)),
             perHourRow(today, monthPages, monthSec)
         )
-        if (today.pages.isNotEmpty()) rows += action(
-            host.getString(R.string.stats_page_times_open, figures(today.pages.size, res))
-        ) { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
+        if (today.pages.isNotEmpty()) rows += row(host.getString(R.string.stats_page_times_open), pagesSaid(today.pages.size, res)).apply {
+            opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
+        }
         return rows
     }
 
@@ -328,8 +330,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             else -> none(res) to host.getString(R.string.stats_finish_unknown)
         }
         return row(host.getString(if (set) R.string.khatma_goal else R.string.khatma_expected), value, note).apply {
-            isClickable = true
-            setOnClickListener { picker.khatma(plan) }
+            opens { picker.khatma(plan) }
         }
     }
 

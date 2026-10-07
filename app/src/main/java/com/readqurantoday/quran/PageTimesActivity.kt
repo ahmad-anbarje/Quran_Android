@@ -43,8 +43,7 @@ class PageTimesActivity : CardsActivity(R.string.stats_page_times) {
 
     private fun sortRow(): View =
         row(getString(R.string.pt_sort), getString(if (longestFirst) R.string.pt_by_time else R.string.pt_by_page)).apply {
-            isClickable = true
-            setOnClickListener {
+            opens {
                 sheet(getString(R.string.pt_sort), listOf(
                     Choice(getString(R.string.pt_by_page), on = !longestFirst),
                     Choice(getString(R.string.pt_by_time), on = longestFirst)

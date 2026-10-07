@@ -106,4 +106,8 @@
     <dimen name="mark_button_height">36dp</dimen>
     <dimen name="mark_button_text">13sp</dimen>
     <dimen name="mark_button_icon">16dp</dimen>
+    <!-- The arrow or switch at the end of a tappable statistics row -->
+    <dimen name="row_go">18dp</dimen>
+    <dimen name="row_toggle_w">36dp</dimen>
+    <dimen name="row_toggle_h">24dp</dimen>
 </resources>

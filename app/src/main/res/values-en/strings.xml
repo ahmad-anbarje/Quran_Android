@@ -228,7 +228,7 @@
         <item quantity="one">%1$s minute</item>
         <item quantity="other">%1$s minutes</item>
     </plurals>
-    <string name="stats_pages_today">Pages today</string>
+    <string name="stats_pages_today">Read today</string>
     <string name="of_count">%1$s of %2$s</string>
     <string name="stats_days_read">Days you read this month</string>
     <string name="stats_total">In all, %1$s days</string>
@@ -250,14 +250,12 @@
     <string name="chart_today">Today</string>
     <string name="chart_goal">Goal</string>
     <string name="stats_read_month">Reading time this month</string>
-    <string name="stats_month">This month</string>
-    <string name="stats_calendar">Calendar</string>
     <string name="cal_hijri">Hijri</string>
     <string name="cal_greg">Gregorian</string>
     <string name="stats_speed">Your reading speed</string>
     <string name="stats_page_avg_month">This month</string>
     <string name="stats_per_hour">In an hour you read about</string>
-    <string name="stats_page_times_open">Time on each page today (%1$s)</string>
+    <string name="stats_page_times_open">Time on each page read today</string>
     <string name="goal_done">Today\'s goal is done</string>
     <string name="time_and">%1$s %2$s</string>
     <string name="per_page">%1$s a page</string>
@@ -329,9 +327,7 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="goal_change">Change</string>
-    <string name="done_week">Done this week</string>
-    <string name="left_today">Left for today</string>
-    <string name="left_none">Nothing, today\'s goal is done</string>
+    <string name="done_week">Goal met this week</string>
     <string name="khatma_daily">%1$s a day to finish by %2$s</string>
     <string name="goal_khatma_by">A khatma by %1$s</string>
     <string name="goal_khatma_note">Each day\'s pages come from what is left</string>
@@ -355,11 +351,9 @@
     <string name="hifz_pages_ask">Pick the pages you know</string>
     <string name="pages_all">Select all</string>
     <string name="pages_none">Clear all</string>
-    <string name="done_week_none">No full day yet</string>
+    <string name="done_week_none">Not yet</string>
     <string name="hifz_mine_add">Add</string>
     <string name="sec_hifz">My memorising</string>
-    <string name="wird_done">I read today\'s portion</string>
-    <string name="wird_undo">Undo “I read today\'s portion”</string>
     <string name="khatma_goal">Finish by</string>
     <string name="khatma_expected">Expected finish</string>
     <string name="khatma_per_day">%1$s a day</string>
@@ -372,4 +366,9 @@
         <item quantity="one">%1$s khatma finished before this</item>
         <item quantity="other">%1$s khatmas finished before this</item>
     </plurals>
+    <string name="goal_over">Goal done, and %1$s more</string>
+    <string name="goal_left">%1$s to go</string>
+    <string name="hifz_none_today">Nothing memorised yet today</string>
+    <string name="paper_read">I read today\'s goal from a printed mushaf</string>
+    <string name="percent_under_one">under 1%</string>
 </resources>

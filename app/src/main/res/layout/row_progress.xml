@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A statistics row: label and value, an optional quiet line, an optional trend -->
+<!-- A statistics row: label and value, an optional quiet line, an optional trend; a mark at the end when tappable -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,9 +32,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textColor="@color/accent"
+            android:textColor="@color/text"
             android:textSize="@dimen/row_value"
             android:textStyle="bold" />
+
+        <!-- Shown on rows that open something or switch something -->
+        <ImageView
+            android:id="@+id/prog_go"
+            android:layout_width="@dimen/row_go"
+            android:layout_height="@dimen/row_go"
+            android:layout_marginStart="6dp"
+            android:contentDescription="@null"
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView

@@ -451,7 +451,8 @@ class MushafPageView @JvmOverloads constructor(
     private var pageMarks = ""
     private var headJuz = ""
     private var headPage = ""
-    private var headHizb = ""
+    // The hizb mark where one begins, else the page: never both, since the page number is also at the foot
+    private var headSide = ""
     private var headSurah = 0
     private var folioText = ""
 
@@ -672,9 +673,9 @@ class MushafPageView @JvmOverloads constructor(
         headJuz = if (juz > 0) context.getString(R.string.head_juz, figures(juz, resources)) else ""
         headPage = context.getString(R.string.head_page, figures(page, resources))
         // As the printed mushaf's margin: named only on the page where the hizb or one of its quarters begins
-        headHizb = Surahs.quarterOn(page)?.let { (hizb, part) ->
+        headSide = Surahs.quarterOn(page)?.let { (hizb, part) ->
             context.getString(HIZB_MARKS[part], figures(hizb, resources))
-        }.orEmpty()
+        } ?: headPage
         // A page that opens with a surah's own title needs no name above it
         val opensWithTitle = lines.firstOrNull { it.kind == "surah" || it.kind == "ayah" }?.kind == "surah"
         headSurah = if (opensWithTitle) 0 else Surahs.headOfPage(page)?.id ?: 0
@@ -1070,7 +1071,7 @@ class MushafPageView @JvmOverloads constructor(
         canvas.restore()
     }
 
-    /* Running head: juz on the right, surah name centred, hizb and page on the left. */
+    /* Running head: juz on the right, surah name centred, the hizb mark or else the page on the left. */
     private fun runningHead(canvas: Canvas, left: Float, measure: Float) {
         if (pageNo <= 0) return
         val y = padTop + headBand * 0.62f
@@ -1079,7 +1080,7 @@ class MushafPageView @JvmOverloads constructor(
         // Narrow screens shrink the side labels rather than let them touch the centred name
         val full = label.textSize
         val side = (measure - titleWidth(headSurah, titleSize)) / 2f - full
-        val widest = maxOf(pageAndHizbWidth(), label.measureText(headJuz))
+        val widest = maxOf(label.measureText(headSide), label.measureText(headJuz))
         if (widest > side && side > 0f) label.textSize = full * side / widest
 
         if (headJuz.isNotEmpty()) {
@@ -1089,15 +1090,10 @@ class MushafPageView @JvmOverloads constructor(
 
         if (headSurah > 0) title(canvas, headSurah, left + measure / 2f, titleSize, y)
 
-        // Page at the edge, its hizb beside it, a type-size apart so the two read as two
         label.textAlign = Paint.Align.LEFT
-        canvas.drawText(headPage, left, y, label)
-        if (headHizb.isNotEmpty()) canvas.drawText(headHizb, left + label.measureText(headPage) + label.textSize, y, label)
+        canvas.drawText(headSide, left, y, label)
         label.textSize = full
     }
-
-    private fun pageAndHizbWidth(): Float =
-        label.measureText(headPage) + if (headHizb.isEmpty()) 0f else label.textSize + label.measureText(headHizb)
 
     private fun titleWidth(surah: Int, size: Float): Float {
         if (surah <= 0) return 0f

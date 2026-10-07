@@ -129,7 +129,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 done = { ago -> week[WEEK - 1 - ago].let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } }
             ))
         )
-        // Read away from the app, from a printed mushaf: the switch counts today's goal as done
+        // The reader says today's goal is done, wherever it was read
         if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
             Stats.setDoneByHand(host, on)
             // The knob finishes its slide before the numbers move

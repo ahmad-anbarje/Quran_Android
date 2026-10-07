@@ -125,6 +125,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             }
         }
         if (had == 0) return none(res)
+        if (met == 0) return host.getString(R.string.done_week_none)
         return host.getString(R.string.of_count, figures(met, res), res.getQuantityString(R.plurals.days_count, had, figures(had, res)))
     }
 
@@ -143,7 +144,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val plan = Stats.hifzPlan(host)
         val mine = mineRow()
         if (plan == null) return listOf(
-            quiet(host.getString(R.string.hifz_none)),
             action(host.getString(R.string.hifz_add)) { picker.hifz(null) },
             mine
         )
@@ -174,7 +174,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val known = Hifz.pages(host).size
         return row(
             host.getString(R.string.hifz_mine),
-            if (known == 0) none(res) else host.getString(R.string.percent, figures(known * 100 / Mushaf.PAGES, res)),
+            if (known == 0) host.getString(R.string.hifz_mine_add) else host.getString(R.string.percent, figures(known * 100 / Mushaf.PAGES, res)),
             if (known == 0) host.getString(R.string.hifz_mine_empty) else host.getString(R.string.hifz_mine_pages, pagesSaid(known, res))
         ).apply {
             isClickable = true

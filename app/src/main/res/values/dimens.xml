@@ -99,4 +99,11 @@
     <dimen name="section_inset">18dp</dimen>
     <dimen name="chart_label">10sp</dimen>
     <dimen name="chart_gap">6dp</dimen>
+    <!-- Toggle buttons and page tiles: chosen is filled, not chosen is outlined -->
+    <dimen name="choice_radius">12dp</dimen>
+    <dimen name="choice_tile">48dp</dimen>
+    <dimen name="choice_gap">4dp</dimen>
+    <dimen name="mark_button_height">36dp</dimen>
+    <dimen name="mark_button_text">13sp</dimen>
+    <dimen name="mark_button_icon">16dp</dimen>
 </resources>

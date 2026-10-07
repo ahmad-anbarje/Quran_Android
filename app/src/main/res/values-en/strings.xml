@@ -333,7 +333,7 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="wird_title">Your daily reading</string>
-    <string name="hifz_title">Your memorisation</string>
+    <string name="hifz_title">Memorising</string>
     <string name="goal_change">Change</string>
     <string name="done_week">Done this week</string>
     <string name="left_today">Left for today</string>
@@ -349,17 +349,24 @@
     </plurals>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
-    <string name="hifz_none">No memorisation goal yet</string>
-    <string name="hifz_add">Add a memorisation goal</string>
-    <string name="hifz_goal_title">Memorisation goal</string>
+    <string name="hifz_add">Set a memorising goal</string>
+    <string name="hifz_goal_title">Memorising goal</string>
     <string name="hifz_custom_ask">How many pages a day?</string>
-    <string name="hifz_stop">Stop the memorisation goal</string>
-    <string name="hifz_today">Pages memorised today</string>
-    <string name="hifz_mine">My memorisation</string>
-    <string name="hifz_mine_empty">Tap to add what you know by heart</string>
-    <string name="hifz_mine_pages">%1$s of the mushaf</string>
-    <string name="hifz_how">Tick a whole surah you already know. Tap a surah to tick its pages; those count as memorised today.</string>
-    <string name="hifz_surah_mark">I know this whole surah</string>
-    <string name="hifz_surah_unmark">Unmark this surah</string>
+    <string name="hifz_stop">Remove the memorising goal</string>
+    <string name="hifz_today">Memorised today</string>
+    <string name="hifz_mine">What I know by heart</string>
+    <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
+    <string name="hifz_mine_pages">%1$s of the Quran</string>
+    <string name="hifz_how">Know a whole surah? Tap “I know it”. Learned new pages today? Tap the surah’s name and pick them.</string>
+    <string name="hifz_surah_mark">I know it</string>
     <string name="hifz_keep">Done</string>
+    <string name="hifz_surah_known">Known</string>
+    <string name="hifz_surah_mark_said">I know Surah %1$s by heart</string>
+    <string name="hifz_surah_unmark_said">Surah %1$s is known, tap to undo</string>
+    <string name="hifz_pages_ask">Pick the pages you know</string>
+    <string name="pages_all">Select all</string>
+    <string name="pages_none">Clear all</string>
+    <string name="done_week_none">No full day yet</string>
+    <string name="hifz_mine_add">Add</string>
+    <string name="hifz_total">In all</string>
 </resources>

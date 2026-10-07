@@ -1,10 +1,9 @@
 package com.readqurantoday.quran
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 
 /** What is memorised: every surah with a tick for all of it, and a tap for its pages one by one. */
 class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
@@ -14,6 +13,13 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
         Surahs.load(this)
         build()
         sayBars()
+    }
+
+    // The tick on a surah's button once it is all known, in the button's own text colour
+    private fun tick() = AppCompatResources.getDrawable(this, R.drawable.ic_check)?.mutate()?.apply {
+        val size = resources.getDimensionPixelSize(R.dimen.mark_button_icon)
+        setBounds(0, 0, size, size)
+        setTint(getColor(R.color.on_dark))
     }
 
     private lateinit var summary: View
@@ -36,7 +42,7 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
     private fun refresh() {
         val kept = Hifz.pages(this)
         val known = kept.size
-        summary.findViewById<TextView>(R.id.prog_label).text = getString(R.string.hifz_mine)
+        summary.findViewById<TextView>(R.id.prog_label).text = getString(R.string.hifz_total)
         summary.findViewById<TextView>(R.id.prog_value).text =
             if (known == 0) none(resources) else getString(R.string.percent, figures(known * 100 / Mushaf.PAGES, resources))
         summary.findViewById<TextView>(R.id.prog_note).text =
@@ -55,12 +61,13 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
             findViewById<View>(R.id.place_track).apply {
                 if (done > 0) fillTrack(done.toFloat(), all.toFloat()) else visibility = View.GONE
             }
-            // The tick is the whole surah, known from before; the row opens its pages
-            findViewById<ImageView>(R.id.place_remove).apply {
+            // The button is the whole surah, known from before; the row opens its pages
+            findViewById<TextView>(R.id.place_mark).apply {
                 visibility = View.VISIBLE
-                setImageResource(if (whole) R.drawable.ic_check else R.drawable.ic_circle)
-                imageTintList = ColorStateList.valueOf(getColor(if (whole) R.color.accent else R.color.text_mute))
-                contentDescription = getString(if (whole) R.string.hifz_surah_unmark else R.string.hifz_surah_mark)
+                setText(if (whole) R.string.hifz_surah_known else R.string.hifz_surah_mark)
+                markChoice(this, whole)
+                setCompoundDrawablesRelative(if (whole) tick() else null, null, null, null)
+                contentDescription = getString(if (whole) R.string.hifz_surah_unmark_said else R.string.hifz_surah_mark_said, surah.name)
                 setOnClickListener {
                     Hifz.setSurah(this@MemorizedActivity, surah, known = !whole)
                     refresh()
@@ -70,15 +77,12 @@ class MemorizedActivity : CardsActivity(R.string.hifz_mine) {
         }
     }
 
-    // A page ticked here is learned today, and counts toward today's memorisation goal
+    // A page chosen here is learned today, and counts toward today's memorisation goal
     private fun pickPages(surah: Surahs.Surah, kept: Map<Int, Long>) {
         val pages = (surah.from..surah.to).toList()
-        val was = BooleanArray(pages.size) { pages[it] in kept }
-        val labels = pages.map { getString(R.string.head_page, figures(it, resources)) }
-        pickMany(surah.name, labels, was.copyOf(), getString(R.string.hifz_keep)) { now ->
-            Hifz.setPages(this,
-                marked = pages.filterIndexed { i, _ -> now[i] && !was[i] },
-                unmarked = pages.filterIndexed { i, _ -> !now[i] && was[i] })
+        val was = pages.filter { it in kept }.toSet()
+        pickPages(getString(R.string.surah_named, surah.name), getString(R.string.hifz_pages_ask), pages, was) { now ->
+            Hifz.setPages(this, marked = now - was, unmarked = was - now)
             refresh()
         }
     }

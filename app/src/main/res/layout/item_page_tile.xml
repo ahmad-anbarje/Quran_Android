@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One page to tick: its number, filled when chosen -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/choice_tile"
+    android:layout_weight="1"
+    android:layout_margin="@dimen/choice_gap"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:textSize="@dimen/row_title" />

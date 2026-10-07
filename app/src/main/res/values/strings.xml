@@ -398,7 +398,7 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="wird_title">وِردك</string>
-    <string name="hifz_title">حفظك</string>
+    <string name="hifz_title">حفظ القرآن</string>
     <string name="goal_change">تغيير</string>
     <string name="done_week">ما أنجزته هذا الأسبوع</string>
     <string name="left_today">ما بقي اليوم</string>
@@ -418,17 +418,24 @@
     </plurals>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
-    <string name="hifz_none">لم تضع هدفًا للحفظ بعد</string>
-    <string name="hifz_add">أضف هدف حفظ</string>
+    <string name="hifz_add">حدّد هدف الحفظ</string>
     <string name="hifz_goal_title">هدف الحفظ</string>
     <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
-    <string name="hifz_stop">إيقاف هدف الحفظ</string>
-    <string name="hifz_today">صفحات حفظتها اليوم</string>
-    <string name="hifz_mine">محفوظي</string>
-    <string name="hifz_mine_empty">اضغط لتسجّل ما تحفظه</string>
-    <string name="hifz_mine_pages">%1$s من المصحف</string>
-    <string name="hifz_how">علّم السورة كلها إن كنت تحفظها من قبل. واضغط على السورة لتعلّم صفحاتها، فتُحسب من حفظ اليوم.</string>
-    <string name="hifz_surah_mark">أحفظ السورة كلها</string>
-    <string name="hifz_surah_unmark">ألغِ تعليم السورة</string>
+    <string name="hifz_stop">إلغاء هدف الحفظ</string>
+    <string name="hifz_today">ما حفظته اليوم</string>
+    <string name="hifz_mine">ما أحفظه</string>
+    <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
+    <string name="hifz_mine_pages">%1$s من القرآن</string>
+    <string name="hifz_how">إن كنت تحفظ سورة كاملة فاضغط «أحفظها». وإن حفظت صفحات جديدة اليوم فاضغط على اسم السورة واختر صفحاتها.</string>
+    <string name="hifz_surah_mark">أحفظها</string>
     <string name="hifz_keep">تم</string>
+    <string name="hifz_surah_known">محفوظة</string>
+    <string name="hifz_surah_mark_said">أحفظ سورة %1$s كاملة</string>
+    <string name="hifz_surah_unmark_said">سورة %1$s محفوظة، اضغط للإلغاء</string>
+    <string name="hifz_pages_ask">اختر الصفحات التي تحفظها</string>
+    <string name="pages_all">اختر الكل</string>
+    <string name="pages_none">ألغِ الكل</string>
+    <string name="done_week_none">لم تُتمّ يومًا بعد</string>
+    <string name="hifz_mine_add">أضف</string>
+    <string name="hifz_total">مجموع حفظك</string>
 </resources>

@@ -72,6 +72,25 @@
         android:maxLines="1"
         android:visibility="gone" />
 
+    <!-- A toggle with its word on it, for rows that are marked rather than removed -->
+    <TextView
+        android:id="@+id/place_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/mark_button_height"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="center"
+        android:minWidth="84dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:drawablePadding="6dp"
+        android:textSize="@dimen/mark_button_text"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/place_remove"
         android:layout_width="@dimen/row_button"

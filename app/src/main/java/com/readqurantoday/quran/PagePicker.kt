@@ -69,6 +69,6 @@ fun Activity.pickPages(title: String, note: String, pages: List<Int>, chosen: Se
 /** A toggle drawn as chosen (filled) or not (outlined), as the page tiles and the surah buttons both are. */
 fun markChoice(button: TextView, on: Boolean) {
     button.setBackgroundResource(if (on) R.drawable.choice_on else R.drawable.choice_off)
-    button.setTextColor(button.context.getColor(if (on) R.color.on_dark else R.color.accent))
+    button.setTextColor(button.context.getColor(if (on) R.color.on_dark else R.color.text))
     button.isSelected = on
 }

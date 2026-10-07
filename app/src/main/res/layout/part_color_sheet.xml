@@ -111,7 +111,7 @@
             android:gravity="center"
             android:background="@drawable/row_flat"
             android:text="@string/done"
-            android:textColor="@color/accent"
+            android:textColor="@color/text"
             android:textSize="15sp"
             android:textStyle="bold" />
 

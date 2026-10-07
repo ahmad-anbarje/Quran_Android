@@ -51,7 +51,7 @@ class SwipeTabs(
     private fun mark(on: Int) = segs.forEachIndexed { i, seg ->
         val isOn = i == on
         seg.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-        seg.setTextColor(seg.context.getColor(if (isOn) R.color.accent else R.color.text_mute))
+        seg.setTextColor(seg.context.getColor(if (isOn) R.color.text else R.color.text_mute))
         // Built from the theme's own face: defaultFromStyle would put the system font here
         seg.typeface = Typeface.create(face, if (isOn) Typeface.BOLD else Typeface.NORMAL)
     }

@@ -230,7 +230,7 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
         val dark = row.findViewById<TextView>(R.id.seg_night)
         for ((option, isOn) in listOf(day to !night, dark to night)) {
             option.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-            option.setTextColor(host.getColor(if (isOn) R.color.accent else R.color.text_mute))
+            option.setTextColor(host.getColor(if (isOn) R.color.text else R.color.text_mute))
             option.setTypeface(option.typeface, if (isOn) Typeface.BOLD else Typeface.NORMAL)
         }
         day.setOnClickListener { if (night) readingStyle(night = false) }

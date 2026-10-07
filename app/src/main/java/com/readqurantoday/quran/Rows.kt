@@ -8,14 +8,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 
-/** A statistics row (row_progress) that opens or changes something: its value in the accent, an arrow after it. */
+/** A statistics row (row_progress) that opens or changes something: an arrow in the accent after its value. */
 fun View.opens(act: () -> Unit) {
     findViewById<ImageView>(R.id.prog_go).apply {
         setImageResource(R.drawable.ic_chevron)
         imageTintList = ColorStateList.valueOf(context.getColor(R.color.accent))
         visibility = View.VISIBLE
     }
-    findViewById<TextView>(R.id.prog_value).setTextColor(context.getColor(R.color.accent))
     isClickable = true
     setOnClickListener { act() }
 }

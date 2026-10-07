@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="@color/accent"
+                android:textColor="@color/text_mute"
                 android:textSize="@dimen/row_meta"
                 android:includeFontPadding="false"
                 android:maxLines="1" />

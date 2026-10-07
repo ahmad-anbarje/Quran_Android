@@ -69,7 +69,7 @@
             android:background="@drawable/choice_off"
             android:clickable="true"
             android:focusable="true"
-            android:textColor="@color/accent"
+            android:textColor="@color/text"
             android:textSize="@dimen/row_title" />
 
         <TextView

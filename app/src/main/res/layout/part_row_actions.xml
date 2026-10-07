@@ -44,7 +44,7 @@
             android:id="@+id/play_label"
             android:duplicateParentState="true"
             android:text="@string/play"
-            android:textColor="@color/accent" />
+            android:textColor="@color/text_mute" />
     </LinearLayout>
 
     <!-- Reciter -->

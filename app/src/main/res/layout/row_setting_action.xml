@@ -11,5 +11,5 @@
     android:focusable="true"
     android:paddingStart="14dp"
     android:paddingEnd="14dp"
-    android:textColor="@color/accent"
+    android:textColor="@color/text"
     android:textSize="@dimen/row_title" />

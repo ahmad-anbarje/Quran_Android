@@ -93,7 +93,7 @@
                 android:id="@+id/meta_juz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/accent"
+                android:textColor="@color/text_mute"
                 android:includeFontPadding="false"
                 android:textSize="@dimen/row_meta"
                 android:maxLines="1" />

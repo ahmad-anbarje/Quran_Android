@@ -126,7 +126,7 @@
             android:id="@+id/p_play_label"
             android:layout_marginTop="2dp"
             android:text="@string/play"
-            android:textColor="@color/accent"
+            android:textColor="@color/text_mute"
             android:textStyle="bold" />
     </LinearLayout>
 

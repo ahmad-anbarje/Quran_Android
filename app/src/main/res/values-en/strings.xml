@@ -210,7 +210,6 @@
     <string name="stats_khatma_read">%1$s of %2$s</string>
     <string name="stats_left">Left</string>
     <string name="stats_finish_unknown">Read for a few days to see when you\'ll finish.</string>
-    <string name="stats_done">Khatmas completed</string>
     <string name="stats_new_khatma">Start a new khatma</string>
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
@@ -232,7 +231,6 @@
     <string name="stats_pages_today">Pages today</string>
     <string name="of_count">%1$s of %2$s</string>
     <string name="stats_days_read">Days you read this month</string>
-    <string name="stats_finish_on">Expected to finish %1$s</string>
     <string name="stats_total">In all, %1$s days</string>
     <string name="trend_by">%1$s vs last week</string>
     <string name="trend_up">%1$s more than last week</string>
@@ -243,7 +241,6 @@
         <item quantity="one">page</item>
         <item quantity="other">pages</item>
     </plurals>
-    <string name="sec_goal">My goal</string>
     <string name="sec_reading">My reading</string>
     <string name="sec_khatma">My khatma</string>
     <string name="sec_listening">My listening</string>
@@ -295,7 +292,6 @@
     <string name="goal_custom_hint">Number</string>
     <string name="goal_keep">Save goal</string>
     <string name="goal_title">Your goal</string>
-    <string name="goal_today">Goal today</string>
     <string name="goal_none_today">No goal for today</string>
     <string name="goal_every_day">every day</string>
     <string name="goal_plan">%1$s %2$s</string>
@@ -332,8 +328,6 @@
         <item>a hizb and three quarters</item>
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
-    <string name="wird_title">Your daily reading</string>
-    <string name="hifz_title">Memorising</string>
     <string name="goal_change">Change</string>
     <string name="done_week">Done this week</string>
     <string name="left_today">Left for today</string>
@@ -357,16 +351,25 @@
     <string name="hifz_mine">What I know by heart</string>
     <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
     <string name="hifz_mine_pages">%1$s of the Quran</string>
-    <string name="hifz_how">Know a whole surah? Tap “I know it”. Learned new pages today? Tap the surah’s name and pick them.</string>
-    <string name="hifz_surah_mark">I know it</string>
     <string name="hifz_keep">Done</string>
-    <string name="hifz_surah_known">Known</string>
-    <string name="hifz_surah_mark_said">I know Surah %1$s by heart</string>
-    <string name="hifz_surah_unmark_said">Surah %1$s is known, tap to undo</string>
     <string name="hifz_pages_ask">Pick the pages you know</string>
     <string name="pages_all">Select all</string>
     <string name="pages_none">Clear all</string>
     <string name="done_week_none">No full day yet</string>
     <string name="hifz_mine_add">Add</string>
-    <string name="hifz_total">In all</string>
+    <string name="sec_hifz">My memorising</string>
+    <string name="wird_done">I read today\'s portion</string>
+    <string name="wird_undo">Undo “I read today\'s portion”</string>
+    <string name="khatma_goal">Finish by</string>
+    <string name="khatma_expected">Expected finish</string>
+    <string name="khatma_per_day">%1$s a day</string>
+    <string name="khatma_by_pace">At your recent pace; tap to set a date</string>
+    <string name="hifz_full">Known whole</string>
+    <string name="hifz_part">Known in part</string>
+    <string name="hifz_full_said">Surah %1$s known whole</string>
+    <string name="hifz_part_said">Pick the pages you know of Surah %1$s</string>
+    <plurals name="khatmas_before">
+        <item quantity="one">%1$s khatma finished before this</item>
+        <item quantity="other">%1$s khatmas finished before this</item>
+    </plurals>
 </resources>

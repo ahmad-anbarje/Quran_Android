@@ -248,7 +248,6 @@
     <string name="stats_khatma_read">%1$s من %2$s</string>
     <string name="stats_left">المتبقي</string>
     <string name="stats_finish_unknown">اقرأ بضعة أيام ليظهر موعد الختم المتوقع.</string>
-    <string name="stats_done">ختمات مكتملة</string>
     <string name="stats_new_khatma">ابدأ ختمة جديدة</string>
     <string name="stats_new_khatma_ask">تبدأ الختمة من أولها، وتبقى الختمات المكتملة محسوبة.</string>
     <string name="stats_new_khatma_do">ابدأ من جديد</string>
@@ -278,7 +277,6 @@
     <string name="stats_pages_today">صفحات اليوم</string>
     <string name="of_count">%1$s من %2$s</string>
     <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
-    <string name="stats_finish_on">الختم المتوقع %1$s</string>
     <string name="stats_total">المجموع في %1$s يومًا</string>
     <string name="trend_by">%1$s عن الأسبوع الماضي</string>
     <string name="trend_up">%1$s أكثر من الأسبوع الماضي</string>
@@ -293,7 +291,6 @@
         <item quantity="many">صفحة</item>
         <item quantity="other">صفحة</item>
     </plurals>
-    <string name="sec_goal">هدفي</string>
     <string name="sec_reading">قراءتي</string>
     <string name="sec_khatma">ختمتي</string>
     <string name="sec_listening">استماعي</string>
@@ -359,7 +356,6 @@
     <string name="goal_custom_hint">العدد</string>
     <string name="goal_keep">حفظ الهدف</string>
     <string name="goal_title">هدفك</string>
-    <string name="goal_today">هدف اليوم</string>
     <string name="goal_none_today">لا هدف لهذا اليوم</string>
     <string name="goal_every_day">كل يوم</string>
     <string name="goal_plan">%1$s %2$s</string>
@@ -397,8 +393,6 @@
         <item>حزب وثلاثة أرباع</item>
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
-    <string name="wird_title">وِردك</string>
-    <string name="hifz_title">حفظ القرآن</string>
     <string name="goal_change">تغيير</string>
     <string name="done_week">ما أنجزته هذا الأسبوع</string>
     <string name="left_today">ما بقي اليوم</string>
@@ -426,16 +420,29 @@
     <string name="hifz_mine">ما أحفظه</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
     <string name="hifz_mine_pages">%1$s من القرآن</string>
-    <string name="hifz_how">إن كنت تحفظ سورة كاملة فاضغط «أحفظها». وإن حفظت صفحات جديدة اليوم فاضغط على اسم السورة واختر صفحاتها.</string>
-    <string name="hifz_surah_mark">أحفظها</string>
     <string name="hifz_keep">تم</string>
-    <string name="hifz_surah_known">محفوظة</string>
-    <string name="hifz_surah_mark_said">أحفظ سورة %1$s كاملة</string>
-    <string name="hifz_surah_unmark_said">سورة %1$s محفوظة، اضغط للإلغاء</string>
     <string name="hifz_pages_ask">اختر الصفحات التي تحفظها</string>
     <string name="pages_all">اختر الكل</string>
     <string name="pages_none">ألغِ الكل</string>
     <string name="done_week_none">لم تُتمّ يومًا بعد</string>
     <string name="hifz_mine_add">أضف</string>
-    <string name="hifz_total">مجموع حفظك</string>
+    <string name="sec_hifz">حفظي</string>
+    <string name="wird_done">قرأت وِردي اليوم</string>
+    <string name="wird_undo">ألغِ «قرأت وِردي اليوم»</string>
+    <string name="khatma_goal">موعد الختم</string>
+    <string name="khatma_expected">الختم المتوقع</string>
+    <string name="khatma_per_day">%1$s كل يوم</string>
+    <string name="khatma_by_pace">بحسب قراءتك الأخيرة، اضغط لتحدّد موعدًا</string>
+    <string name="hifz_full">محفوظة كاملة</string>
+    <string name="hifz_part">محفوظة جزئيًا</string>
+    <string name="hifz_full_said">سورة %1$s محفوظة كاملة</string>
+    <string name="hifz_part_said">اختر ما تحفظه من سورة %1$s</string>
+    <plurals name="khatmas_before">
+        <item quantity="zero">%1$s ختمة قبلها</item>
+        <item quantity="one">وأتممت قبلها ختمة واحدة</item>
+        <item quantity="two">وأتممت قبلها ختمتين</item>
+        <item quantity="few">وأتممت قبلها %1$s ختمات</item>
+        <item quantity="many">وأتممت قبلها %1$s ختمة</item>
+        <item quantity="other">وأتممت قبلها %1$s ختمة</item>
+    </plurals>
 </resources>

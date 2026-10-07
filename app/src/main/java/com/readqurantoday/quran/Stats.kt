@@ -38,8 +38,8 @@ object Stats {
     private const val HIJRI = "hijri"
     private const val CELEBRATED = "celebrated"
 
-    /** One day: seconds on each page, and seconds of recitation heard from each surah. */
-    data class Day(val pageSec: Map<Int, Int>, val surahSec: Map<Int, Int>) {
+    /** One day: seconds on each page, seconds heard from each surah, and whether the reader said the goal was done. */
+    data class Day(val pageSec: Map<Int, Int>, val surahSec: Map<Int, Int>, val doneByHand: Boolean = false) {
         val pages: List<Int> get() = pageSec.filterValues { it >= READ_FROM_SEC }.keys.sorted()
         val readSec: Int get() = pageSec.values.sum()
         val listenSec: Int get() = surahSec.values.sum()
@@ -106,8 +106,11 @@ object Stats {
     fun day(ctx: Context, day: Long): Day {
         val o = store(ctx).getString(DAY + day, null)?.let { runCatching { JSONObject(it) }.getOrNull() }
             ?: return Day(emptyMap(), emptyMap())
-        return Day(counts(o.optJSONObject("r")), counts(o.optJSONObject("l")))
+        return Day(counts(o.optJSONObject("r")), counts(o.optJSONObject("l")), o.optBoolean("m"))
     }
+
+    /** Today's reading goal said done by the reader, for reading from a printed mushaf. */
+    fun setDoneByHand(ctx: Context, on: Boolean) = save(ctx, today(), day(ctx, today()).copy(doneByHand = on))
 
     /** The last [n] days, oldest first, today last. */
     fun lastDays(ctx: Context, n: Int): List<Day> {
@@ -224,6 +227,7 @@ object Stats {
         val o = JSONObject()
             .put("r", JSONObject(record.pageSec.mapKeys { it.key.toString() }))
             .put("l", JSONObject(record.surahSec.mapKeys { it.key.toString() }))
+        if (record.doneByHand) o.put("m", true)
         val prefs = store(ctx)
         prefs.edit {
             if (!prefs.contains(SINCE)) putLong(SINCE, day)

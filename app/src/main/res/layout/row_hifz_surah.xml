@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A surah in the memorised list: its name and how much is known, then whole or in part -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="@dimen/row_pad_v"
+    android:paddingBottom="@dimen/row_pad_v">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <include
+            android:id="@+id/hifz_title"
+            layout="@layout/part_surah_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/hifz_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_mute"
+            android:textSize="@dimen/row_meta"
+            android:includeFontPadding="false"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/hifz_track"
+        layout="@layout/part_progress"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/track_height"
+        android:layout_marginTop="6dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/hifz_full"
+            style="@style/MarkButton"
+            android:layout_marginEnd="8dp"
+            android:text="@string/hifz_full" />
+
+        <TextView
+            android:id="@+id/hifz_part"
+            style="@style/MarkButton"
+            android:text="@string/hifz_part" />
+    </LinearLayout>
+</LinearLayout>

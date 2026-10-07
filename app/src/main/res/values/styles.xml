@@ -16,4 +16,19 @@
     </style>
 
 
+    <!-- A toggle with its word on it: half a row wide, filled once chosen -->
+    <style name="MarkButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/mark_button_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:textSize">@dimen/mark_button_text</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
 </resources>

@@ -50,9 +50,15 @@ class GoalPicker(private val host: Activity, private val changed: () -> Unit) {
                 2 -> host.sheet(host.getString(R.string.goal_surah_ask), Surahs.list().map { Choice(it.name) }) { s ->
                     pickDays(current.copy(kind = Goal.Kind.SURAHS, amount = 0, surahs = listOf(Surahs.list()[s].id)), kahf = true, ::keepReading)
                 }
-                else -> number(R.string.goal_khatma_ask, KHATMA_MONTH, 1..KHATMA_LONGEST) { keepReading(khatmaIn(it)) }
+                else -> khatma(current)
             }
         }
+    }
+
+    /** A khatma by a day: asks in how many days, and makes that the reading goal. */
+    fun khatma(current: Goal) {
+        val days = if (current.kind == Goal.Kind.KHATMA) (current.amount - Stats.today() + 1).toInt().coerceIn(1, KHATMA_LONGEST) else KHATMA_MONTH
+        number(R.string.goal_khatma_ask, days, 1..KHATMA_LONGEST) { keepReading(khatmaIn(it)) }
     }
 
     private fun keepReading(goal: Goal) {

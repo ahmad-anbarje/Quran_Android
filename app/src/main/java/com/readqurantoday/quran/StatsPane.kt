@@ -83,7 +83,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     // --- reading: today against the goal first, then the month ---
 
     private fun readingPage(into: LinearLayout, today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>) {
-        blow.card(into, 0, wirdRows(today, goal, week, before))
+        blow.card(into, 0, wirdRows(today, goal))
         val hijri = Stats.hijri(host)
         val thisMonth = Stats.monthDays(host)
         into.addView(monthHead(hijri))
@@ -107,27 +107,16 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, 0, listOf(quiet(host.getString(R.string.stats_private))))
     }
 
-    private fun wirdRows(today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>): List<View> {
+    private fun wirdRows(today: Stats.Day, goal: Int): List<View> {
         val plan = Stats.goalPlan(host)
         val read = readToday(today, goal)
-        val hero = hero(
-            key = TODAY, count = read,
-            say = { if (it == 0) none(res) else figures(it, res) },
-            unit = if (read == 0) "" else res.getQuantityString(R.plurals.pages_unit, read),
-            title = host.getString(R.string.stats_pages_today),
-            line = todayLine(read, goal, R.string.stats_none_today),
-            note = todayNote(read, goal)
-        ).also {
-            fillRing(it, TODAY, read.toFloat(), goal.toFloat())
-            showTrend(it.findViewById(R.id.hero_trend), week.sumOf { d -> d.pages.size }, before.sumOf { d -> d.pages.size })
-        }
+        // A khatma's pages a day are only known for today, so any reading counts toward it on other days
+        val rings = goalRings(TODAY, read, goal, R.string.stats_none_today,
+            want = { _, weekday -> if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(weekday) },
+            done = { day -> Stats.day(host, day).let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } })
         val rows = mutableListOf(
-            hero,
-            changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { picker.reading(plan) },
-            row(host.getString(R.string.done_week), metOfWeek(
-                want = { weekday -> if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(weekday) },
-                done = { ago -> week[WEEK - 1 - ago].let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } }
-            ))
+            rings,
+            changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { picker.reading(plan) }
         )
         // The reader says today's goal is done, wherever it was read
         if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
@@ -141,38 +130,56 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         return rows
     }
 
-    // Done against the goal, counting on past it
-    private fun todayLine(done: Int, goal: Int, nothingYet: Int): String = when {
-        done == 0 -> host.getString(nothingYet)
-        goal == 0 -> pagesSaid(done, res)
-        done < goal -> host.getString(R.string.of_count, figures(done, res), pagesSaid(goal, res))
-        done == goal -> host.getString(R.string.stats_goal_reached)
-        else -> host.getString(R.string.goal_over, pagesSaid(done - goal, res))
+    // Today, this week and this month side by side: today in pages, the others in days the goal was met,
+    // out of the days that had one
+    private fun goalRings(key: String, todayDone: Int, goal: Int, nothingYet: Int,
+                          want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): View =
+        blow.inflate(R.layout.part_goal_rings, parent, false).apply {
+            fillGoalRing(findViewById(R.id.ring_today), "$key.day", todayDone, goal, R.string.ring_today,
+                unit = if (goal > 0) host.getString(R.string.ring_of, figures(goal, res))
+                    else res.getQuantityString(R.plurals.pages_unit, todayDone))
+            val monthFrom = Stats.today() - Stats.monthDays(host).size + 1
+            for ((id, from, label) in listOf(
+                Triple(R.id.ring_week, Stats.today() - WEEK + 1, R.string.ring_week),
+                Triple(R.id.ring_month, monthFrom, R.string.ring_month)
+            )) {
+                val (met, had) = metDays(from, want, done)
+                fillGoalRing(findViewById(id), "$key.$label", met, had, label,
+                    unit = if (had > 0) host.getString(R.string.ring_of, figures(had, res)) else "")
+            }
+            findViewById<TextView>(R.id.rings_line).text = todayLine(todayDone, goal, nothingYet)
+        }
+
+    private fun fillGoalRing(ring: View, key: String, done: Int, total: Int, label: Int, unit: String) {
+        countFigure(ring.findViewById(R.id.ring_value), key, done) { if (it == 0) none(res) else figures(it, res) }
+        ring.findViewById<TextView>(R.id.ring_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
+        ring.findViewById<TextView>(R.id.ring_label).setText(label)
+        fillRing(ring.findViewById(R.id.ring), key, done.toFloat(), total.toFloat())
     }
 
-    private fun todayNote(done: Int, goal: Int): String = when {
-        goal == 0 -> host.getString(R.string.goal_none_today)
-        done < goal -> host.getString(R.string.goal_left, pagesSaid(goal - done, res))
-        else -> ""
-    }
-
-    // Days of the last week that met their goal, out of the days that had one; a khatma's pages a day are
-    // only known for today, so any reading counts toward it
-    private fun metOfWeek(want: (weekday: Int) -> Int, done: (ago: Int) -> Int): String {
+    // Days from [from] to today that met their goal, and how many had a goal at all
+    private fun metDays(from: Long, want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): Pair<Int, Int> {
         val cal = Calendar.getInstance()
         var had = 0
         var met = 0
-        for (ago in 0 until WEEK) {
-            cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
-            val wanted = want(cal.get(Calendar.DAY_OF_WEEK))
+        for (day in from..Stats.today()) {
+            cal.timeInMillis = Stats.noonOf(day)
+            val wanted = want(day, cal.get(Calendar.DAY_OF_WEEK))
             if (wanted > 0) {
                 had++
-                if (done(ago) >= wanted) met++
+                if (done(day) >= wanted) met++
             }
         }
-        if (had == 0) return none(res)
-        if (met == 0) return host.getString(R.string.done_week_none)
-        return host.getString(R.string.of_count, figures(met, res), res.getQuantityString(R.plurals.days_count, had, figures(had, res)))
+        return met to had
+    }
+
+    // Today in a line: what is left, that the goal is reached, or by how much it was passed
+    private fun todayLine(done: Int, goal: Int, nothingYet: Int): String = when {
+        goal == 0 -> if (done == 0) host.getString(R.string.goal_none_today) else pagesSaid(done, res)
+        done == 0 -> host.getString(nothingYet)
+        done < goal -> host.getString(R.string.goal_left, pagesSaid(goal - done, res))
+        done == goal -> host.getString(R.string.stats_goal_reached)
+        else -> host.getString(R.string.goal_over, pagesSaid(done - goal, res))
     }
 
     // A khatma goal says what its daily pages are for
@@ -189,21 +196,11 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         else {
             val goal = Stats.hifzGoal(host)
             val learned = kept.count { it.value == Stats.today() }
-            val hero = hero(
-                key = HIFZ, count = learned,
-                say = { if (it == 0) none(res) else figures(it, res) },
-                unit = if (learned == 0) "" else res.getQuantityString(R.plurals.pages_unit, learned),
-                title = host.getString(R.string.hifz_today),
-                line = todayLine(learned, goal, R.string.hifz_none_today),
-                note = todayNote(learned, goal)
-            ).also { fillRing(it, HIFZ, learned.toFloat(), goal.toFloat()) }
             blow.card(into, 0, listOf(
-                hero,
-                changeRow(plan.said(host)) { picker.hifz(plan) },
-                row(host.getString(R.string.done_week), metOfWeek(
-                    want = { weekday -> plan.pagesOn(weekday) },
-                    done = { ago -> kept.count { it.value == Stats.today() - ago } }
-                ))
+                goalRings(HIFZ, learned, goal, R.string.hifz_none_today,
+                    want = { _, weekday -> plan.pagesOn(weekday) },
+                    done = { day -> kept.count { it.value == day } }),
+                changeRow(plan.said(host)) { picker.hifz(plan) }
             ))
         }
         blow.card(into, 0, listOf(mineRow(kept.size)))
@@ -403,11 +400,14 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         }
 
     // From empty when the tab opens, from where it stood on an update, at once when motion is off
-    private fun fillRing(hero: View, key: String, done: Float, total: Float) {
+    private fun fillRing(hero: View, key: String, done: Float, total: Float) =
+        fillRing(hero.findViewById<RingView>(R.id.hero_ring), key, done, total)
+
+    private fun fillRing(ring: RingView, key: String, done: Float, total: Float) {
         val share = if (total > 0f) (done / total).coerceIn(0f, 1f) else 0f
         // A first build, with nothing shown before it, simply shows the value
         val from = if (!moving) null else if (motion == Motion.OPEN) 0f else shares[key]
-        hero.findViewById<RingView>(R.id.hero_ring).show(done, total, from)
+        ring.show(done, total, from)
         shares[key] = share
     }
 

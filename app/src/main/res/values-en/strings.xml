@@ -228,7 +228,6 @@
         <item quantity="one">%1$s minute</item>
         <item quantity="other">%1$s minutes</item>
     </plurals>
-    <string name="stats_pages_today">Read today</string>
     <string name="of_count">%1$s of %2$s</string>
     <string name="stats_days_read">Days you read this month</string>
     <string name="stats_total">In all, %1$s days</string>
@@ -327,23 +326,17 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="goal_change">Change</string>
-    <string name="done_week">Goal met this week</string>
     <string name="khatma_daily">%1$s a day to finish by %2$s</string>
     <string name="goal_khatma_by">A khatma by %1$s</string>
     <string name="goal_khatma_note">Each day\'s pages come from what is left</string>
     <string name="goal_kind_khatma">A khatma in a number of days</string>
     <string name="goal_khatma_ask">Finish in how many days?</string>
-    <plurals name="days_count">
-        <item quantity="one">%1$s day</item>
-        <item quantity="other">%1$s days</item>
-    </plurals>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
     <string name="hifz_add">Set a memorising goal</string>
     <string name="hifz_goal_title">Memorising goal</string>
     <string name="hifz_custom_ask">How many pages a day?</string>
     <string name="hifz_stop">Remove the memorising goal</string>
-    <string name="hifz_today">Memorised today</string>
     <string name="hifz_mine">What I know by heart</string>
     <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
     <string name="hifz_mine_pages">%1$s of the Quran</string>
@@ -351,7 +344,6 @@
     <string name="hifz_pages_ask">Pick the pages you know</string>
     <string name="pages_all">Select all</string>
     <string name="pages_none">Clear all</string>
-    <string name="done_week_none">Not yet</string>
     <string name="hifz_mine_add">Add</string>
     <string name="sec_hifz">My memorising</string>
     <string name="khatma_goal">Finish by</string>
@@ -371,4 +363,8 @@
     <string name="hifz_none_today">Nothing memorised yet today</string>
     <string name="paper_read">I finished today\'s goal</string>
     <string name="percent_under_one">under 1%</string>
+    <string name="ring_today">Pages today</string>
+    <string name="ring_week">Days this week</string>
+    <string name="ring_month">Days this month</string>
+    <string name="ring_of">of %1$s</string>
 </resources>

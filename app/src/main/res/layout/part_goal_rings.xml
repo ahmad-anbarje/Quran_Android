@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A goal at a glance: today, this week and this month as rings side by side, and one line on today -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:padding="@dimen/tile_pad">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <include android:id="@+id/ring_today" layout="@layout/part_ring" />
+
+        <include android:id="@+id/ring_week" layout="@layout/part_ring" />
+
+        <include android:id="@+id/ring_month" layout="@layout/part_ring" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rings_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_title"
+        android:textStyle="bold" />
+</LinearLayout>

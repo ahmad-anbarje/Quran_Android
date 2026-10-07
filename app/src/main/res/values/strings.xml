@@ -274,7 +274,6 @@
         <item quantity="many">%1$s دقيقة</item>
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
-    <string name="stats_pages_today">قرأت اليوم</string>
     <string name="of_count">%1$s من %2$s</string>
     <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
     <string name="stats_total">المجموع في %1$s يومًا</string>
@@ -392,27 +391,17 @@
     </string-array>
     <!-- Goals tab: what the goal is, what is done, what is left -->
     <string name="goal_change">تغيير</string>
-    <string name="done_week">أتممت هدفك هذا الأسبوع</string>
     <string name="khatma_daily">%1$s كل يوم لتختم في %2$s</string>
     <string name="goal_khatma_by">ختمة تنتهي في %1$s</string>
     <string name="goal_khatma_note">تُحسب صفحات كل يوم مما بقي</string>
     <string name="goal_kind_khatma">ختمة في عدد من الأيام</string>
     <string name="goal_khatma_ask">في كم يومًا تختم؟</string>
-    <plurals name="days_count">
-        <item quantity="zero">%1$s يوم</item>
-        <item quantity="one">يوم واحد</item>
-        <item quantity="two">يومين</item>
-        <item quantity="few">%1$s أيام</item>
-        <item quantity="many">%1$s يومًا</item>
-        <item quantity="other">%1$s يوم</item>
-    </plurals>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
     <string name="hifz_add">حدّد هدف الحفظ</string>
     <string name="hifz_goal_title">هدف الحفظ</string>
     <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
     <string name="hifz_stop">إلغاء هدف الحفظ</string>
-    <string name="hifz_today">حفظت اليوم</string>
     <string name="hifz_mine">ما أحفظه</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
     <string name="hifz_mine_pages">%1$s من القرآن</string>
@@ -420,7 +409,6 @@
     <string name="hifz_pages_ask">اختر الصفحات التي تحفظها</string>
     <string name="pages_all">اختر الكل</string>
     <string name="pages_none">ألغِ الكل</string>
-    <string name="done_week_none">لم تُتمّه بعد</string>
     <string name="hifz_mine_add">أضف</string>
     <string name="sec_hifz">حفظي</string>
     <string name="khatma_goal">موعد الختم</string>
@@ -444,4 +432,8 @@
     <string name="hifz_none_today">لم تحفظ اليوم بعد</string>
     <string name="paper_read">أتممت هدف اليوم</string>
     <string name="percent_under_one">أقل من ١٪</string>
+    <string name="ring_today">صفحات اليوم</string>
+    <string name="ring_week">أيام هذا الأسبوع</string>
+    <string name="ring_month">أيام هذا الشهر</string>
+    <string name="ring_of">من %1$s</string>
 </resources>

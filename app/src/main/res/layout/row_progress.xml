@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A statistics row: label and value, an optional quiet line, an optional trend; a mark at the end when tappable -->
+<!-- A statistics row: label, an optional quiet line and trend, then the value centred on them all;
+     an arrow after the value when tappable -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:gravity="center_vertical"
     android:layoutDirection="locale"
     android:background="@drawable/row_flat"
@@ -14,52 +15,51 @@
     android:paddingBottom="@dimen/row_pad_v">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/prog_label"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:textColor="@color/text"
             android:textSize="@dimen/row_title" />
 
         <TextView
-            android:id="@+id/prog_value"
+            android:id="@+id/prog_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/text_mute"
+            android:textSize="@dimen/row_meta"
+            android:visibility="gone" />
+
+        <include
+            android:id="@+id/prog_trend"
+            layout="@layout/part_trend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/text"
-            android:textSize="@dimen/row_value"
-            android:textStyle="bold" />
-
-        <!-- Shown on rows that open something or switch something -->
-        <ImageView
-            android:id="@+id/prog_go"
-            android:layout_width="@dimen/row_go"
-            android:layout_height="@dimen/row_go"
-            android:layout_marginStart="6dp"
-            android:contentDescription="@null"
+            android:layout_marginTop="6dp"
             android:visibility="gone" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/prog_note"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textColor="@color/text_mute"
-        android:textSize="@dimen/row_meta"
-        android:visibility="gone" />
-
-    <include
-        android:id="@+id/prog_trend"
-        layout="@layout/part_trend"
+        android:id="@+id/prog_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_value"
+        android:textStyle="bold" />
+
+    <!-- Shown on rows that open or change something -->
+    <ImageView
+        android:id="@+id/prog_go"
+        android:layout_width="@dimen/row_go"
+        android:layout_height="@dimen/row_go"
+        android:layout_marginStart="6dp"
+        android:contentDescription="@null"
         android:visibility="gone" />
 </LinearLayout>

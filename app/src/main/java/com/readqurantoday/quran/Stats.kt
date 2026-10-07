@@ -137,11 +137,8 @@ object Stats {
     /** Pages a day lately, or 0 until there are enough days to tell. */
     fun pace(ctx: Context): Float = if (daysKept(ctx) < PACE_FROM_DAYS) 0f else average(ctx, PACE_DAYS)
 
-    /** Days of this month that statistics were kept for, oldest first, today last. */
-    fun monthDays(ctx: Context): List<Day> {
-        val from = maxOf(monthStart(today(), hijri(ctx)), today() - daysKept(ctx) + 1)
-        return (from..today()).map { day(ctx, it) }
-    }
+    /** This month from its first day to today, oldest first, today last. */
+    fun monthDays(ctx: Context): List<Day> = (monthStart(today(), hijri(ctx))..today()).map { day(ctx, it) }
 
     /** Months counted by the Hijri calendar, or the Gregorian. */
     fun hijri(ctx: Context) = store(ctx).getBoolean(HIJRI, true)

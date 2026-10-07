@@ -130,7 +130,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     }
 
     // Today, this week and this month side by side: today in pages, the others in days the goal was met,
-    // out of the days that had one
+    // out of the days so far that had one
     private fun goalRings(key: String, todayDone: Int, goal: Int, nothingYet: Int,
                           want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): View =
         blow.inflate(R.layout.part_goal_rings, parent, false).apply {
@@ -155,22 +155,17 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         fillRing(ring.findViewById(R.id.ring), key, done.toFloat(), total.toFloat())
     }
 
-    // This week, Saturday to Friday as the app's week runs
+    // This week so far, from Saturday as the app's week runs
     private fun weekSpan(): LongRange {
         val cal = Calendar.getInstance()
         cal.timeInMillis = Stats.noonOf(Stats.today())
-        val start = Stats.today() - (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SATURDAY + WEEK) % WEEK
-        return start until start + WEEK
+        return Stats.today() - (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SATURDAY + WEEK) % WEEK..Stats.today()
     }
 
-    // The whole of this month by the chosen calendar; a month's length is where the next one starts
-    private fun monthSpan(): LongRange {
-        val hijri = Stats.hijri(host)
-        val start = monthStart(Stats.today(), hijri)
-        return start until monthStart(start + LONGEST_MONTH, hijri)
-    }
+    // This month so far, by the chosen calendar
+    private fun monthSpan(): LongRange = monthStart(Stats.today(), Stats.hijri(host))..Stats.today()
 
-    // Days of [span] that had a goal, and how many of those up to today met it
+    // Days of [span] that had a goal, and how many of those met it
     private fun metDays(span: LongRange, want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): Pair<Int, Int> {
         val cal = Calendar.getInstance()
         var had = 0
@@ -180,7 +175,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             val wanted = want(day, cal.get(Calendar.DAY_OF_WEEK))
             if (wanted > 0) {
                 had++
-                if (day <= Stats.today() && done(day) >= wanted) met++
+                if (done(day) >= wanted) met++
             }
         }
         return met to had
@@ -458,8 +453,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val LISTENING = 3
 
         const val WEEK = 7
-        // Past the end of any month, Hijri or Gregorian, counted from its first day
-        const val LONGEST_MONTH = 31
         const val TOP_HEARD = 3
         // Long enough for the cards to have come in first
         const val CELEBRATE_AFTER_MS = 450L

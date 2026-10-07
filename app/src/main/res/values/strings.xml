@@ -437,4 +437,5 @@
     <string name="ring_month">أيام هذا الشهر</string>
     <string name="ring_of">من %1$s</string>
     <string name="set_calendar">التقويم</string>
+    <string name="about_privacy">خصوصيتك</string>
 </resources>

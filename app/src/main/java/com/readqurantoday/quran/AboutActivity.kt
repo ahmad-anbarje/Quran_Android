@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 
-/** What the app is, where developers find its code, and whose work it is built on. */
+/** What the app is, how it keeps your statistics private, where developers find its code, and whose work it is built on. */
 class AboutActivity : CardsActivity(R.string.set_about) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,16 +14,18 @@ class AboutActivity : CardsActivity(R.string.set_about) {
         val intro = layoutInflater.inflate(R.layout.part_about_intro, into, false)
         intro.findViewById<TextView>(R.id.about_version).text = getString(R.string.about_version, appVersion(this))
         layoutInflater.card(into, 0, listOf(intro))
+        layoutInflater.card(into, R.string.about_privacy, listOf(note(into, R.string.stats_private)))
         layoutInflater.card(into, R.string.about_links, listOf(
             link(into, R.string.set_website, R.string.site_host, SITE_URL),
             link(into, R.string.about_source, R.string.source_host, SOURCE_URL),
             link(into, R.string.about_docker, R.string.docker_host, DOCKER_URL)
         ))
-        val credits = layoutInflater.inflate(R.layout.row_setting_note, into, false) as TextView
-        credits.setText(R.string.credits_text)
-        layoutInflater.card(into, R.string.set_credits, listOf(credits))
+        layoutInflater.card(into, R.string.set_credits, listOf(note(into, R.string.credits_text)))
         sayBars()
     }
+
+    private fun note(into: LinearLayout, text: Int): View =
+        (layoutInflater.inflate(R.layout.row_setting_note, into, false) as TextView).also { it.setText(text) }
 
     // The address is the value, so the row reads as where it goes
     private fun link(into: LinearLayout, label: Int, shown: Int, url: String): View =

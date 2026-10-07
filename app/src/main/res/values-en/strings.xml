@@ -368,4 +368,5 @@
     <string name="ring_month">Days this month</string>
     <string name="ring_of">of %1$s</string>
     <string name="set_calendar">Calendar</string>
+    <string name="about_privacy">Your privacy</string>
 </resources>

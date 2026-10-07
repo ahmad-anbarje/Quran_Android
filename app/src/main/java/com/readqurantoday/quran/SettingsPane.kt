@@ -59,7 +59,6 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
             rows.add(linkRow(R.string.set_about, { host.startActivity(Intent(host, AboutActivity::class.java)) }, emptyList()))
             rows.add(linkRow(R.string.set_report, { host.startActivity(Intent(host, FeedbackActivity::class.java)) }, emptyList()))
             rows.add(linkRow(R.string.set_privacy, { host.openLink(PRIVACY_URL) }, emptyList()))
-            rows.add((blow.inflate(R.layout.row_setting_note, into, false) as TextView).apply { setText(R.string.stats_private) })
         }
     }
 

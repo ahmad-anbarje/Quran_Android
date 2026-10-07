@@ -76,10 +76,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun celebrateOnce(today: Stats.Day, goal: Int) {
         if (goal == 0 || readToday(today, goal) < goal || Stats.celebrated(host)) return
         Stats.setCelebrated(host)
-        celebrate()
-    }
-
-    private fun celebrate() {
         val over = host.findViewById<ViewGroup>(android.R.id.content)
         over.postDelayed({ over.celebrate(host.getString(R.string.goal_done)) }, CELEBRATE_AFTER_MS)
     }
@@ -145,7 +141,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         ) {
             Stats.setDoneByHand(host, !today.doneByHand)
             build()
-            if (!today.doneByHand && moving) celebrate()
+            if (!today.doneByHand) celebrateOnce(Stats.day(host, Stats.today()), goal)
         }
         return rows
     }

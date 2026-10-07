@@ -64,17 +64,14 @@ object Stats {
 
     // --- recording ---
 
-    /** Credit [sec] to [page]; true when this is what brings today's pages up to the goal. */
-    fun addRead(ctx: Context, page: Int, sec: Int): Boolean {
-        if (page !in 1..Mushaf.PAGES || sec <= 0) return false
+    /** Credit [sec] to [page]. */
+    fun addRead(ctx: Context, page: Int, sec: Int) {
+        if (page !in 1..Mushaf.PAGES || sec <= 0) return
         val day = day(ctx, today())
-        val before = day.pages.size
         val total = (day.pageSec[page] ?: 0) + sec
         val after = day.copy(pageSec = day.pageSec + (page to total))
         save(ctx, today(), after)
         if (total >= READ_FROM_SEC) markRead(ctx, page)
-        val goal = goal(ctx)
-        return goal > 0 && before < goal && after.pages.size >= goal
     }
 
     fun addHeard(ctx: Context, surah: Int, sec: Int) {

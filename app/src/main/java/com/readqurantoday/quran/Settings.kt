@@ -24,6 +24,7 @@ object Settings {
     private const val INK_WEIGHT    = "ink-weight"
     private const val LIT_WEIGHT    = "lit-weight"
     private const val AYAH_WEIGHT   = "ayah-weight"
+    private const val LABEL_WEIGHT  = "label-weight"
     /* Suffixed -day or -night: see themed(). */
     private const val INK_COLOR     = "ink-color"
     private const val PAPER_COLOR   = "paper-color"
@@ -274,10 +275,14 @@ object Settings {
     fun ayahWeight(ctx: Context) = weight(ctx, AYAH_WEIGHT, BOLD_AYAH, R.integer.default_ayah_weight)
     fun setAyahWeight(ctx: Context, weight: Int) = setWeight(ctx, AYAH_WEIGHT, weight)
 
+    /** The juz, hizb and page numbers around the page; the surah name keeps its own calligraphy. */
+    fun labelWeight(ctx: Context) = weight(ctx, LABEL_WEIGHT, LABEL_WEIGHT, R.integer.default_label_weight)
+    fun setLabelWeight(ctx: Context, weight: Int) = setWeight(ctx, LABEL_WEIGHT, weight)
+
     // Removes pre-per-theme keys too, or they would outrank the restored defaults
     fun resetStyle(ctx: Context) {
         store(ctx).edit {
-            for (key in listOf(HL_COLOR, AYAH_COLOR, INK_COLOR, PAPER_COLOR, INK_WEIGHT, LIT_WEIGHT, AYAH_WEIGHT)) {
+            for (key in listOf(HL_COLOR, AYAH_COLOR, INK_COLOR, PAPER_COLOR, INK_WEIGHT, LIT_WEIGHT, AYAH_WEIGHT, LABEL_WEIGHT)) {
                 remove(themed(ctx, key))
             }
             for (old in listOf(HL_COLOR, AYAH_COLOR, INK_WEIGHT, LIT_WEIGHT, AYAH_WEIGHT, BOLD_LIT, BOLD_AYAH, BOLD_INK)) {

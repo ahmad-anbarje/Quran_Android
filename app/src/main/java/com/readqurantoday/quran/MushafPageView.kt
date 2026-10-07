@@ -444,6 +444,7 @@ class MushafPageView @JvmOverloads constructor(
     // Read when dressing, not per frame: a pinch redraws the page 60 times a second
     private var inkSpread = 0f
     private var markSpread = 0f
+    private var labelSpread = 0f
     private var litSpread = 0f
 
     // Depends only on the page, so built once in show()
@@ -531,6 +532,8 @@ class MushafPageView @JvmOverloads constructor(
         inkSpread = spread(Settings.inkWeight(context))
         markSpread = spread(Settings.ayahWeight(context))
         litSpread = spread(Settings.litWeight(context))
+        labelSpread = spread(Settings.labelWeight(context))
+        label.style = if (labelSpread > 0f) Paint.Style.FILL_AND_STROKE else Paint.Style.FILL
         // Never fake bold: it tears these glyphs. drawRun thickens by dilation instead
         paint.isFakeBoldText = false
         markPaint.isFakeBoldText = false
@@ -836,6 +839,7 @@ class MushafPageView @JvmOverloads constructor(
 
     // A page's figures, drawn small at the edges of the preview
     private fun previewLabels(canvas: Canvas, left: Float, measure: Float) {
+        thicken()
         val edge = label.textSize * 0.9f
         label.textAlign = Paint.Align.RIGHT
         canvas.drawText(headJuz, left + measure, edge, label)
@@ -1082,6 +1086,7 @@ class MushafPageView @JvmOverloads constructor(
         val side = (measure - titleWidth(headSurah, titleSize)) / 2f - full
         val widest = maxOf(label.measureText(headSide), label.measureText(headJuz))
         if (widest > side && side > 0f) label.textSize = full * side / widest
+        thicken()
 
         if (headJuz.isNotEmpty()) {
             label.textAlign = Paint.Align.RIGHT
@@ -1093,6 +1098,11 @@ class MushafPageView @JvmOverloads constructor(
         label.textAlign = Paint.Align.LEFT
         canvas.drawText(headSide, left, y, label)
         label.textSize = full
+    }
+
+    // The labels' weight as a stroke around each letter, in step with their size: shrunk labels thin with them
+    private fun thicken() {
+        label.strokeWidth = label.textSize * labelSpread * 2f
     }
 
     private fun titleWidth(surah: Int, size: Float): Float {
@@ -1194,6 +1204,7 @@ class MushafPageView @JvmOverloads constructor(
 
     private fun folio(canvas: Canvas) {
         if (pageNo <= 0) return
+        thicken()
         label.textAlign = Paint.Align.CENTER
         /* At the foot of the page, which on a scrolling page is below the screen. */
         canvas.drawText(folioText, width / 2f, pageTall - padBottom / 2f, label)

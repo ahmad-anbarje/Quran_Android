@@ -93,6 +93,7 @@
     <string name="set_ink_weight">Text weight</string>
     <string name="set_lit_weight">Highlight weight</string>
     <string name="set_ayah_weight">Ayah number weight</string>
+    <string name="set_label_weight">Juz, hizb and page weight</string>
     <string name="weight_regular">Regular</string>
     <string name="weight_light">Light</string>
     <string name="weight_medium">Medium</string>

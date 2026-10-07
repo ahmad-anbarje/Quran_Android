@@ -3,5 +3,7 @@
 <resources>
     <integer name="default_ink_weight">0</integer>
     <integer name="default_lit_weight">2</integer>
+    <!-- The juz, hizb and page numbers: a touch heavier than the app's own text, as they sit on the page -->
+    <integer name="default_label_weight">2</integer>
     <integer name="default_ayah_weight">2</integer>
 </resources>

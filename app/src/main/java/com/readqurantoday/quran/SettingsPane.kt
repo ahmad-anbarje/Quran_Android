@@ -97,6 +97,12 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
                 current = { Settings.inkWeight(look) },
                 choose = { Settings.setInkWeight(look, it) }
             ))
+            rows.add(choiceRow(
+                label = R.string.set_label_weight,
+                options = WEIGHT_NAMES,
+                current = { Settings.labelWeight(look) },
+                choose = { Settings.setLabelWeight(look, it) }
+            ))
         }
 
         group(R.string.set_group_word) { rows ->

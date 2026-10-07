@@ -135,6 +135,7 @@
     <string name="set_ink_weight">سماكة النص</string>
     <string name="set_lit_weight">سماكة الكلمة المظللة</string>
     <string name="set_ayah_weight">سماكة رقم الآية</string>
+    <string name="set_label_weight">سماكة الجزء والحزب والصفحة</string>
     <string name="weight_regular">عادي</string>
     <string name="weight_light">خفيف</string>
     <string name="weight_medium">متوسط</string>

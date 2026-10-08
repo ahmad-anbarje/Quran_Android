@@ -201,7 +201,7 @@
 
     <!-- Statistics -->
     <string name="tab_achievements">My Achievements</string>
-    <string name="stats_read_time">Reading time today</string>
+    <string name="stats_read_time">Reading time</string>
     <string name="stats_listen_time">Listening time today</string>
     <string name="stats_none_today">Nothing read yet today</string>
     <string name="stats_goal_reached">Today\'s goal reached</string>
@@ -214,7 +214,6 @@
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
     <string name="stats_week">Listening, last %1$s days</string>
-    <string name="stats_avg">Your pages a day this month</string>
     <string name="stats_chart_desc">Pages read on each of the last %1$s days, most on one day %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
     <string name="stats_private">Your reading and memorising statistics stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
@@ -241,20 +240,16 @@
     <string name="sec_reading">My reading</string>
     <string name="sec_khatma">My khatma</string>
     <string name="sec_listening">My listening</string>
-    <string name="stats_page_avg">Today</string>
+    <string name="stats_page_avg">Time per page</string>
     <string name="stats_page_times">Time on each page today</string>
     <string name="chart_today">Today</string>
-    <string name="chart_goal">Goal</string>
     <string name="stats_read_month">Reading time this month</string>
     <string name="cal_hijri">Hijri</string>
     <string name="cal_greg">Gregorian</string>
-    <string name="stats_speed">Your reading speed</string>
-    <string name="stats_page_avg_month">This month</string>
     <string name="stats_per_hour">In an hour you read about</string>
     <string name="stats_page_times_open">Time on each page read today</string>
     <string name="goal_done">Today\'s goal is done</string>
     <string name="time_and">%1$s %2$s</string>
-    <string name="per_page">%1$s a page</string>
     <string name="stats_per_hour_note">An estimate from your speed this month</string>
     <string name="pt_sort">Order</string>
     <string name="pt_by_page">By page</string>
@@ -369,4 +364,5 @@
     <string name="chart_total">In all</string>
     <string name="ring_known">Of the Quran</string>
     <string name="ring_whole">Whole surahs</string>
+    <string name="stats_today">Today\'s reading</string>
 </resources>

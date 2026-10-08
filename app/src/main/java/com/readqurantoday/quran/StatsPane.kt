@@ -86,17 +86,11 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, 0, wirdRows(today, goal))
         val thisMonth = Stats.monthDays(host)
         val monthPages = thisMonth.sumOf { it.pages.size }
-        into.addView(pair(
-            Tile(R.drawable.ic_clock, spent(today.readSec, res), host.getString(R.string.stats_read_time)),
-            Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
-        ))
+        blow.card(into, R.string.stats_today, todayRows(today, thisMonth))
         into.addView(pair(
             Tile(R.drawable.ic_calendar, if (monthPages == 0) none(res) else pagesSaid(monthPages, res), host.getString(R.string.stats_pages_month)),
-            Tile(R.drawable.ic_stats_outline,
-                pagesSaid((monthPages.toFloat() / thisMonth.size).roundToInt(), res),
-                host.getString(R.string.stats_avg))
+            Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
         ))
-        blow.card(into, R.string.stats_speed, speedRows(today, thisMonth))
         blow.card(into, host.getString(R.string.stats_last_days, figures(WEEK, res)), weekRows(week, goal))
     }
 
@@ -243,16 +237,13 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun changeRow(said: String, change: () -> Unit): View =
         row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply { opens(change) }
 
-    // How long a page takes, today and this month; every page's own time is a screen of its own, for days of many pages
-    private fun speedRows(today: Stats.Day, thisMonth: List<Stats.Day>): List<View> {
-        val monthPages = thisMonth.sumOf { it.pages.size }
-        val monthSec = thisMonth.sumOf { onPages(it) }
+    // Today's reading: how long, how long a page takes, the pace over an hour, and every page's own time a tap away
+    private fun todayRows(today: Stats.Day, thisMonth: List<Stats.Day>): List<View> {
         val rows = mutableListOf(
+            row(host.getString(R.string.stats_read_time), spent(today.readSec, res)),
             row(host.getString(R.string.stats_page_avg),
-                if (today.pages.isEmpty()) none(res) else perPage(onPages(today) / today.pages.size)),
-            row(host.getString(R.string.stats_page_avg_month),
-                if (monthPages == 0) none(res) else perPage(monthSec / monthPages)),
-            perHourRow(today, monthPages, monthSec)
+                if (today.pages.isEmpty()) none(res) else spentExact(onPages(today) / today.pages.size, res)),
+            perHourRow(today, thisMonth.sumOf { it.pages.size }, thisMonth.sumOf { onPages(it) })
         )
         if (today.pages.isNotEmpty()) rows += row(host.getString(R.string.stats_page_times_open), pagesSaid(today.pages.size, res)).apply {
             opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
@@ -270,17 +261,28 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         return row(host.getString(R.string.stats_per_hour), pagesSaid(perHour.roundToInt(), res), host.getString(by, juzSaid(perHour, res)))
     }
 
-    private fun perPage(sec: Int) = host.getString(R.string.per_page, spentExact(sec, res))
-
     // Time on the pages that were read, leaving out pages only passed over
     private fun onPages(day: Stats.Day): Int = day.pages.sumOf { day.pageSec.getValue(it) }
 
+    // The last seven days, each against its own goal; a khatma's pages a day are only known for today
     private fun weekRows(week: List<Stats.Day>, goal: Int): List<View> {
+        val plan = Stats.goalPlan(host)
+        val cal = Calendar.getInstance()
+        val goals = week.indices.map { i ->
+            val ago = week.size - 1 - i
+            cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
+            when {
+                ago == 0 -> goal
+                plan.kind == Goal.Kind.KHATMA -> 0
+                else -> plan.pagesOn(cal.get(Calendar.DAY_OF_WEEK))
+            }
+        }
         val counts = week.map { it.pages.size }
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
         val chart = DayBars(host).apply {
             setPadding(pad, pad, pad, pad)
-            show(counts, goal, host.getString(R.string.chart_goal), ::dayName, grow = moving && motion == Motion.OPEN)
+            show(counts, goals, ::dayName, { host.getString(R.string.ring_of, figures(it, res)) },
+                grow = moving && motion == Motion.OPEN)
             contentDescription = host.getString(
                 R.string.stats_chart_desc, figures(week.size, res), pagesSaid(counts.max(), res)
             )

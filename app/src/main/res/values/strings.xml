@@ -239,7 +239,7 @@
     <!-- Statistics: kept on the phone only. Figures arrive already written in Arabic figures -->
     <!-- The tab of reading and listening numbers, told as what the reader has done -->
     <string name="tab_achievements">إنجازي</string>
-    <string name="stats_read_time">وقت القراءة اليوم</string>
+    <string name="stats_read_time">وقت القراءة</string>
     <string name="stats_listen_time">وقت الاستماع اليوم</string>
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
     <string name="stats_goal_reached">بلغت هدف اليوم</string>
@@ -252,7 +252,6 @@
     <string name="stats_new_khatma_ask">تبدأ الختمة من أولها، وتبقى الختمات المكتملة محسوبة.</string>
     <string name="stats_new_khatma_do">ابدأ من جديد</string>
     <string name="stats_week">وقت الاستماع في آخر %1$s أيام</string>
-    <string name="stats_avg">معدل صفحاتك في اليوم هذا الشهر</string>
     <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s أيام، وأكثرها في يوم %2$s</string>
     <string name="stats_most_heard">الأكثر استماعًا في آخر %1$s أيام</string>
     <string name="stats_private">إحصاءات قراءتك وحفظك تبقى في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
@@ -291,20 +290,16 @@
     <string name="sec_reading">قراءتي</string>
     <string name="sec_khatma">ختمتي</string>
     <string name="sec_listening">استماعي</string>
-    <string name="stats_page_avg">اليوم</string>
+    <string name="stats_page_avg">وقت الصفحة الواحدة</string>
     <string name="stats_page_times">وقت كل صفحة اليوم</string>
     <string name="chart_today">اليوم</string>
-    <string name="chart_goal">الهدف</string>
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
     <string name="cal_hijri">هجري</string>
     <string name="cal_greg">ميلادي</string>
-    <string name="stats_speed">سرعة قراءتك</string>
-    <string name="stats_page_avg_month">هذا الشهر</string>
     <string name="stats_per_hour">في ساعة تقرأ نحو</string>
     <string name="stats_page_times_open">وقت كل صفحة قرأتها اليوم</string>
     <string name="goal_done">أتممت هدف اليوم</string>
     <string name="time_and">%1$s و%2$s</string>
-    <string name="per_page">%1$s للصفحة</string>
     <string name="stats_per_hour_note">تقدير بحسب سرعتك هذا الشهر</string>
     <string name="pt_sort">الترتيب</string>
     <string name="pt_by_page">بالصفحة</string>
@@ -438,4 +433,5 @@
     <string name="chart_total">المجموع</string>
     <string name="ring_known">من القرآن</string>
     <string name="ring_whole">سور كاملة</string>
+    <string name="stats_today">قراءة اليوم</string>
 </resources>

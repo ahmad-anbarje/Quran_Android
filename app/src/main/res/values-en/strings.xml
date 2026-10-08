@@ -204,12 +204,11 @@
     <string name="stats_read_time">Reading time</string>
     <string name="stats_listen_time">Listening time today</string>
     <string name="stats_none_today">Nothing read yet today</string>
-    <string name="stats_goal_reached">Today\'s goal reached</string>
+    <string name="stats_goal_reached">Today\'s goal done</string>
     <string name="stats_goal_month">A khatma in about a month</string>
     <string name="stats_goal_half_month">A khatma in about 15 days</string>
     <string name="stats_khatma_read">%1$s of %2$s</string>
-    <string name="stats_left">Left</string>
-    <string name="stats_finish_unknown">Read for a few days to see when you\'ll finish.</string>
+    <string name="stats_finish_unknown">Read for a few days to see the date.</string>
     <string name="stats_new_khatma">Start a new khatma</string>
     <string name="stats_new_khatma_ask">The khatma starts over; completed khatmas stay counted.</string>
     <string name="stats_new_khatma_do">Start over</string>
@@ -240,7 +239,7 @@
     <string name="sec_reading">My reading</string>
     <string name="sec_khatma">My khatma</string>
     <string name="sec_listening">My listening</string>
-    <string name="stats_page_avg">Time per page</string>
+    <string name="stats_page_avg">Average time a page</string>
     <string name="stats_page_times">Time on each page today</string>
     <string name="chart_today">Today</string>
     <string name="stats_read_month">Reading time this month</string>
@@ -250,12 +249,12 @@
     <string name="stats_page_times_open">Time on each page read today</string>
     <string name="goal_done">Today\'s goal is done</string>
     <string name="time_and">%1$s %2$s</string>
-    <string name="stats_per_hour_note">An estimate from your speed this month</string>
+    <string name="stats_per_hour_note">Shows once you have read a few pages</string>
     <string name="pt_sort">Order</string>
     <string name="pt_by_page">By page</string>
     <string name="pt_by_time">Slowest first</string>
     <string name="pt_total">Today in all</string>
-    <string name="pt_average">Average page</string>
+    <string name="pt_average">Average time a page</string>
     <string name="pt_fastest">Fastest page</string>
     <string name="pt_slowest">Slowest page</string>
     <plurals name="hours_count">
@@ -353,16 +352,16 @@
     <string name="goal_left">%1$s to go</string>
     <string name="hifz_none_today">Nothing memorised yet today</string>
     <string name="paper_read">I finished today\'s goal</string>
-    <string name="ring_today">Pages today</string>
-    <string name="ring_week">Days this week</string>
-    <string name="ring_month">Days this month</string>
+    <string name="ring_today">Today</string>
+    <string name="ring_week">This week</string>
+    <string name="ring_month">This month</string>
     <string name="ring_of">of %1$s</string>
     <string name="set_calendar">Calendar</string>
     <string name="about_privacy">Your privacy</string>
     <string name="stats_pages_month">Pages this month</string>
     <string name="stats_last_days">Your pages, last %1$s days</string>
     <string name="chart_total">In all</string>
-    <string name="ring_known">Of the Quran</string>
+    <string name="ring_known">Memorised</string>
     <string name="ring_whole">Whole surahs</string>
     <string name="stats_today">Today\'s reading</string>
     <!-- Weekdays short enough to sit under a bar of the week chart, Sunday first -->
@@ -378,4 +377,7 @@
     <string name="chart_read">Pages read</string>
     <string name="chart_goal_word">Goal</string>
     <string name="chart_goal_of">Goal %1$s</string>
+    <string name="ring_days_met">Days goal met</string>
+    <string name="ring_pages_learned">Pages memorised</string>
+    <string name="ring_of_quran">of the Quran</string>
 </resources>

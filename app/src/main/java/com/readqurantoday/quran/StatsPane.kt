@@ -98,7 +98,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val plan = Stats.goalPlan(host)
         val read = readToday(today, goal)
         // A khatma's pages a day are only known for today, so any reading counts toward it on other days
-        val rings = goalRings(TODAY, read, goal, R.string.stats_none_today,
+        val rings = goalRings(TODAY, read, goal, R.string.stats_none_today, R.string.chart_read,
             want = { _, weekday -> if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(weekday) },
             done = { day -> Stats.day(host, day).let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } })
         val rows = mutableListOf(
@@ -119,10 +119,10 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
 
     // Today, this week and this month side by side: today in pages, the others in days the goal was met,
     // out of the period's days that have one
-    private fun goalRings(key: String, todayDone: Int, goal: Int, nothingYet: Int,
+    private fun goalRings(key: String, todayDone: Int, goal: Int, nothingYet: Int, todaySaid: Int,
                           want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): View =
         blow.inflate(R.layout.part_rings, parent, false).apply {
-            fillGoalRing(findViewById(R.id.ring_today), "$key.day", todayDone, goal, R.string.ring_today,
+            fillGoalRing(findViewById(R.id.ring_today), "$key.day", todayDone, goal, R.string.ring_today, todaySaid,
                 unit = if (goal > 0) host.getString(R.string.ring_of, figures(goal, res))
                     else res.getQuantityString(R.plurals.pages_unit, todayDone))
             for ((id, span, label) in listOf(
@@ -130,17 +130,19 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 Triple(R.id.ring_month, monthSpan(), R.string.ring_month)
             )) {
                 val (met, had) = metDays(span, want, done)
-                fillGoalRing(findViewById(id), "$key.$label", met, had, label,
+                fillGoalRing(findViewById(id), "$key.$label", met, had, label, R.string.ring_days_met,
                     unit = if (had > 0) host.getString(R.string.ring_of, figures(had, res)) else "")
             }
             findViewById<TextView>(R.id.rings_line).text = todayLine(todayDone, goal, nothingYet)
         }
 
-    private fun fillGoalRing(ring: View, key: String, done: Int, total: Int, label: Int, unit: String,
+    // [label] says when or what the ring is; [said], beneath it, what its figure counts, if that needs saying
+    private fun fillGoalRing(ring: View, key: String, done: Int, total: Int, label: Int, said: Int, unit: String,
                              say: (Int) -> String = { if (it == 0) none(res) else figures(it, res) }) {
         countFigure(ring.findViewById(R.id.ring_value), key, done, say)
         ring.findViewById<TextView>(R.id.ring_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
         ring.findViewById<TextView>(R.id.ring_label).setText(label)
+        ring.findViewById<TextView>(R.id.ring_said).apply { if (said == 0) visibility = View.GONE else setText(said) }
         fillRing(ring.findViewById(R.id.ring), key, done.toFloat(), total.toFloat())
     }
 
@@ -199,7 +201,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             val goal = Stats.hifzGoal(host)
             val learned = kept.count { it.value == Stats.today() }
             blow.card(into, 0, listOf(
-                goalRings(HIFZ, learned, goal, R.string.hifz_none_today,
+                goalRings(HIFZ, learned, goal, R.string.hifz_none_today, R.string.ring_pages_learned,
                     want = { _, weekday -> plan.pagesOn(weekday) },
                     done = { day -> kept.count { it.value == day } }),
                 changeRow(plan.said(host)) { picker.hifz(plan) }
@@ -216,10 +218,10 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val whole = surahs.count { Hifz.knownOf(it, bySurah) == it.to - it.from + 1 }
         val rings = blow.inflate(R.layout.part_rings, parent, false).apply {
             val share = findViewById<View>(R.id.ring_today)
-            fillGoalRing(share, KNOWN, shareOf(known), 100, R.string.ring_known, unit = "") {
+            fillGoalRing(share, KNOWN, shareOf(known), 100, R.string.ring_known, R.string.ring_of_quran, unit = "") {
                 if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res))
             }
-            fillGoalRing(findViewById(R.id.ring_week), KNOWN_WHOLE, whole, surahs.size, R.string.ring_whole,
+            fillGoalRing(findViewById(R.id.ring_week), KNOWN_WHOLE, whole, surahs.size, R.string.ring_whole, 0,
                 unit = host.getString(R.string.ring_of, figures(surahs.size, res)))
             findViewById<View>(R.id.ring_month).visibility = View.GONE
             findViewById<TextView>(R.id.rings_line).text = if (known == 0) host.getString(R.string.hifz_mine_empty)
@@ -245,7 +247,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 if (today.pages.isEmpty()) none(res) else spentExact(onPages(today) / today.pages.size, res)),
             perHourRow(today, thisMonth.sumOf { it.pages.size }, thisMonth.sumOf { onPages(it) })
         )
-        if (today.pages.isNotEmpty()) rows += row(host.getString(R.string.stats_page_times_open), pagesSaid(today.pages.size, res)).apply {
+        if (today.pages.isNotEmpty()) rows += row(host.getString(R.string.stats_page_times_open), "").apply {
             opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
         }
         return rows
@@ -317,10 +319,12 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             unit = "", title = "",
             line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
                 else host.getString(R.string.stats_khatma_read, pagesSaid(k.read, res), figures(all, res)),
-            note = if (k.done > 0) res.getQuantityString(R.plurals.khatmas_before, k.done, figures(k.done, res)) else ""
+            note = listOfNotNull(
+                host.getString(R.string.goal_left, pagesSaid(all - k.read, res)).takeIf { k.read > 0 },
+                res.getQuantityString(R.plurals.khatmas_before, k.done, figures(k.done, res)).takeIf { k.done > 0 }
+            ).joinToString(host.getString(R.string.list_join))
         ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
         rows += finishRow(plan, all - k.read)
-        rows += row(host.getString(R.string.stats_left), pagesSaid(all - k.read, res))
         rows += action(host.getString(R.string.stats_new_khatma)) {
             host.sheet(host.getString(R.string.stats_new_khatma_ask), listOf(Choice(host.getString(R.string.stats_new_khatma_do)))) {
                 Stats.newKhatma(host)

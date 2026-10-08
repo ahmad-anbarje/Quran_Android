@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One of the goal's rings: the figure inside, what it counts below -->
+<!-- A ring: the figure inside; below, when or what it is, then what its figure counts -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
@@ -50,6 +50,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_meta"
+        android:textStyle="bold"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/ring_said"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="@color/text_mute"
         android:textSize="@dimen/row_meta"
         android:maxLines="1" />

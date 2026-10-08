@@ -281,13 +281,19 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
         val chart = DayBars(host).apply {
             setPadding(pad, pad, pad, pad)
-            show(counts, goals, ::dayName, { host.getString(R.string.ring_of, figures(it, res)) },
+            show(counts, goals, ::dayName, { host.getString(R.string.chart_goal_of, figures(it, res)) },
                 grow = moving && motion == Motion.OPEN)
             contentDescription = host.getString(
                 R.string.stats_chart_desc, figures(week.size, res), pagesSaid(counts.max(), res)
             )
         }
-        return listOf(chart, row(host.getString(R.string.chart_total), pagesSaid(counts.sum(), res)))
+        // The chart and the key to its colours are one row, with no seam between them
+        val withKey = LinearLayout(host).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(chart)
+            addView(blow.inflate(R.layout.part_chart_legend, this, false))
+        }
+        return listOf(withKey, row(host.getString(R.string.chart_total), pagesSaid(counts.sum(), res)))
     }
 
     // Today by name, the days before it by their weekday

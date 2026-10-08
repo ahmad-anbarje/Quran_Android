@@ -120,4 +120,5 @@
     <dimen name="chart_bar">26dp</dimen>
     <dimen name="chart_count">13sp</dimen>
     <dimen name="chart_day">12sp</dimen>
+    <dimen name="legend_dot">10dp</dimen>
 </resources>

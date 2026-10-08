@@ -444,4 +444,7 @@
         <item>جمعة</item>
         <item>سبت</item>
     </string-array>
+    <string name="chart_read">ما قرأته</string>
+    <string name="chart_goal_word">الهدف</string>
+    <string name="chart_goal_of">الهدف %1$s</string>
 </resources>

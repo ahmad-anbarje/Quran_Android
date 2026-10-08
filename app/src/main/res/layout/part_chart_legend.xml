@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What the week chart's two colours mean: the bar is what was read, the track behind it the goal -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layoutDirection="locale"
+    android:paddingBottom="@dimen/tile_pad">
+
+    <View
+        android:layout_width="@dimen/legend_dot"
+        android:layout_height="@dimen/legend_dot"
+        android:background="@drawable/dot_accent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:text="@string/chart_read"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta" />
+
+    <View
+        android:layout_width="@dimen/legend_dot"
+        android:layout_height="@dimen/legend_dot"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/chip_soft" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:text="@string/chart_goal_word"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta" />
+</LinearLayout>

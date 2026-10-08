@@ -40,6 +40,19 @@ class ReaderActivity : LanguageActivity() {
     private lateinit var turnLabel: TextView
 
     private lateinit var rc: RecitationController
+    private lateinit var controls: ReaderPlayer
+
+    // What the player asks of the page
+    private val reader = object : ReaderPlayer.Reader {
+        override fun go(page: Int) { if (page in 1..pages) this@ReaderActivity.go(page) }
+        override fun pageInView() = this@ReaderActivity.pageInView()
+        override fun shownWord() = this@ReaderActivity.shownWord
+        override fun lit(surah: Int, ayah: Int, word: Int) = this@ReaderActivity.lit(surah, ayah, word)
+        override fun redrawPages() = this@ReaderActivity.redrawPages()
+        override fun showPlayer() = this@ReaderActivity.showPlayer()
+        override fun closeSoon() = this@ReaderActivity.closeSoon()
+        override fun armClose() = this@ReaderActivity.armClose()
+    }
 
     /* Finished images of the page in view and its neighbours; see PageShots. */
     private lateinit var shots: PageShots
@@ -55,7 +68,7 @@ class ReaderActivity : LanguageActivity() {
     // Kept as one instance so the reader can tell whether Recite's single listener slot still holds it
     private val heard: () -> Unit = {
         if (Recite.wantsToPlay()) rc.follow()
-        sayPlayer()
+        controls.say()
     }
 
     private var bars: WindowInsetsControllerCompat? = null
@@ -81,12 +94,6 @@ class ReaderActivity : LanguageActivity() {
     /* The page last arrived at; 0 before the first. See arrived(). */
     private var current = 0
 
-    /* Word chosen by long-press but not yet played. */
-    private var pendingSurah = 0
-    private var pendingFrom  = 0
-    // Set when the start was picked for the reader, so a later page can pick again
-    private var pendingAuto = false
-
     private var lastTouchX = 0f
     private var lastTouchY = 0f
 
@@ -103,7 +110,7 @@ class ReaderActivity : LanguageActivity() {
                     if (surah > 0 && ayah > 0) {
                         flashAyah(page, surah, ayah)
                         // The player moves to the ayah's first word, playing only if it already was (see offer)
-                        pager.post { offer(surah, ayah, 0) }
+                        pager.post { controls.offer(surah, ayah, 0) }
                     }
                 }
                 /* page == 0: caller wants us to follow the live audio position. */
@@ -143,7 +150,7 @@ class ReaderActivity : LanguageActivity() {
             tickView    = pager,
             pageCount   = pages,
             currentPage = ::page,
-            onChanged   = ::sayPlayer,
+            onChanged   = { controls.say() },
             onNavigate  = ::go,
             // A word being said alone keeps the mark; a paused recitation would re-mark its own word
             onLight     = { s, a, w -> if (!WordVoice.saying) lit(s, a, w) },
@@ -152,7 +159,7 @@ class ReaderActivity : LanguageActivity() {
                 if (Recite.failed) notice(getString(R.string.recite_unheard))
                 player.visibility = View.GONE
                 sayBars()
-                pendingSurah = 0
+                controls.clearPending()
                 lit(-1, -1, -1)
             }
         )
@@ -178,16 +185,14 @@ class ReaderActivity : LanguageActivity() {
             sayPage(page())
         }
 
-        wirePlayer()
+        controls = ReaderPlayer(this, player, rc, reader)
 
         val last = Settings.lastPage(this).let { if (it in 1..pages) it else 2 }
         // Opening behind the menu is not reading, so nothing is noted until a page is chosen
         go(last, note = false)
         // A theme change rebuilds this screen: the chosen word, the mark and the bars come back as they were
         savedInstanceState?.let { was ->
-            pendingSurah = was.getInt(PENDING_SURAH)
-            pendingFrom  = was.getInt(PENDING_FROM)
-            pendingAuto  = was.getBoolean(PENDING_AUTO)
+            controls.restore(was)
             rc.litAyah   = was.getInt(LIT_AYAH)
             rc.litWord   = was.getInt(LIT_WORD, -1)
             shownWord    = was.getIntArray(SHOWN_WORD)
@@ -292,7 +297,10 @@ class ReaderActivity : LanguageActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             v.setOnClickListener { showChrome(!chrome) }
-            v.setOnLongClickListener { view -> offer(view as MushafPageView, lastTouchX, lastTouchY); true }
+            v.setOnLongClickListener { view ->
+                (view as MushafPageView).wordUnder(lastTouchX, lastTouchY)?.let { controls.offer(surah = it[0], ayah = it[1], w = it[2]) }
+                true
+            }
             v.setOnTouchListener { _, e -> lastTouchX = e.x; lastTouchY = e.y; false }
             return Holder(v)
         }
@@ -553,8 +561,8 @@ class ReaderActivity : LanguageActivity() {
         if (!on) {
             player.visibility = View.GONE
         } else {
-            offerPageStart()
-            if (Recite.playing != 0 || pendingSurah != 0) showPlayer()
+            controls.offerPageStart()
+            if (Recite.playing != 0 || controls.hasPending) showPlayer()
         }
         seatPlayer()
         sayBars()
@@ -592,72 +600,6 @@ class ReaderActivity : LanguageActivity() {
 
     // --- recitation ---
 
-    // Highlights the pressed word and shows the player without starting audio; seeks if already playing
-    private fun offer(view: MushafPageView, x: Float, y: Float) {
-        val word = view.wordUnder(x, y) ?: return
-        offer(surah = word[0], ayah = word[1], w = word[2])
-    }
-
-    // A paused recitation stays paused at the new word; only one already playing carries on from it
-    private fun offer(surah: Int, ayah: Int, w: Int) {
-        if (surah <= 0 || ayah <= 0) return
-        val play = Recite.wantsToPlay()
-
-        // A new word chosen ends the one being said, and is fetched now for the Word button
-        WordVoice.stop()
-        lit(surah, ayah, w)
-        WordVoice.warm(this, surah, ayah, w)
-        val voice = Recite.chosen(this)?.id ?: return
-        val timing = Timing.of(this, surah, voice)
-        if (timing == null) { notice(getString(R.string.no_timing)); return }
-
-        /* Seek to the exact word so the highlight is immediate and correct. */
-        val from = timing.wordSpan(ayah, w)?.get(0) ?: timing.startOf(ayah)
-
-        rc.litAyah = ayah
-        rc.litWord = w
-        rc.until   = 0
-        /* A long-press elsewhere moves page repeat to that word's page. */
-        rc.reanchor()
-
-        if (Recite.playing != 0) {
-            /* Audio already running: seek to the new word without stopping. */
-            if (Recite.playing == surah && rc.reading != null) {
-                rc.startedAt = from
-                Recite.seek(from)
-                if (play && !Recite.wantsToPlay()) Recite.toggle()
-                rc.follow()
-            } else {
-                rc.start(surah, from, play)
-            }
-            if (play) closeSoon()
-        } else {
-            /* Not yet playing: remember where to start; user will tap Play. */
-            pendingSurah = surah
-            pendingFrom  = from
-            pendingAuto  = false
-        }
-
-        showPlayer()
-        sayPlayer()
-    }
-
-    // Nothing chosen yet: Play starts from the first word of the page in view, unlit until it plays
-    private fun offerPageStart() {
-        if (Recite.playing != 0 || (pendingSurah != 0 && !pendingAuto)) return
-        val (surah, ayah, w) = pageInView()?.firstWord() ?: return
-        WordVoice.warm(this, surah, ayah, w)
-        val voice = Recite.chosen(this)?.id ?: return
-        val timing = Timing.of(this, surah, voice) ?: return
-        pendingSurah = surah
-        pendingFrom  = timing.wordSpan(ayah, w)?.get(0) ?: timing.startOf(ayah)
-        pendingAuto  = true
-        rc.litAyah = ayah
-        rc.litWord = w
-        rc.until   = 0
-        rc.reanchor()
-    }
-
     private fun pageInView(): MushafPageView? =
         (0 until pager.childCount).map { pager.getChildAt(it) }
             .firstOrNull { (it as? MushafPageView)?.page == page() } as? MushafPageView
@@ -676,182 +618,6 @@ class ReaderActivity : LanguageActivity() {
             roof = if (chrome) groundOf(bar) ?: paper else paper,
             floor = if (chrome) groundOf(player) ?: paper else paper
         )
-    }
-
-    private fun sayPlayer() {
-        // The recitation going again, from here or the notification, ends a word said alone
-        if (WordVoice.saying && Recite.wantsToPlay()) WordVoice.stop()
-        armClose()
-        val isPlaying = Recite.wantsToPlay()
-        // A spinner while audio is on its way, so the silence does not look like a dead button
-        val waiting = Recite.waiting()
-        findViewById<ImageView>(R.id.p_play_icon).apply {
-            setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
-            visibility = if (waiting) View.INVISIBLE else View.VISIBLE
-        }
-        findViewById<View>(R.id.p_play_wait).visibility = if (waiting) View.VISIBLE else View.GONE
-        findViewById<TextView>(R.id.p_play_label).setText(
-            when {
-                waiting   -> R.string.loading
-                isPlaying -> R.string.stop
-                else      -> R.string.play
-            }
-        )
-        // Repeat reads like a selected tab: accent while on
-        val repeating = getColor(if (Recite.repeat != Recite.ONCE) R.color.accent else R.color.text_mute)
-        findViewById<ImageView>(R.id.p_repeat_icon).imageTintList = ColorStateList.valueOf(repeating)
-        findViewById<TextView>(R.id.p_repeat_label).setTextColor(repeating)
-        // Accent off the recorded speed, like repeat while it is on
-        val speed = Settings.speed(this)
-        val paced = getColor(if (speed != 1f) R.color.accent else R.color.text_mute)
-        findViewById<ImageView>(R.id.p_speed_icon).imageTintList = ColorStateList.valueOf(paced)
-        findViewById<TextView>(R.id.p_speed_label).apply {
-            setText(SPEED_NAMES.getOrElse(SPEEDS.indexOfFirst { it == speed }) { R.string.speed_normal })
-            setTextColor(paced)
-        }
-        // Accent while the word is being said, like repeat while it is on; faded while it is fetched
-        val word = getColor(if (WordVoice.saying) R.color.accent else R.color.text_mute)
-        findViewById<ImageView>(R.id.p_word_icon).apply {
-            imageTintList = ColorStateList.valueOf(word)
-            imageAlpha = if (WordVoice.loading) 0x66 else 0xFF
-        }
-        findViewById<TextView>(R.id.p_word_label).apply {
-            setText(if (WordVoice.loading) R.string.loading else R.string.label_word)
-            setTextColor(word)
-        }
-        val latin = getColor(if (Settings.translit(this)) R.color.accent else R.color.text_mute)
-        findViewById<ImageView>(R.id.p_translit_icon).imageTintList = ColorStateList.valueOf(latin)
-        findViewById<TextView>(R.id.p_translit_label).setTextColor(latin)
-    }
-
-    private fun wirePlayer() {
-        /* Tapping the bar body navigates to the current word's page. */
-        player.setOnClickListener {
-            if (Recite.playing == 0) return@setOnClickListener
-            val on = Ayat.pageOf(rc.readingSurah, rc.litAyah.coerceAtLeast(1))
-            if (on in 1..pages) go(on)
-        }
-
-        /* Play: start from the pending position, or toggle if already running. */
-        findViewById<View>(R.id.p_play).setOnClickListener {
-            WordVoice.stop()
-            if (Recite.playing == 0) {
-                // Menus shown before the page was laid out left no start; the page in view gives one now
-                if (pendingSurah == 0) offerPageStart()
-                if (pendingSurah > 0) {
-                    rc.start(pendingSurah, pendingFrom)
-                    pendingSurah = 0
-                    showPlayer()
-                    sayPlayer()
-                    closeSoon()
-                }
-                return@setOnClickListener
-            }
-            Recite.toggle()
-            if (Recite.wantsToPlay()) {
-                rc.follow()
-                closeSoon()
-            }
-            sayPlayer()
-        }
-
-        /* Locate: go to the current (or pending) word's page. */
-        findViewById<View>(R.id.p_locate).setOnClickListener {
-            val surah = if (Recite.playing != 0) rc.readingSurah else pendingSurah
-            val ayah  = rc.litAyah.coerceAtLeast(1)
-            val on = Ayat.pageOf(surah, ayah)
-            if (on in 1..pages) go(on)
-        }
-
-        /* Reciter: pick a voice; if playing, restart from the current word. */
-        findViewById<View>(R.id.p_reciter).setOnClickListener {
-            // A voice can be chosen before anything is chosen to recite
-            val surah = if (Recite.playing != 0) rc.readingSurah else pendingSurah
-            val voices = Recite.reciters()
-            val now = Recite.chosen(this)?.id
-
-            sheet(
-                getString(R.string.reciter),
-                voices.map { Choice(it.nameAr, it.noteAr, it.id == now) }
-            ) { i ->
-                val id = voices[i].id
-                if (id == now) return@sheet
-                Recite.choose(this, id)
-
-                if (Recite.playing != 0) {
-                    val keepAyah   = rc.litAyah
-                    val keepWord   = rc.litWord
-                    val wasPlaying = Recite.wantsToPlay()
-                    val fresh = Timing.of(this, rc.readingSurah, id)
-                    val span  = if (keepWord >= 0 && keepAyah > 0) fresh?.wordSpan(keepAyah, keepWord) else null
-                    rc.until = 0
-                    val from = span?.get(0) ?: if (keepAyah > 0) fresh?.startOf(keepAyah) ?: 0 else 0
-                    rc.start(rc.readingSurah, from, wasPlaying)
-                } else if (surah > 0) {
-                    /* Recalculate pending start for the new voice. */
-                    val fresh = Timing.of(this, surah, id)
-                    pendingFrom = fresh?.wordSpan(rc.litAyah, rc.litWord)?.get(0)
-                        ?: fresh?.startOf(rc.litAyah.coerceAtLeast(1)) ?: 0
-                }
-                sayPlayer()
-            }
-        }
-
-        findViewById<View>(R.id.p_repeat).setOnClickListener {
-            /* In the order of Recite's modes, which a choice's position maps to. */
-            val modes = listOf(R.string.repeat_off, R.string.repeat_ayah, R.string.repeat_page, R.string.repeat_surah)
-            sheet(
-                getString(R.string.repeat),
-                modes.mapIndexed { i, said -> Choice(getString(said), on = i == Recite.repeat) }
-            ) { i ->
-                Recite.repeat = i
-                /* Choosing page repeat means the page recitation is on now. */
-                rc.reanchor()
-                sayPlayer()
-            }
-        }
-
-        /* Word: the chosen word alone; a running recitation pauses for it, and a second tap stops it. */
-        findViewById<View>(R.id.p_word).setOnClickListener {
-            // Still fetching: a second tap would only ask again
-            if (WordVoice.loading) return@setOnClickListener
-            if (WordVoice.saying) {
-                WordVoice.stop()
-                return@setOnClickListener
-            }
-            // The marked word if it is on this page, else the page's first word
-            val view = pageInView()
-            val (surah, ayah, w) = shownWord?.takeIf { view?.holds(it[0], it[1], it[2]) == true }
-                ?: view?.firstWord() ?: return@setOnClickListener
-            if (Recite.wantsToPlay()) Recite.toggle()
-            lit(surah, ayah, w)
-            WordVoice.say(this, surah, ayah, w, changed = ::sayPlayer) { how ->
-                sayPlayer()
-                when (how) {
-                    WordVoice.End.MISSING -> notice(getString(R.string.word_missing))
-                    WordVoice.End.UNREACHABLE -> notice(getString(R.string.word_unheard))
-                    WordVoice.End.HEARD -> {}
-                }
-            }
-            sayPlayer()
-        }
-
-        findViewById<View>(R.id.p_translit).setOnClickListener {
-            val on = !Settings.translit(this)
-            Settings.setTranslit(this, on)
-            sayPlayer()
-            if (on && !Translit.ready) Thread { Translit.load(this); runOnUiThread { redrawPages() } }.start()
-            else redrawPages()
-        }
-
-        /* Speed: each tap steps to the next, round to the start. */
-        findViewById<View>(R.id.p_speed).setOnClickListener {
-            val now = SPEEDS.indexOfFirst { it == Settings.speed(this) }
-            val next = SPEEDS[(now + 1) % SPEEDS.size]
-            Settings.setSpeed(this, next)
-            Recite.setSpeed(next)
-            sayPlayer()
-        }
     }
 
     // --- theme toggle ---
@@ -920,16 +686,14 @@ class ReaderActivity : LanguageActivity() {
         if (Recite.playing != 0) {
             rc.follow()
             if (chrome) showPlayer()
-            sayPlayer()
+            controls.say()
         }
     }
 
     override fun onSaveInstanceState(out: Bundle) {
         super.onSaveInstanceState(out)
         out.putBoolean(CHROME, chrome)
-        out.putInt(PENDING_SURAH, pendingSurah)
-        out.putInt(PENDING_FROM, pendingFrom)
-        out.putBoolean(PENDING_AUTO, pendingAuto)
+        controls.save(out)
         out.putInt(LIT_AYAH, rc.litAyah)
         out.putInt(LIT_WORD, rc.litWord)
         shownWord?.let { out.putIntArray(SHOWN_WORD, it) }
@@ -959,8 +723,7 @@ class ReaderActivity : LanguageActivity() {
             Recite.stop()
             rc.stop()
         }
-        pendingSurah = 0
-        pendingAuto = false
+        controls.clearPending()
         lit(-1, -1, -1)
         player.visibility = View.GONE
     }
@@ -1004,18 +767,11 @@ class ReaderActivity : LanguageActivity() {
 
     companion object {
         private const val CHROME = "chrome"
-        private const val PENDING_SURAH = "pending-surah"
-        private const val PENDING_FROM = "pending-from"
-        private const val PENDING_AUTO = "pending-auto"
         private const val LIT_AYAH = "lit-ayah"
         private const val LIT_WORD = "lit-word"
         private const val SHOWN_WORD = "shown-word"
         private const val TURN_FLING_DP = 400f
         private const val AUTO_CLOSE_MS = 1500L
         private const val IDLE_CLOSE_MS = 6000L
-
-        /* The speeds a tap steps through, and what each is called; in step with each other. */
-        private val SPEEDS = floatArrayOf(0.75f, 1f, 1.25f)
-        private val SPEED_NAMES = listOf(R.string.speed_slow, R.string.speed_normal, R.string.speed_fast)
     }
 }

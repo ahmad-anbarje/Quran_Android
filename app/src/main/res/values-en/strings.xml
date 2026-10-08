@@ -206,7 +206,6 @@
     <string name="stats_none_today">Nothing read yet today</string>
     <string name="stats_goal_reached">Today\'s goal done</string>
     <string name="stats_goal_month">A khatma in about a month</string>
-    <string name="stats_goal_half_month">A khatma in about 15 days</string>
     <string name="stats_khatma_read">%1$s of %2$s</string>
     <string name="stats_finish_unknown">Read for a few days to see the date.</string>
     <string name="stats_new_khatma">Start a new khatma</string>
@@ -313,7 +312,6 @@
     <string name="goal_change">Change</string>
     <string name="khatma_daily">%1$s a day to finish by %2$s</string>
     <string name="goal_khatma_by">A khatma by %1$s</string>
-    <string name="goal_khatma_note">Each day\'s pages come from what is left</string>
     <string name="goal_kind_khatma">A khatma in a number of days</string>
     <string name="goal_khatma_ask">Finish in how many days?</string>
 

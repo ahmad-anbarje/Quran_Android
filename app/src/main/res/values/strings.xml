@@ -244,7 +244,6 @@
     <string name="stats_none_today">لم تقرأ اليوم بعد</string>
     <string name="stats_goal_reached">أتممت هدف اليوم</string>
     <string name="stats_goal_month">ختمة في شهر تقريبًا</string>
-    <string name="stats_goal_half_month">ختمة في نحو ١٥ يومًا</string>
     <string name="stats_khatma_read">%1$s من %2$s</string>
     <string name="stats_finish_unknown">اقرأ بضعة أيام ليظهر الموعد.</string>
     <string name="stats_new_khatma">ابدأ ختمة جديدة</string>
@@ -378,7 +377,6 @@
     <string name="goal_change">تغيير</string>
     <string name="khatma_daily">%1$s كل يوم لتختم في %2$s</string>
     <string name="goal_khatma_by">ختمة تنتهي في %1$s</string>
-    <string name="goal_khatma_note">تُحسب صفحات كل يوم مما بقي</string>
     <string name="goal_kind_khatma">ختمة في عدد من الأيام</string>
     <string name="goal_khatma_ask">في كم يومًا تختم؟</string>
 

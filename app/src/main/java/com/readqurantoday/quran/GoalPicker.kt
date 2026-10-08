@@ -7,20 +7,15 @@ class GoalPicker(private val host: Activity, private val changed: () -> Unit) {
 
     private val res = host.resources
 
-    private fun every(kind: Goal.Kind, amount: Int, surahs: List<Int> = emptyList()) =
-        Goal(kind, amount, surahs, Goal.ALL_DAYS, kahf = false)
+    private fun every(kind: Goal.Kind, amount: Int) = Goal(kind, amount, emptyList(), Goal.ALL_DAYS, kahf = false)
 
     // --- reading ---
 
-    /** Ready-made reading goals, the default first; anything else is built step by step under «custom». */
+    /** Two ready-made reading goals, the default and a light one; anything else is built step by step under «custom». */
     fun reading(current: Goal) {
         val presets = listOf(
             Goal.DEFAULT to host.getString(R.string.stats_goal_month),
-            every(Goal.Kind.PAGES, 5) to "",
-            every(Goal.Kind.PAGES, 10) to "",
-            every(Goal.Kind.JUZ, 2) to host.getString(R.string.stats_goal_half_month),
-            every(Goal.Kind.SURAHS, 0, listOf(2, 3)) to "",
-            khatmaIn(KHATMA_MONTH) to host.getString(R.string.goal_khatma_note)
+            every(Goal.Kind.PAGES, 5) to ""
         )
         val choices = presets.map { (g, note) -> Choice(g.said(host), note, on = g == current) } +
             Choice(host.getString(R.string.goal_custom), on = presets.none { it.first == current })

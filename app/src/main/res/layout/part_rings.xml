@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A goal at a glance: today, this week and this month as rings side by side, and one line on today -->
+<!-- Up to three rings side by side, and one line beneath them -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

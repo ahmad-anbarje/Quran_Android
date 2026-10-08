@@ -253,7 +253,7 @@
     <string name="stats_new_khatma_do">ابدأ من جديد</string>
     <string name="stats_week">وقت الاستماع في آخر %1$s أيام</string>
     <string name="stats_avg">معدل صفحاتك في اليوم هذا الشهر</string>
-    <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s يومًا، وأكثرها في يوم %2$s</string>
+    <string name="stats_chart_desc">الصفحات المقروءة في كل يوم من آخر %1$s أيام، وأكثرها في يوم %2$s</string>
     <string name="stats_most_heard">الأكثر استماعًا في آخر %1$s أيام</string>
     <string name="stats_private">إحصاءات قراءتك وحفظك تبقى في هاتفك فقط، ولا تُرسل إلى أي مكان. تُحسب الصفحة مقروءة بعد بقائها على الشاشة عشر ثوانٍ.</string>
     <string name="percent">%1$s٪</string>
@@ -275,8 +275,6 @@
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
     <string name="of_count">%1$s من %2$s</string>
-    <string name="stats_days_read">أيام قرأتَ فيها هذا الشهر</string>
-    <string name="stats_total">المجموع في %1$s يومًا</string>
     <string name="trend_by">%1$s عن الأسبوع الماضي</string>
     <string name="trend_up">%1$s أكثر من الأسبوع الماضي</string>
     <string name="trend_down">%1$s أقل من الأسبوع الماضي</string>
@@ -295,7 +293,6 @@
     <string name="sec_listening">استماعي</string>
     <string name="stats_page_avg">اليوم</string>
     <string name="stats_page_times">وقت كل صفحة اليوم</string>
-    <string name="stats_days">صفحاتك في آخر %1$s يومًا</string>
     <string name="chart_today">اليوم</string>
     <string name="chart_goal">الهدف</string>
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
@@ -357,7 +354,7 @@
     <string name="goal_every_day">كل يوم</string>
     <string name="goal_plan">%1$s %2$s</string>
     <string name="goal_plan_days">%1$s أيام %2$s</string>
-    <string name="goal_with_kahf">%1$s، والكهف يوم الجمعة</string>
+    <string name="goal_with_kahf">%1$s مع الكهف يوم الجمعة</string>
     <string name="and_join">" و"</string>
     <string name="list_join">"، "</string>
     <string name="goal_kind_ask">ماذا تقرأ؟</string>
@@ -367,7 +364,7 @@
     <string name="goal_juz_ask">كم جزءًا تقرأ؟</string>
     <string name="goal_surah_ask">أي سورة؟</string>
     <string name="goal_days_ask">في أي الأيام؟</string>
-    <string name="goal_add_kahf">وسورة الكهف يوم الجمعة</string>
+    <string name="goal_add_kahf">مع سورة الكهف يوم الجمعة</string>
     <string name="goal_next">التالي</string>
     <string-array name="weekdays">
         <item>الأحد</item>
@@ -436,13 +433,9 @@
     <string name="ring_of">من %1$s</string>
     <string name="set_calendar">التقويم</string>
     <string name="about_privacy">خصوصيتك</string>
-    <string name="hifz_known_title">ما حفظته</string>
-    <plurals name="surahs_whole">
-        <item quantity="zero">%1$s سورة كاملة</item>
-        <item quantity="one">سورة واحدة كاملة</item>
-        <item quantity="two">سورتان كاملتان</item>
-        <item quantity="few">%1$s سور كاملة</item>
-        <item quantity="many">%1$s سورة كاملة</item>
-        <item quantity="other">%1$s سورة كاملة</item>
-    </plurals>
+    <string name="stats_pages_month">صفحاتك هذا الشهر</string>
+    <string name="stats_last_days">صفحاتك في آخر %1$s أيام</string>
+    <string name="chart_total">المجموع</string>
+    <string name="ring_known">من القرآن</string>
+    <string name="ring_whole">سور كاملة</string>
 </resources>

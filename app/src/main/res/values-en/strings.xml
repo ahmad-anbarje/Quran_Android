@@ -215,7 +215,7 @@
     <string name="stats_new_khatma_do">Start over</string>
     <string name="stats_week">Listening, last %1$s days</string>
     <string name="stats_avg">Your pages a day this month</string>
-    <string name="stats_chart_desc">Pages read each day for the last %1$s days; most in a day: %2$s</string>
+    <string name="stats_chart_desc">Pages read on each of the last %1$s days, most on one day %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
     <string name="stats_private">Your reading and memorising statistics stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
     <string name="percent">%1$s%%</string>
@@ -229,8 +229,6 @@
         <item quantity="other">%1$s minutes</item>
     </plurals>
     <string name="of_count">%1$s of %2$s</string>
-    <string name="stats_days_read">Days you read this month</string>
-    <string name="stats_total">In all, %1$s days</string>
     <string name="trend_by">%1$s vs last week</string>
     <string name="trend_up">%1$s more than last week</string>
     <string name="trend_down">%1$s less than last week</string>
@@ -245,7 +243,6 @@
     <string name="sec_listening">My listening</string>
     <string name="stats_page_avg">Today</string>
     <string name="stats_page_times">Time on each page today</string>
-    <string name="stats_days">Pages read, last %1$s days</string>
     <string name="chart_today">Today</string>
     <string name="chart_goal">Goal</string>
     <string name="stats_read_month">Reading time this month</string>
@@ -293,7 +290,7 @@
     <string name="goal_every_day">every day</string>
     <string name="goal_plan">%1$s %2$s</string>
     <string name="goal_plan_days">%1$s on %2$s</string>
-    <string name="goal_with_kahf">%1$s, and Al-Kahf on Friday</string>
+    <string name="goal_with_kahf">%1$s, with Al-Kahf on Friday</string>
     <string name="list_join">", "</string>
     <string name="goal_kind_ask">What will you read?</string>
     <string name="goal_kind_pages">A number of pages</string>
@@ -302,7 +299,7 @@
     <string name="goal_juz_ask">How many juz?</string>
     <string name="goal_surah_ask">Which surah?</string>
     <string name="goal_days_ask">On which days?</string>
-    <string name="goal_add_kahf">And Al-Kahf on Friday</string>
+    <string name="goal_add_kahf">With Al-Kahf on Friday</string>
     <string name="goal_next">Next</string>
     <string-array name="weekdays">
         <item>Sunday</item>
@@ -367,9 +364,9 @@
     <string name="ring_of">of %1$s</string>
     <string name="set_calendar">Calendar</string>
     <string name="about_privacy">Your privacy</string>
-    <string name="hifz_known_title">Memorised</string>
-    <plurals name="surahs_whole">
-        <item quantity="one">%1$s whole surah</item>
-        <item quantity="other">%1$s whole surahs</item>
-    </plurals>
+    <string name="stats_pages_month">Pages this month</string>
+    <string name="stats_last_days">Your pages, last %1$s days</string>
+    <string name="chart_total">In all</string>
+    <string name="ring_known">Of the Quran</string>
+    <string name="ring_whole">Whole surahs</string>
 </resources>

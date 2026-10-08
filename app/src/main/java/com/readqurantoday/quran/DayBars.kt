@@ -12,7 +12,7 @@ import kotlin.math.ceil
 
 /**
  * Pages read on each of the last days as bars, today at the reading end, with a scale of pages up the side,
- * days named along the foot, and the goal, if set, as a dashed line.
+ * days named along the foot, and the goal, if set, as a dashed line. A week names every day and writes its pages.
  */
 class DayBars(context: Context) : View(context) {
 
@@ -40,6 +40,12 @@ class DayBars(context: Context) : View(context) {
         color = context.getColor(R.color.text_mute)
         textSize = resources.getDimension(R.dimen.chart_label)
         typeface = ResourcesCompat.getFont(context, R.font.cairo)
+    }
+    private val count = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = context.getColor(R.color.text)
+        textSize = resources.getDimension(R.dimen.chart_label)
+        typeface = ResourcesCompat.getFont(context, R.font.cairo)
+        textAlign = Paint.Align.CENTER
     }
     private val gap = resources.getDimension(R.dimen.chart_gap)
     private val chipPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.surface) }
@@ -93,22 +99,24 @@ class DayBars(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         if (pages.isEmpty()) return
         val rtl = layoutDirection == LAYOUT_DIRECTION_RTL
+        // A week is few enough bars to name every day and write its pages over it; that says what a scale would
+        val everyDay = pages.size <= EVERY_DAY
         val top = scaleTop()
         val marks = listOf(0, top / 2, top).distinct()
         val said = marks.associateWith { figures(it, resources) }
 
         // The scale sits at the start edge; the bars take the rest
-        val gutter = said.values.maxOf { label.measureText(it) } + gap
+        val gutter = if (everyDay) 0f else said.values.maxOf { label.measureText(it) } + gap
         val left = paddingLeft + if (rtl) 0f else gutter
         val right = width - paddingRight - if (rtl) gutter else 0f
-        val roof = paddingTop + label.textSize / 2f
+        val roof = paddingTop + label.textSize / 2f + if (everyDay) label.textSize + gap else 0f
         val base = height - paddingBottom - label.textSize - gap
         val room = base - roof
 
         // Scale: a faint line at each mark, its number beside it
         label.textAlign = if (rtl) Paint.Align.LEFT else Paint.Align.RIGHT
         val numberX = if (rtl) right + gap else left - gap
-        for (m in marks) {
+        for (m in if (everyDay) listOf(0) else marks) {
             val y = base - room * m / top
             canvas.drawLine(left, y, right, y, grid)
             // The baseline speaks for itself, and an Arabic zero is only a dot
@@ -123,13 +131,21 @@ class DayBars(context: Context) : View(context) {
             // A day with nothing read keeps a stub, so the run of days still reads as a calendar
             val tall = (if (n > 0) room * n / top else 2 * d) * rise(i)
             canvas.drawRoundRect(x + inset, base - tall, x + slot - inset, base, d, d, if (n > 0) bar else none)
+            if (everyDay && n > 0 && rise(i) == 1f) canvas.drawText(figures(n, resources), x + slot / 2f, base - tall - gap, count)
         }
 
         // Days along the foot: today under its bar, then every so many days back
         label.textAlign = Paint.Align.CENTER
         val footY = base + gap + label.textSize * 0.8f
         val last = pages.size - 1
-        for (ago in listOf(0, last / 3, 2 * last / 3, last).distinct()) {
+        val named = if (everyDay) (0..last).toList() else listOf(0, last / 3, 2 * last / 3, last).distinct()
+        val full = label.textSize
+        // Every day's name fits under its own bar; on a narrow screen they all shrink alike
+        if (everyDay) {
+            val widest = named.maxOf { label.measureText(dayName(it)) }
+            if (widest > slot - gap) label.textSize = full * (slot - gap) / widest
+        }
+        for (ago in named) {
             val i = last - ago
             val centre = if (rtl) right - (i + 0.5f) * slot else left + (i + 0.5f) * slot
             val text = dayName(ago)
@@ -137,6 +153,7 @@ class DayBars(context: Context) : View(context) {
             val half = label.measureText(text) / 2f
             canvas.drawText(text, centre.coerceIn(left + half, right - half), footY, label)
         }
+        label.textSize = full
 
         if (goal > 0) {
             val y = base - room * goal / top
@@ -154,5 +171,6 @@ class DayBars(context: Context) : View(context) {
     private companion object {
         const val GROW_MS = 900L
         const val WAVE = 6f
+        const val EVERY_DAY = 7
     }
 }

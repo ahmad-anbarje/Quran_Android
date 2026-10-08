@@ -56,7 +56,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         val week = fortnight.takeLast(WEEK)
         val before = fortnight.take(WEEK)
 
-        readingPage(columns[READING], today, goal, week, before)
+        readingPage(columns[READING], today, goal, week)
         hifzPage(columns[HIFZ_PAGE])
         khatmaPage(columns[KHATMA_PAGE])
         listeningPage(columns[LISTENING], today, week, before)
@@ -82,28 +82,22 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
 
     // --- reading: today against the goal first, then the month ---
 
-    private fun readingPage(into: LinearLayout, today: Stats.Day, goal: Int, week: List<Stats.Day>, before: List<Stats.Day>) {
+    private fun readingPage(into: LinearLayout, today: Stats.Day, goal: Int, week: List<Stats.Day>) {
         blow.card(into, 0, wirdRows(today, goal))
-        val hijri = Stats.hijri(host)
         val thisMonth = Stats.monthDays(host)
-        into.addView(monthHead(hijri))
+        val monthPages = thisMonth.sumOf { it.pages.size }
         into.addView(pair(
             Tile(R.drawable.ic_clock, spent(today.readSec, res), host.getString(R.string.stats_read_time)),
             Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
         ))
         into.addView(pair(
-            Tile(R.drawable.ic_calendar,
-                thisMonth.count { it.pages.isNotEmpty() }.let { n ->
-                    if (n == 0) none(res) else host.getString(R.string.of_count, figures(n, res), figures(thisMonth.size, res))
-                },
-                host.getString(R.string.stats_days_read)),
+            Tile(R.drawable.ic_calendar, if (monthPages == 0) none(res) else pagesSaid(monthPages, res), host.getString(R.string.stats_pages_month)),
             Tile(R.drawable.ic_stats_outline,
-                pagesSaid((thisMonth.sumOf { it.pages.size }.toFloat() / thisMonth.size).roundToInt(), res),
+                pagesSaid((monthPages.toFloat() / thisMonth.size).roundToInt(), res),
                 host.getString(R.string.stats_avg))
         ))
         blow.card(into, R.string.stats_speed, speedRows(today, thisMonth))
-        val month = Stats.lastDays(host, Stats.CHART_DAYS)
-        blow.card(into, host.getString(R.string.stats_days, figures(Stats.CHART_DAYS, res)), monthRows(month, goal))
+        blow.card(into, host.getString(R.string.stats_last_days, figures(WEEK, res)), weekRows(week, goal))
     }
 
     private fun wirdRows(today: Stats.Day, goal: Int): List<View> {
@@ -118,7 +112,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { picker.reading(plan) }
         )
         // The reader says today's goal is done, wherever it was read
-        if (goal > 0 && (today.doneByHand || today.pages.size < goal)) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
+        if (goal > 0 && today.pages.size < goal) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
             Stats.setDoneByHand(host, on)
             // The knob finishes its slide before the numbers move
             parent.postDelayed({
@@ -130,10 +124,10 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     }
 
     // Today, this week and this month side by side: today in pages, the others in days the goal was met,
-    // out of the days so far that had one
+    // out of the period's days that have one
     private fun goalRings(key: String, todayDone: Int, goal: Int, nothingYet: Int,
                           want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): View =
-        blow.inflate(R.layout.part_goal_rings, parent, false).apply {
+        blow.inflate(R.layout.part_rings, parent, false).apply {
             fillGoalRing(findViewById(R.id.ring_today), "$key.day", todayDone, goal, R.string.ring_today,
                 unit = if (goal > 0) host.getString(R.string.ring_of, figures(goal, res))
                     else res.getQuantityString(R.plurals.pages_unit, todayDone))
@@ -148,24 +142,30 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             findViewById<TextView>(R.id.rings_line).text = todayLine(todayDone, goal, nothingYet)
         }
 
-    private fun fillGoalRing(ring: View, key: String, done: Int, total: Int, label: Int, unit: String) {
-        countFigure(ring.findViewById(R.id.ring_value), key, done) { if (it == 0) none(res) else figures(it, res) }
+    private fun fillGoalRing(ring: View, key: String, done: Int, total: Int, label: Int, unit: String,
+                             say: (Int) -> String = { if (it == 0) none(res) else figures(it, res) }) {
+        countFigure(ring.findViewById(R.id.ring_value), key, done, say)
         ring.findViewById<TextView>(R.id.ring_unit).apply { text = unit; visibility = if (unit.isEmpty()) View.GONE else View.VISIBLE }
         ring.findViewById<TextView>(R.id.ring_label).setText(label)
         fillRing(ring.findViewById(R.id.ring), key, done.toFloat(), total.toFloat())
     }
 
-    // This week so far, from Saturday as the app's week runs
+    // This week, Saturday to Friday as the app's week runs
     private fun weekSpan(): LongRange {
         val cal = Calendar.getInstance()
         cal.timeInMillis = Stats.noonOf(Stats.today())
-        return Stats.today() - (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SATURDAY + WEEK) % WEEK..Stats.today()
+        val start = Stats.today() - (cal.get(Calendar.DAY_OF_WEEK) - Calendar.SATURDAY + WEEK) % WEEK
+        return start until start + WEEK
     }
 
-    // This month so far, by the chosen calendar
-    private fun monthSpan(): LongRange = monthStart(Stats.today(), Stats.hijri(host))..Stats.today()
+    // The whole of this month by the chosen calendar; it ends where the next one starts
+    private fun monthSpan(): LongRange {
+        val hijri = Stats.hijri(host)
+        val start = monthStart(Stats.today(), hijri)
+        return start until monthStart(start + LONGEST_MONTH, hijri)
+    }
 
-    // Days of [span] that had a goal, and how many of those met it
+    // Days of [span] that have a goal, and how many of those up to today met it
     private fun metDays(span: LongRange, want: (day: Long, weekday: Int) -> Int, done: (day: Long) -> Int): Pair<Int, Int> {
         val cal = Calendar.getInstance()
         var had = 0
@@ -175,7 +175,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             val wanted = want(day, cal.get(Calendar.DAY_OF_WEEK))
             if (wanted > 0) {
                 had++
-                if (done(day) >= wanted) met++
+                if (day <= Stats.today() && done(day) >= wanted) met++
             }
         }
         return met to had
@@ -214,23 +214,26 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, 0, knownRows())
     }
 
-    // What is memorised in all: a ring filled by its share of the mushaf, then the way into the record
+    // What is memorised in all: its share of the Quran and its whole surahs as rings, then the way into the record
     private fun knownRows(): List<View> {
         val bySurah = Hifz.bySurah(host)
         val known = Hifz.pages(host).size
-        val whole = Surahs.list().count { Hifz.knownOf(it, bySurah) == it.to - it.from + 1 }
-        val gauge = hero(
-            key = KNOWN, count = shareOf(known),
-            say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
-            unit = "",
-            title = host.getString(R.string.hifz_known_title),
-            line = if (known == 0) host.getString(R.string.hifz_mine_empty)
-                else host.getString(R.string.stats_khatma_read, pagesSaid(known, res), figures(Mushaf.PAGES, res)),
-            note = if (whole == 0) "" else res.getQuantityString(R.plurals.surahs_whole, whole, figures(whole, res))
-        ).also { fillRing(it, KNOWN, known.toFloat(), Mushaf.PAGES.toFloat()) }
+        val surahs = Surahs.list()
+        val whole = surahs.count { Hifz.knownOf(it, bySurah) == it.to - it.from + 1 }
+        val rings = blow.inflate(R.layout.part_rings, parent, false).apply {
+            val share = findViewById<View>(R.id.ring_today)
+            fillGoalRing(share, KNOWN, shareOf(known), 100, R.string.ring_known, unit = "") {
+                if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res))
+            }
+            fillGoalRing(findViewById(R.id.ring_week), KNOWN_WHOLE, whole, surahs.size, R.string.ring_whole,
+                unit = host.getString(R.string.ring_of, figures(surahs.size, res)))
+            findViewById<View>(R.id.ring_month).visibility = View.GONE
+            findViewById<TextView>(R.id.rings_line).text = if (known == 0) host.getString(R.string.hifz_mine_empty)
+                else host.getString(R.string.stats_khatma_read, pagesSaid(known, res), figures(Mushaf.PAGES, res))
+        }
         val record = row(host.getString(R.string.hifz_mine), if (known == 0) host.getString(R.string.hifz_mine_add) else "")
             .apply { opens { host.startActivity(Intent(host, MemorizedActivity::class.java)) } }
-        return listOf(gauge, record)
+        return listOf(rings, record)
     }
 
     // A share of the whole mushaf in hundredths; a page or two already shows, never as nought
@@ -239,12 +242,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     // The goal as written, with the way to change it
     private fun changeRow(said: String, change: () -> Unit): View =
         row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply { opens(change) }
-
-    // Which month the numbers below count; the calendar is chosen in the settings
-    private fun monthHead(hijri: Boolean): View =
-        blow.inflate(R.layout.part_month_head, parent, false).apply {
-            findViewById<TextView>(R.id.month_name).text = monthName(Stats.today(), hijri, res)
-        }
 
     // How long a page takes, today and this month; every page's own time is a screen of its own, for days of many pages
     private fun speedRows(today: Stats.Day, thisMonth: List<Stats.Day>): List<View> {
@@ -278,21 +275,26 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     // Time on the pages that were read, leaving out pages only passed over
     private fun onPages(day: Stats.Day): Int = day.pages.sumOf { day.pageSec.getValue(it) }
 
-    private fun monthRows(month: List<Stats.Day>, goal: Int): List<View> {
-        val counts = month.map { it.pages.size }
+    private fun weekRows(week: List<Stats.Day>, goal: Int): List<View> {
+        val counts = week.map { it.pages.size }
         val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
         val chart = DayBars(host).apply {
             setPadding(pad, pad, pad, pad)
             show(counts, goal, host.getString(R.string.chart_goal), ::dayName, grow = moving && motion == Motion.OPEN)
             contentDescription = host.getString(
-                R.string.stats_chart_desc, figures(month.size, res), pagesSaid(counts.max(), res)
+                R.string.stats_chart_desc, figures(week.size, res), pagesSaid(counts.max(), res)
             )
         }
-        return listOf(chart, row(host.getString(R.string.stats_total, figures(month.size, res)), pagesSaid(counts.sum(), res)))
+        return listOf(chart, row(host.getString(R.string.chart_total), pagesSaid(counts.sum(), res)))
     }
 
-    private fun dayName(ago: Int): String =
-        if (ago == 0) host.getString(R.string.chart_today) else res.getQuantityString(R.plurals.ago_days, ago, figures(ago, res))
+    // Today by name, the days before it by their weekday
+    private fun dayName(ago: Int): String {
+        if (ago == 0) return host.getString(R.string.chart_today)
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
+        return Goal.weekdayName(cal.get(Calendar.DAY_OF_WEEK), res)
+    }
 
     // --- khatma ---
 
@@ -461,6 +463,8 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val LISTENING = 3
 
         const val WEEK = 7
+        // Past the end of any month, Hijri or Gregorian, counted from its first day
+        const val LONGEST_MONTH = 31
         const val TOP_HEARD = 3
         // Long enough for the cards to have come in first
         const val CELEBRATE_AFTER_MS = 450L
@@ -468,6 +472,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         const val TODAY = "today"
         const val HIFZ = "hifz"
         const val KNOWN = "known"
+        const val KNOWN_WHOLE = "known.whole"
         const val KHATMA = "khatma"
     }
 }

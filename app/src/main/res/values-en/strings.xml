@@ -375,7 +375,7 @@
         <item>Fri</item>
         <item>Sat</item>
     </string-array>
-    <string name="chart_read">Read</string>
+    <string name="chart_read">Pages read</string>
     <string name="chart_goal_word">Goal</string>
     <string name="chart_goal_of">Goal %1$s</string>
 </resources>

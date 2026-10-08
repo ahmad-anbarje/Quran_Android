@@ -1,0 +1,117 @@
+package com.readqurantoday.quran
+
+import android.content.Intent
+import android.view.View
+import android.widget.LinearLayout
+import com.readqurantoday.quran.StatCards.Companion.WEEK
+import com.readqurantoday.quran.StatCards.Tile
+import java.util.Calendar
+import kotlin.math.roundToInt
+
+/**
+ * The reading tab: today against the goal, today's reading in time and speed, the month in pages and time,
+ * and the last seven days each against its own goal. [done] hears the reader say today's goal was read elsewhere.
+ */
+class ReadingTab(private val cards: StatCards, private val rings: GoalRings, private val done: (Boolean) -> Unit) {
+
+    private val host = cards.host
+    private val res = cards.res
+    private val blow = cards.blow
+
+    fun fill(into: LinearLayout, today: Stats.Day, goal: Int, week: List<Stats.Day>) {
+        blow.card(into, 0, goalRows(today, goal, into))
+        blow.card(into, R.string.stats_today, todayRows(today))
+        val thisMonth = Stats.monthDays(host)
+        val monthPages = thisMonth.sumOf { it.pages.size }
+        into.addView(cards.pair(
+            Tile(R.drawable.ic_calendar, if (monthPages == 0) none(res) else pagesSaid(monthPages, res), host.getString(R.string.stats_pages_month)),
+            Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
+        ))
+        blow.card(into, host.getString(R.string.stats_last_days, figures(WEEK, res)), weekRows(week, goal))
+    }
+
+    private fun goalRows(today: Stats.Day, goal: Int, into: LinearLayout): List<View> {
+        val plan = Stats.goalPlan(host)
+        // A khatma's pages a day are only known for today, so any reading counts toward it on other days
+        val view = rings.view(KEY, readToday(today, goal), goal, R.string.stats_none_today, R.string.chart_read,
+            want = { _, weekday -> if (plan.kind == Goal.Kind.KHATMA) 1 else plan.pagesOn(weekday) },
+            done = { day -> Stats.day(host, day).let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } })
+        val rows = mutableListOf(view, cards.changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { GoalActivity.open(host) })
+        // The reader says today's goal is done, wherever it was read
+        if (goal > 0 && today.pages.size < goal) rows += blow.switchRow(into, host.getString(R.string.paper_read), today.doneByHand) { on ->
+            Stats.setDoneByHand(host, on)
+            // The knob finishes its slide before the numbers move
+            into.postDelayed({ done(on) }, SWITCH_SETTLE_MS)
+        }
+        return rows
+    }
+
+    // A khatma goal says what its daily pages are for
+    private fun khatmaNote(plan: Goal, goal: Int): String =
+        if (plan.kind != Goal.Kind.KHATMA || goal == 0) ""
+        else host.getString(R.string.khatma_daily, pagesSaid(goal, res), dateSaid(host, plan.amount.toLong()))
+
+    // Today's reading: how long, and how fast, said once as time a page with the hour's worth beneath it
+    private fun todayRows(today: Stats.Day): List<View> {
+        val rows = mutableListOf(cards.row(host.getString(R.string.stats_read_time), spent(today.readSec, res)), speedRow(today))
+        if (today.pages.isNotEmpty()) rows += cards.row(host.getString(R.string.stats_page_times_open), "").apply {
+            opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
+        }
+        return rows
+    }
+
+    // A rate, not a promise: today's time a page, and how much an hour at that pace would be
+    private fun speedRow(today: Stats.Day): View {
+        val sec = today.pages.sumOf { today.pageSec.getValue(it) }
+        if (sec == 0) return cards.row(host.getString(R.string.stats_speed_today), none(res), host.getString(R.string.stats_per_hour_note))
+        val perHour = today.pages.size * 3600f / sec
+        return cards.row(host.getString(R.string.stats_speed_today),
+            host.getString(R.string.speed_per_page, spentExact(sec / today.pages.size, res)),
+            host.getString(R.string.speed_per_hour, pagesSaid(perHour.roundToInt(), res), juzSaid(perHour, res)))
+    }
+
+    // The last seven days, each against its own goal; a khatma's pages a day are only known for today
+    private fun weekRows(week: List<Stats.Day>, goal: Int): List<View> {
+        val plan = Stats.goalPlan(host)
+        val cal = Calendar.getInstance()
+        val goals = week.indices.map { i ->
+            val ago = week.size - 1 - i
+            cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
+            when {
+                ago == 0 -> goal
+                plan.kind == Goal.Kind.KHATMA -> 0
+                else -> plan.pagesOn(cal.get(Calendar.DAY_OF_WEEK))
+            }
+        }
+        val counts = week.map { it.pages.size }
+        val pad = res.getDimensionPixelSize(R.dimen.tile_pad)
+        val chart = DayBars(host).apply {
+            setPadding(pad, pad, pad, pad)
+            show(counts, goals, ::dayName, { host.getString(R.string.chart_goal_of, figures(it, res)) }, grow = cards.growing)
+            contentDescription = host.getString(R.string.stats_chart_desc, figures(week.size, res), pagesSaid(counts.max(), res))
+        }
+        // The chart and the key to its colours are one row, with no seam between them
+        val withKey = LinearLayout(host).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(chart)
+            addView(blow.inflate(R.layout.part_chart_legend, this, false))
+        }
+        return listOf(withKey, cards.row(host.getString(R.string.chart_total), pagesSaid(counts.sum(), res)))
+    }
+
+    // Today by name, the days before it by their weekday
+    private fun dayName(ago: Int): String {
+        if (ago == 0) return host.getString(R.string.chart_today)
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
+        return res.getStringArray(R.array.weekdays_short)[cal.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY]
+    }
+
+    companion object {
+        private const val KEY = "today"
+        private const val SWITCH_SETTLE_MS = 250L
+
+        /** Pages read today, or the whole goal once the reader says it was read elsewhere. */
+        fun readToday(today: Stats.Day, goal: Int) = if (today.doneByHand) maxOf(today.pages.size, goal) else today.pages.size
+    }
+}

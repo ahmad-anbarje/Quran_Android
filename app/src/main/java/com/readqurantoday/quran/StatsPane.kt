@@ -86,7 +86,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         blow.card(into, 0, wirdRows(today, goal))
         val thisMonth = Stats.monthDays(host)
         val monthPages = thisMonth.sumOf { it.pages.size }
-        blow.card(into, R.string.stats_today, todayRows(today, thisMonth))
+        blow.card(into, R.string.stats_today, todayRows(today))
         into.addView(pair(
             Tile(R.drawable.ic_calendar, if (monthPages == 0) none(res) else pagesSaid(monthPages, res), host.getString(R.string.stats_pages_month)),
             Tile(R.drawable.ic_clock, spent(thisMonth.sumOf { it.readSec }, res), host.getString(R.string.stats_read_month))
@@ -239,13 +239,11 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun changeRow(said: String, change: () -> Unit): View =
         row(host.getString(R.string.goal_title), host.getString(R.string.goal_change), said).apply { opens(change) }
 
-    // Today's reading: how long, how long a page takes, the pace over an hour, and every page's own time a tap away
-    private fun todayRows(today: Stats.Day, thisMonth: List<Stats.Day>): List<View> {
+    // Today's reading: how long, and how fast, said once as time a page with the hour's worth beneath it
+    private fun todayRows(today: Stats.Day): List<View> {
         val rows = mutableListOf(
             row(host.getString(R.string.stats_read_time), spent(today.readSec, res)),
-            row(host.getString(R.string.stats_page_avg),
-                if (today.pages.isEmpty()) none(res) else spentExact(onPages(today) / today.pages.size, res)),
-            perHourRow(today, thisMonth.sumOf { it.pages.size }, thisMonth.sumOf { onPages(it) })
+            speedRow(today)
         )
         if (today.pages.isNotEmpty()) rows += row(host.getString(R.string.stats_page_times_open), "").apply {
             opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
@@ -253,14 +251,14 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         return rows
     }
 
-    // A rate, not a promise: today's pace over an hour, or the month's before anything is read today
-    private fun perHourRow(today: Stats.Day, monthPages: Int, monthSec: Int): View {
-        val todaySec = onPages(today)
-        val (pages, sec, by) = if (todaySec > 0) Triple(today.pages.size, todaySec, R.string.stats_per_hour_today)
-            else Triple(monthPages, monthSec, R.string.stats_per_hour_juz)
-        if (sec == 0) return row(host.getString(R.string.stats_per_hour), none(res), host.getString(R.string.stats_per_hour_note))
-        val perHour = pages * 3600f / sec
-        return row(host.getString(R.string.stats_per_hour), pagesSaid(perHour.roundToInt(), res), host.getString(by, juzSaid(perHour, res)))
+    // A rate, not a promise: today's time a page, and how much an hour at that pace would be
+    private fun speedRow(today: Stats.Day): View {
+        val sec = onPages(today)
+        if (sec == 0) return row(host.getString(R.string.stats_speed_today), none(res), host.getString(R.string.stats_per_hour_note))
+        val perHour = today.pages.size * 3600f / sec
+        return row(host.getString(R.string.stats_speed_today),
+            host.getString(R.string.speed_per_page, spentExact(sec / today.pages.size, res)),
+            host.getString(R.string.speed_per_hour, pagesSaid(perHour.roundToInt(), res), juzSaid(perHour, res)))
     }
 
     // Time on the pages that were read, leaving out pages only passed over
@@ -318,11 +316,8 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             say = { if (it == 0) none(res) else host.getString(R.string.percent, figures(it, res)) },
             unit = "", title = "",
             line = if (k.read == 0) host.getString(R.string.stats_khatma_none)
-                else host.getString(R.string.stats_khatma_read, pagesSaid(k.read, res), figures(all, res)),
-            note = listOfNotNull(
-                host.getString(R.string.goal_left, pagesSaid(all - k.read, res)).takeIf { k.read > 0 },
-                res.getQuantityString(R.plurals.khatmas_before, k.done, figures(k.done, res)).takeIf { k.done > 0 }
-            ).joinToString(host.getString(R.string.list_join))
+                else host.getString(R.string.khatma_read_left, pagesSaid(k.read, res), figures(all - k.read, res)),
+            note = if (k.done > 0) res.getQuantityString(R.plurals.khatmas_before, k.done, figures(k.done, res)) else ""
         ).also { fillRing(it, KHATMA, k.read.toFloat(), all.toFloat()) }
         rows += finishRow(plan, all - k.read)
         rows += action(host.getString(R.string.stats_new_khatma)) {

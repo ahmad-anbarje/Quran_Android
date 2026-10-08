@@ -289,22 +289,18 @@
     <string name="sec_reading">قراءتي</string>
     <string name="sec_khatma">ختمتي</string>
     <string name="sec_listening">استماعي</string>
-    <string name="stats_page_avg">متوسط وقت الصفحة</string>
-    <string name="stats_page_times">وقت كل صفحة اليوم</string>
+    <string name="stats_page_times">وقت كل صفحة قرأتها اليوم</string>
     <string name="chart_today">اليوم</string>
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
     <string name="cal_hijri">هجري</string>
     <string name="cal_greg">ميلادي</string>
-    <string name="stats_per_hour">في ساعة تقرأ نحو</string>
     <string name="stats_page_times_open">وقت كل صفحة قرأتها اليوم</string>
     <string name="goal_done">أتممت هدف اليوم</string>
     <string name="time_and">%1$s و%2$s</string>
     <string name="stats_per_hour_note">يظهر بعد أن تقرأ بضع صفحات</string>
     <string name="pt_sort">الترتيب</string>
-    <string name="pt_by_page">بالصفحة</string>
+    <string name="pt_by_page">بترتيب الصفحات</string>
     <string name="pt_by_time">الأبطأ أولًا</string>
-    <string name="pt_total">مجموع اليوم</string>
-    <string name="pt_average">متوسط وقت الصفحة</string>
     <string name="pt_fastest">أسرع صفحة</string>
     <string name="pt_slowest">أبطأ صفحة</string>
     <plurals name="hours_count">
@@ -327,7 +323,6 @@
     <string name="stats_khatma_none">لم تبدأ هذه الختمة بعد</string>
     <!-- Nothing yet: a dash, since an Arabic zero is a lone dot -->
     <string name="none_yet" translatable="false">—</string>
-    <string name="stats_per_hour_juz">أي %1$s، تقديرًا بحسب سرعتك هذا الشهر</string>
     <string name="about">نحو %1$s</string>
     <string name="and_half">%1$s ونصف</string>
     <plurals name="juz_count">
@@ -338,7 +333,6 @@
         <item quantity="many">%1$s جزءًا</item>
         <item quantity="other">%1$s جزء</item>
     </plurals>
-    <string name="stats_per_hour_today">أي %1$s، تقديرًا بحسب سرعتك اليوم</string>
     <string name="goal_custom">هدف مخصص…</string>
     <string name="goal_custom_ask">كم صفحة تقرأ في اليوم؟</string>
     <string name="goal_custom_hint">العدد</string>
@@ -449,4 +443,8 @@
     <string name="ring_days_met">أيام أتممتها</string>
     <string name="ring_pages_learned">صفحات حفظتها</string>
     <string name="ring_of_quran">من القرآن</string>
+    <string name="stats_speed_today">سرعتك اليوم</string>
+    <string name="speed_per_page">%1$s للصفحة</string>
+    <string name="speed_per_hour">%1$s في الساعة، أي %2$s</string>
+    <string name="khatma_read_left">قرأت %1$s، وبقي %2$s</string>
 </resources>

@@ -22,13 +22,10 @@ class PageTimesActivity : CardsActivity(R.string.stats_page_times) {
         val sec = today.pages.associateWith { today.pageSec.getValue(it) }
         if (sec.isEmpty()) return
 
-        // The day at a glance: how long in all, the usual page, and the two ends
-        val total = sec.values.sum()
+        // The two ends of the day; its total and pace are on the achievements tab already
         val quickest = sec.minBy { it.value }
         val longest = sec.maxBy { it.value }
         layoutInflater.card(cards, 0, listOf(
-            row(getString(R.string.pt_total), spent(total, resources), pagesSaid(sec.size, resources)),
-            row(getString(R.string.pt_average), spentExact(total / sec.size, resources)),
             row(getString(R.string.pt_fastest), spentExact(quickest.value, resources), where(quickest.key)),
             row(getString(R.string.pt_slowest), spentExact(longest.value, resources), where(longest.key))
         ))

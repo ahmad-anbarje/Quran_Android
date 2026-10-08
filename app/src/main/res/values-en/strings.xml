@@ -365,4 +365,14 @@
     <string name="ring_known">Of the Quran</string>
     <string name="ring_whole">Whole surahs</string>
     <string name="stats_today">Today\'s reading</string>
+    <!-- Weekdays short enough to sit under a bar of the week chart, Sunday first -->
+    <string-array name="weekdays_short">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
 </resources>

@@ -77,7 +77,7 @@
     <!-- A thin progress track under a row -->
     <dimen name="track_height">3dp</dimen>
     <!-- The statistics chart of recent days -->
-    <dimen name="chart_height">96dp</dimen>
+    <dimen name="chart_height">120dp</dimen>
     <!-- Statistics: the ring that tells a figure large, and the small tiles beside it -->
     <dimen name="ring_size">96dp</dimen>
     <dimen name="ring_stroke">8dp</dimen>
@@ -116,4 +116,6 @@
     <dimen name="switch_height">24dp</dimen>
     <dimen name="switch_radius">12dp</dimen>
     <dimen name="switch_knob_box">20dp</dimen>
+    <!-- A bar of the week chart, slim and round-ended -->
+    <dimen name="chart_bar">16dp</dimen>
 </resources>

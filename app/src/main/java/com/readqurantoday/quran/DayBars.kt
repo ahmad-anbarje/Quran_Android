@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.core.content.res.ResourcesCompat
@@ -24,16 +25,20 @@ class DayBars(context: Context) : View(context) {
     private var grown = 1f
 
     private val d = resources.displayMetrics.density
+    private val face = ResourcesCompat.getFont(context, R.font.cairo)
     private val bar = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.accent) }
-    private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.line) }
-    private val count = text(R.color.text)
-    private val label = text(R.color.text_mute)
+    private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.accent_soft) }
+    private val empty = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.line) }
+    private val count = text(R.color.text, bold = true)
+    private val label = text(R.color.text_mute, bold = false)
+    private val todayLabel = text(R.color.text, bold = true)
     private val gap = resources.getDimension(R.dimen.chart_gap)
+    private val barWide = resources.getDimension(R.dimen.chart_bar)
 
-    private fun text(colour: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private fun text(colour: Int, bold: Boolean) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.getColor(colour)
         textSize = resources.getDimension(R.dimen.chart_label)
-        typeface = ResourcesCompat.getFont(context, R.font.cairo)
+        typeface = Typeface.create(face, if (bold) Typeface.BOLD else Typeface.NORMAL)
         textAlign = Paint.Align.CENTER
     }
 
@@ -85,33 +90,40 @@ class DayBars(context: Context) : View(context) {
         val room = base - roof
 
         val slot = (right - left) / pages.size
-        val inset = slot * 0.22f
-        val corner = 3 * d
+        // Slim bars with round ends, the same width however wide the screen
+        val wide = minOf(barWide, slot * 0.6f)
+        val round = wide / 2f
         pages.forEachIndexed { i, n ->
             // Oldest first, so the newest day sits where the line of reading ends
-            val x = if (rtl) right - (i + 1) * slot else left + i * slot
+            val centre = if (rtl) right - (i + 0.5f) * slot else left + (i + 0.5f) * slot
+            val l = centre - wide / 2f
+            val r = centre + wide / 2f
             val goal = goals.getOrElse(i) { 0 }
             val goalTop = base - room * goal / top
-            if (goal > 0) canvas.drawRoundRect(x + inset, goalTop, x + slot - inset, base, corner, corner, track)
-            // A day with nothing read keeps a stub, so the run of days still reads as a calendar
-            val tall = (if (n > 0) room * n / top else 2 * d) * rise(i)
-            canvas.drawRoundRect(x + inset, base - tall, x + slot - inset, base, corner, corner, if (n > 0) bar else track)
-            if (n > 0 && rise(i) == 1f) canvas.drawText(figures(n, resources), x + slot / 2f, minOf(base - tall, goalTop) - gap, count)
+            if (goal > 0) canvas.drawRoundRect(l, goalTop, r, base, round, round, track)
+            // A day with nothing read keeps a dot of a bar, so the run of days still reads as a week
+            val tall = maxOf(if (n > 0) room * n / top else 0f, wide) * rise(i)
+            canvas.drawRoundRect(l, base - tall, r, base, round, round, if (n > 0) bar else empty)
+            if (n > 0 && rise(i) == 1f) canvas.drawText(figures(n, resources), centre, minOf(base - tall, goalTop) - gap, count)
         }
 
         // Every day's name and goal fit under its own bar; on a narrow screen they shrink alike
-        val names = pages.indices.map { dayName(pages.size - 1 - it) }
+        val last = pages.size - 1
+        val names = pages.indices.map { dayName(last - it) }
         val said = goals.map { if (it > 0) goalSaid(it) else "" }
-        val widest = (names + said).maxOf { label.measureText(it) }
+        val widest = (names + said).maxOf { todayLabel.measureText(it) }
         val full = label.textSize
-        if (widest > slot - gap / 2f) label.textSize = full * (slot - gap / 2f) / widest
-        val nameY = base + gap + label.textSize * 0.8f
+        val fit = if (widest > slot - gap / 2f) full * (slot - gap / 2f) / widest else full
+        label.textSize = fit
+        todayLabel.textSize = fit
+        val nameY = base + gap + fit * 0.9f
         pages.indices.forEach { i ->
             val centre = if (rtl) right - (i + 0.5f) * slot else left + (i + 0.5f) * slot
-            canvas.drawText(names[i], centre, nameY, label)
-            if (said[i].isNotEmpty()) canvas.drawText(said[i], centre, nameY + label.textSize + gap / 2f, label)
+            canvas.drawText(names[i], centre, nameY, if (i == last) todayLabel else label)
+            if (said[i].isNotEmpty()) canvas.drawText(said[i], centre, nameY + fit + gap / 2f, label)
         }
         label.textSize = full
+        todayLabel.textSize = full
     }
 
     private companion object {

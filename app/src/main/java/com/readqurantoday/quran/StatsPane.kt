@@ -295,7 +295,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         if (ago == 0) return host.getString(R.string.chart_today)
         val cal = Calendar.getInstance()
         cal.timeInMillis = Stats.noonOf(Stats.today() - ago)
-        return Goal.weekdayName(cal.get(Calendar.DAY_OF_WEEK), res)
+        return res.getStringArray(R.array.weekdays_short)[cal.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY]
     }
 
     // --- khatma ---

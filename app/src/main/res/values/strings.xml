@@ -434,4 +434,14 @@
     <string name="ring_known">من القرآن</string>
     <string name="ring_whole">سور كاملة</string>
     <string name="stats_today">قراءة اليوم</string>
+    <!-- Weekdays short enough to sit under a bar of the week chart, Sunday first -->
+    <string-array name="weekdays_short">
+        <item>أحد</item>
+        <item>اثنين</item>
+        <item>ثلاثاء</item>
+        <item>أربعاء</item>
+        <item>خميس</item>
+        <item>جمعة</item>
+        <item>سبت</item>
+    </string-array>
 </resources>

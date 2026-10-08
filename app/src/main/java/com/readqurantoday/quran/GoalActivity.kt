@@ -10,8 +10,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 
 /**
- * Setting a goal on one screen: the goal written out at the top, ready-made goals a tap away, and below them
- * every part of a goal of one's own, then a button to keep it. The memorising goal is pages on chosen days only.
+ * Setting a goal on one screen: ready-made goals a tap away, below them every part of a goal of one's own, then
+ * the goal written out and a button to keep it. The memorising goal is pages on chosen days only.
  */
 class GoalActivity : CardsActivity(R.string.goal_title) {
 
@@ -51,12 +51,13 @@ class GoalActivity : CardsActivity(R.string.goal_title) {
     // A khatma that ends [days] from today, today counted
     private fun khatmaEnd(days: Int) = (Stats.today() + days - 1).toInt()
 
-    // Rebuilt whole on every change: the screen is short and its parts follow one another
+    // Rebuilt whole on every change. The goal written out sits last, over the button that keeps it, so as its
+    // wording grows or shrinks nothing above it moves under the finger
     private fun build() {
         cards.removeAllViews()
-        layoutInflater.card(cards, 0, listOf(summary()))
         layoutInflater.card(cards, R.string.goal_ready, presets().map { (goal, note) -> readyRow(goal, note) })
         layoutInflater.card(cards, R.string.goal_own, ownRows())
+        layoutInflater.card(cards, 0, listOf(summary()))
         cards.addView(saveButton())
         if (hifz && Stats.hifzPlan(this) != null) layoutInflater.card(cards, 0, listOf(
             (layoutInflater.inflate(R.layout.row_setting_action, cards, false) as TextView).apply {

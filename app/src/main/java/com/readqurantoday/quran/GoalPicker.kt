@@ -11,11 +11,12 @@ class GoalPicker(private val host: Activity, private val changed: () -> Unit) {
 
     // --- reading ---
 
-    /** Two ready-made reading goals, the default and a light one; anything else is built step by step under «custom». */
+    /** Ready-made reading goals, the default first, each with Al-Kahf on Friday; anything else is built under «custom». */
     fun reading(current: Goal) {
         val presets = listOf(
             Goal.DEFAULT to host.getString(R.string.stats_goal_month),
-            every(Goal.Kind.PAGES, 5) to ""
+            surahsWithKahf(BAQARAH) to "",
+            surahsWithKahf(BAQARAH, AL_IMRAN) to ""
         )
         val choices = presets.map { (g, note) -> Choice(g.said(host), note, on = g == current) } +
             Choice(host.getString(R.string.goal_custom), on = presets.none { it.first == current })
@@ -23,6 +24,8 @@ class GoalPicker(private val host: Activity, private val changed: () -> Unit) {
             if (i < presets.size) keepReading(presets[i].first) else customReading(current)
         }
     }
+
+    private fun surahsWithKahf(vararg surahs: Int) = Goal(Goal.Kind.SURAHS, 0, surahs.toList(), Goal.ALL_DAYS, kahf = true)
 
     // A khatma that ends [days] from today, today counted
     private fun khatmaIn(days: Int) = every(Goal.Kind.KHATMA, (Stats.today() + days - 1).toInt())
@@ -107,6 +110,8 @@ class GoalPicker(private val host: Activity, private val changed: () -> Unit) {
 
     private companion object {
         const val KHATMA_MONTH = 30
+        const val BAQARAH = 2
+        const val AL_IMRAN = 3
         const val KHATMA_LONGEST = 365
     }
 }

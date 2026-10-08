@@ -19,8 +19,8 @@
     <color name="line">#323C47</color>
     <color name="text">#DDE2E7</color>
     <color name="text_mute">#B2B9C0</color>
-    <!-- Knocked out of the filled pill. Not pure white at night: it glares. -->
-    <color name="on_dark">#0F1317</color>
+    <!-- On the accent: light, as by day, so knobs, play marks and chosen buttons read the same; a soft white, since pure white glares at night -->
+    <color name="on_dark">#F4F7FA</color>
     <!-- Lit word at night: amber, the one hue that reads as coloured beside near-white type, at its brightness -->
     <color name="ink_lit">#FFD479</color>
     <!-- Quieter than the lit word, so the markers never read as the recited one -->

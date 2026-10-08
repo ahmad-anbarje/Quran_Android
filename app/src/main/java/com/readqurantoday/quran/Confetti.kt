@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import androidx.core.content.res.ResourcesCompat
 import kotlin.random.Random
+import androidx.core.graphics.withRotation
 
 /** A short burst of confetti over [this] with [message] above it; with the phone's animations off, nothing is shown. */
 fun ViewGroup.celebrate(message: String) {
@@ -72,11 +73,10 @@ private class Confetti(context: Context) : View(context) {
             val x = width * (b.x + b.drift * t)
             pen.color = b.colour
             pen.alpha = (255 * fade).toInt()
-            canvas.save()
-            canvas.rotate(b.spin * t, x, y)
-            if (b.round) canvas.drawCircle(x, y, b.size / 2f, pen)
-            else canvas.drawRect(x - b.size / 2f, y - b.size / 4f, x + b.size / 2f, y + b.size / 4f, pen)
-            canvas.restore()
+            canvas.withRotation(b.spin * t, x, y) {
+                if (b.round) drawCircle(x, y, b.size / 2f, pen)
+                else drawRect(x - b.size / 2f, y - b.size / 4f, x + b.size / 2f, y + b.size / 4f, pen)
+            }
         }
 
         // The words rise in quickly and stay until the end

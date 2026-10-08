@@ -19,6 +19,7 @@ import android.view.ViewConfiguration
 import android.view.animation.DecelerateInterpolator
 import android.widget.OverScroller
 import kotlin.math.abs
+import androidx.core.graphics.withTranslation
 
 // One mushaf page drawn from pre-resolved glyphs; each page has its own font
 class MushafPageView @JvmOverloads constructor(
@@ -1069,10 +1070,7 @@ class MushafPageView @JvmOverloads constructor(
         dx: Float,
         dy: Float
     ) {
-        canvas.save()
-        canvas.translate(dx, dy)
-        canvas.drawGlyphs(glyphIds, 0, at, 0, count, face, pen)
-        canvas.restore()
+        canvas.withTranslation(dx, dy) { drawGlyphs(glyphIds, 0, at, 0, count, face, pen) }
     }
 
     /* Running head: juz on the right, surah name centred, the hizb mark or else the page on the left. */

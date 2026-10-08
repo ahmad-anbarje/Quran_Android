@@ -16,6 +16,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import androidx.core.graphics.createBitmap
 
 /** Play Books style turn: the far edge stays frozen, the page humps near it and lifts toward the eye as it flips. */
 class PageCurlView @JvmOverloads constructor(
@@ -83,7 +84,7 @@ class PageCurlView @JvmOverloads constructor(
         tx = fx
         val colour = Settings.paperColor(context) or 0xFF000000.toInt()
         paper.color = colour
-        paperTex = Bitmap.createBitmap(2, 2, Bitmap.Config.ARGB_8888).apply { eraseColor(colour) }
+        paperTex = createBitmap(2, 2).apply { eraseColor(colour) }
         shapeMoved = -1f
         travelPx = measureTravel()
         drag(x, y)

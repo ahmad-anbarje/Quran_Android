@@ -17,6 +17,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.media.app.NotificationCompat as MediaCompat
+import androidx.core.graphics.createBitmap
 
 // Keeps the player notification and the system media controls alive while audio plays; playback itself lives in Recite
 class PlayerService : Service() {
@@ -208,7 +209,7 @@ class PlayerService : Service() {
     // Media controls crop the art to a wide strip, so the name sits small in the middle of the icon's ground
     private fun icon(): Bitmap {
         art?.let { return it }
-        val made = Bitmap.createBitmap(ART_PX, ART_PX, Bitmap.Config.ARGB_8888)
+        val made = createBitmap(ART_PX, ART_PX)
         val canvas = Canvas(made)
         canvas.drawColor(getColor(R.color.icon_ground))
         ContextCompat.getDrawable(this, R.drawable.ic_launcher_foreground)?.let { name ->

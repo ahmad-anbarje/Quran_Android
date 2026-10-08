@@ -116,6 +116,8 @@
     <dimen name="switch_height">24dp</dimen>
     <dimen name="switch_radius">12dp</dimen>
     <dimen name="switch_knob_box">20dp</dimen>
-    <!-- A bar of the week chart, slim and round-ended -->
-    <dimen name="chart_bar">16dp</dimen>
+    <!-- A bar of the week chart, round-ended; and its words: pages over it, the day under it -->
+    <dimen name="chart_bar">26dp</dimen>
+    <dimen name="chart_count">13sp</dimen>
+    <dimen name="chart_day">12sp</dimen>
 </resources>

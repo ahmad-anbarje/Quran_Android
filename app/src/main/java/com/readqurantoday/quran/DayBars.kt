@@ -29,15 +29,17 @@ class DayBars(context: Context) : View(context) {
     private val bar = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.accent) }
     private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.accent_soft) }
     private val empty = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.getColor(R.color.line) }
-    private val count = text(R.color.text, bold = true)
-    private val label = text(R.color.text_mute, bold = false)
-    private val todayLabel = text(R.color.text, bold = true)
+    // Pages over each bar read first, the day's name next, its goal quietest
+    private val count = text(R.color.text, R.dimen.chart_count, bold = true)
+    private val label = text(R.color.text_mute, R.dimen.chart_day, bold = false)
+    private val todayLabel = text(R.color.text, R.dimen.chart_day, bold = true)
+    private val goalLabel = text(R.color.text_mute, R.dimen.chart_label, bold = false)
     private val gap = resources.getDimension(R.dimen.chart_gap)
     private val barWide = resources.getDimension(R.dimen.chart_bar)
 
-    private fun text(colour: Int, bold: Boolean) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private fun text(colour: Int, size: Int, bold: Boolean) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.getColor(colour)
-        textSize = resources.getDimension(R.dimen.chart_label)
+        textSize = resources.getDimension(size)
         typeface = Typeface.create(face, if (bold) Typeface.BOLD else Typeface.NORMAL)
         textAlign = Paint.Align.CENTER
     }
@@ -72,10 +74,11 @@ class DayBars(context: Context) : View(context) {
     }
 
     // Room for the pages over the tallest bar, and the day's name and goal beneath the baseline
-    private fun line() = label.textSize + gap
+    private fun over() = count.textSize + gap
+    private fun under() = label.textSize + goalLabel.textSize + 2 * gap
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-        val tall = resources.getDimensionPixelSize(R.dimen.chart_height) + paddingTop + paddingBottom + (3 * line()).toInt()
+        val tall = resources.getDimensionPixelSize(R.dimen.chart_height) + paddingTop + paddingBottom + (over() + under()).toInt()
         setMeasuredDimension(getDefaultSize(suggestedMinimumWidth, widthSpec), resolveSize(tall, heightSpec))
     }
 
@@ -85,13 +88,13 @@ class DayBars(context: Context) : View(context) {
         val top = maxOf(pages.max(), goals.maxOrNull() ?: 0, 1)
         val left = paddingLeft.toFloat()
         val right = width - paddingRight.toFloat()
-        val roof = paddingTop + line()
-        val base = height - paddingBottom - 2 * line()
+        val roof = paddingTop + over()
+        val base = height - paddingBottom - under()
         val room = base - roof
 
         val slot = (right - left) / pages.size
         // Slim bars with round ends, the same width however wide the screen
-        val wide = minOf(barWide, slot * 0.6f)
+        val wide = minOf(barWide, slot * 0.62f)
         val round = wide / 2f
         pages.forEachIndexed { i, n ->
             // Oldest first, so the newest day sits where the line of reading ends
@@ -101,29 +104,35 @@ class DayBars(context: Context) : View(context) {
             val goal = goals.getOrElse(i) { 0 }
             val goalTop = base - room * goal / top
             if (goal > 0) canvas.drawRoundRect(l, goalTop, r, base, round, round, track)
-            // A day with nothing read keeps a dot of a bar, so the run of days still reads as a week
-            val tall = maxOf(if (n > 0) room * n / top else 0f, wide) * rise(i)
-            canvas.drawRoundRect(l, base - tall, r, base, round, round, if (n > 0) bar else empty)
+            val tall = if (n > 0) maxOf(room * n / top, wide) * rise(i) else 0f
+            if (n > 0) canvas.drawRoundRect(l, base - tall, r, base, round, round, bar)
+            // A day with neither reading nor goal keeps a dot, so it still holds its place in the week
+            else if (goal == 0) canvas.drawRoundRect(l, base - wide, r, base, round, round, empty)
             if (n > 0 && rise(i) == 1f) canvas.drawText(figures(n, resources), centre, minOf(base - tall, goalTop) - gap, count)
         }
 
-        // Every day's name and goal fit under its own bar; on a narrow screen they shrink alike
+        // Every day's name and goal fit under its own bar; on a narrow screen each shrinks to fit, all alike
         val last = pages.size - 1
         val names = pages.indices.map { dayName(last - it) }
         val said = goals.map { if (it > 0) goalSaid(it) else "" }
-        val widest = (names + said).maxOf { todayLabel.measureText(it) }
-        val full = label.textSize
-        val fit = if (widest > slot - gap / 2f) full * (slot - gap / 2f) / widest else full
-        label.textSize = fit
-        todayLabel.textSize = fit
-        val nameY = base + gap + fit * 0.9f
+        val room1 = slot - gap / 2f
+        val dayFull = label.textSize
+        val goalFull = goalLabel.textSize
+        val dayFit = minOf(1f, room1 / names.maxOf { todayLabel.measureText(it) })
+        val goalFit = minOf(1f, room1 / maxOf(1f, said.maxOf { goalLabel.measureText(it) }))
+        label.textSize = dayFull * dayFit
+        todayLabel.textSize = dayFull * dayFit
+        goalLabel.textSize = goalFull * goalFit
+        val nameY = base + gap + label.textSize * 0.9f
+        val goalY = nameY + gap / 2f + goalLabel.textSize
         pages.indices.forEach { i ->
             val centre = if (rtl) right - (i + 0.5f) * slot else left + (i + 0.5f) * slot
             canvas.drawText(names[i], centre, nameY, if (i == last) todayLabel else label)
-            if (said[i].isNotEmpty()) canvas.drawText(said[i], centre, nameY + fit + gap / 2f, label)
+            if (said[i].isNotEmpty()) canvas.drawText(said[i], centre, goalY, goalLabel)
         }
-        label.textSize = full
-        todayLabel.textSize = full
+        label.textSize = dayFull
+        todayLabel.textSize = dayFull
+        goalLabel.textSize = goalFull
     }
 
     private companion object {

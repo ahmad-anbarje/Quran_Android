@@ -65,6 +65,10 @@
             android:exported="false"
             android:theme="@style/Theme.Quran.Index" />
         <activity
+            android:name=".GoalActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Quran.Index" />
+        <activity
             android:name=".MemorizedActivity"
             android:exported="false"
             android:theme="@style/Theme.Quran.Index" />

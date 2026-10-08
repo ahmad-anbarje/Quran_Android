@@ -34,8 +34,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
         ViewPages(pages)
     ) { page -> if (built) columns[page].riseChildren() }
 
-    private val picker = GoalPicker(host) { build() }
-
     // Where each ring and figure last stood, so an update moves on from there
     private val shares = HashMap<String, Float>()
     private val figuresShown = HashMap<String, Int>()
@@ -103,7 +101,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             done = { day -> Stats.day(host, day).let { if (it.doneByHand) Int.MAX_VALUE else it.pages.size } })
         val rows = mutableListOf(
             rings,
-            changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { picker.reading(plan) }
+            changeRow(khatmaNote(plan, goal).ifEmpty { plan.said(host) }) { GoalActivity.open(host) }
         )
         // The reader says today's goal is done, wherever it was read
         if (goal > 0 && today.pages.size < goal) rows += blow.switchRow(parent, host.getString(R.string.paper_read), today.doneByHand) { on ->
@@ -196,7 +194,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private fun hifzPage(into: LinearLayout) {
         val plan = Stats.hifzPlan(host)
         val kept = Hifz.pages(host)
-        if (plan == null) blow.card(into, 0, listOf(action(host.getString(R.string.hifz_add)) { picker.hifz(null) }))
+        if (plan == null) blow.card(into, 0, listOf(action(host.getString(R.string.hifz_add)) { GoalActivity.open(host, hifz = true) }))
         else {
             val goal = Stats.hifzGoal(host)
             val learned = kept.count { it.value == Stats.today() }
@@ -204,7 +202,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
                 goalRings(HIFZ, learned, goal, R.string.hifz_none_today, R.string.ring_pages_learned,
                     want = { _, weekday -> plan.pagesOn(weekday) },
                     done = { day -> kept.count { it.value == day } }),
-                changeRow(plan.said(host)) { picker.hifz(plan) }
+                changeRow(plan.said(host)) { GoalActivity.open(host, hifz = true) }
             ))
         }
         blow.card(into, 0, knownRows())
@@ -339,7 +337,7 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             else -> none(res) to host.getString(R.string.stats_finish_unknown)
         }
         return row(host.getString(if (set) R.string.khatma_goal else R.string.khatma_expected), value, note).apply {
-            opens { picker.khatma(plan) }
+            opens { GoalActivity.open(host, khatma = true) }
         }
     }
 

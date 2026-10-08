@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A number to set: minus and plus for small steps, the number itself to type a big one -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layoutDirection="locale"
+    android:minHeight="56dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="@dimen/row_pad_v"
+    android:paddingBottom="@dimen/row_pad_v">
+
+    <TextView
+        android:id="@+id/step_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_title" />
+
+    <ImageView
+        android:id="@+id/step_less"
+        android:layout_width="@dimen/step_button"
+        android:layout_height="@dimen/step_button"
+        android:padding="8dp"
+        android:background="@drawable/choice_off"
+        android:src="@drawable/ic_minus"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/step_less" />
+
+    <TextView
+        android:id="@+id/step_value"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/step_button"
+        android:minWidth="@dimen/step_value"
+        android:gravity="center"
+        android:background="@drawable/row_flat"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_title"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/step_more"
+        android:layout_width="@dimen/step_button"
+        android:layout_height="@dimen/step_button"
+        android:padding="8dp"
+        android:background="@drawable/choice_off"
+        android:src="@drawable/ic_plus"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/step_more" />
+</LinearLayout>

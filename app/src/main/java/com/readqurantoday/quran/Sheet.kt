@@ -75,33 +75,6 @@ fun Activity.askNumber(title: String, keep: String, current: Int, range: IntRang
     dialog.window?.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 }
 
-/** Choices that each toggle on and off, then [keep] to take them: the sheet stays open while choosing. */
-fun Activity.pickMany(title: String, labels: List<String>, chosen: BooleanArray, keep: String, done: (BooleanArray) -> Unit) {
-    val dialog = Dialog(this, R.style.SheetDialog)
-    val view = layoutInflater.inflate(R.layout.part_sheet, null)
-    view.findViewById<TextView>(R.id.sheet_title).text = title
-    val rows = view.findViewById<LinearLayout>(R.id.sheet_rows)
-    val now = chosen.copyOf()
-    labels.forEachIndexed { i, label ->
-        val row = layoutInflater.inflate(R.layout.item_sheet_row, rows, false)
-        row.findViewById<TextView>(R.id.sheet_label).text = label
-        row.findViewById<View>(R.id.sheet_note).visibility = View.GONE
-        val tick = row.findViewById<View>(R.id.sheet_tick)
-        tick.visibility = if (now[i]) View.VISIBLE else View.INVISIBLE
-        row.setOnClickListener {
-            now[i] = !now[i]
-            tick.visibility = if (now[i]) View.VISIBLE else View.INVISIBLE
-        }
-        rows.addView(row)
-    }
-    (layoutInflater.inflate(R.layout.row_setting_action, rows, false) as TextView).also {
-        it.text = keep
-        it.setOnClickListener { dialog.dismiss(); done(now) }
-        rows.addView(it)
-    }
-    raise(dialog, view)
-}
-
 /** A sheet with nothing to choose — it only has something to say. */
 fun Activity.notice(said: String) {
     val dialog = Dialog(this, R.style.SheetDialog)

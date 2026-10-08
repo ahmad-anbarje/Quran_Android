@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The goal as it stands, written out, changing as it is set -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:padding="@dimen/tile_pad">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_title"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta" />
+
+    <TextView
+        android:id="@+id/goal_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/text"
+        android:textSize="@dimen/row_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/goal_summary_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/row_meta"
+        android:visibility="gone" />
+</LinearLayout>

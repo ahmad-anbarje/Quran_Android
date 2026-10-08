@@ -332,8 +332,6 @@
         <item quantity="many">%1$s جزءًا</item>
         <item quantity="other">%1$s جزء</item>
     </plurals>
-    <string name="goal_custom">هدف مخصص…</string>
-    <string name="goal_custom_ask">كم صفحة تقرأ في اليوم؟</string>
     <string name="goal_custom_hint">العدد</string>
     <string name="goal_keep">حفظ الهدف</string>
     <string name="goal_title">هدفك</string>
@@ -344,15 +342,7 @@
     <string name="goal_with_kahf">%1$s مع الكهف يوم الجمعة</string>
     <string name="and_join">" و"</string>
     <string name="list_join">"، "</string>
-    <string name="goal_kind_ask">ماذا تقرأ؟</string>
-    <string name="goal_kind_pages">عدد من الصفحات</string>
-    <string name="goal_kind_juz">عدد من الأجزاء</string>
-    <string name="goal_kind_surah">سورة</string>
-    <string name="goal_juz_ask">كم جزءًا تقرأ؟</string>
-    <string name="goal_surah_ask">أي سورة؟</string>
-    <string name="goal_days_ask">في أي الأيام؟</string>
     <string name="goal_add_kahf">مع سورة الكهف يوم الجمعة</string>
-    <string name="goal_next">التالي</string>
     <string-array name="weekdays">
         <item>الأحد</item>
         <item>الاثنين</item>
@@ -377,13 +367,10 @@
     <string name="goal_change">تغيير</string>
     <string name="khatma_daily">%1$s كل يوم لتختم في %2$s</string>
     <string name="goal_khatma_by">ختمة تنتهي في %1$s</string>
-    <string name="goal_kind_khatma">ختمة في عدد من الأيام</string>
-    <string name="goal_khatma_ask">في كم يومًا تختم؟</string>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
     <string name="hifz_add">حدّد هدف الحفظ</string>
     <string name="hifz_goal_title">هدف الحفظ</string>
-    <string name="hifz_custom_ask">كم صفحة تحفظ في اليوم؟</string>
     <string name="hifz_stop">إلغاء هدف الحفظ</string>
     <string name="hifz_mine">سجلّ الحفظ</string>
     <string name="hifz_mine_empty">سجّل السور والصفحات التي تحفظها</string>
@@ -445,4 +432,19 @@
     <string name="speed_per_page">%1$s للصفحة</string>
     <string name="speed_per_hour">%1$s في الساعة، أي %2$s</string>
     <string name="khatma_read_left">قرأت %1$s، وبقي %2$s</string>
+    <!-- Setting a goal on its own screen -->
+    <string name="goal_ready">أهداف جاهزة</string>
+    <string name="goal_own">أو اختر بنفسك</string>
+    <string name="kind_pages">صفحات</string>
+    <string name="kind_juz">أجزاء</string>
+    <string name="kind_surah">سورة</string>
+    <string name="kind_khatma">ختمة</string>
+    <string name="goal_amount_pages">عدد الصفحات</string>
+    <string name="goal_amount_juz">عدد الأجزاء</string>
+    <string name="goal_amount_surah">السورة</string>
+    <string name="goal_amount_days">تختم في كم يومًا</string>
+    <string name="goal_on_days">في أي الأيام</string>
+    <string name="goal_pick_day">اختر يومًا واحدًا على الأقل</string>
+    <string name="step_less">أقل</string>
+    <string name="step_more">أكثر</string>
 </resources>

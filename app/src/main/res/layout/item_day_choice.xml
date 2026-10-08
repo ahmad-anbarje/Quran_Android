@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One weekday to pick for a goal, filled when chosen -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/day_choice"
+    android:layout_weight="1"
+    android:layout_margin="@dimen/choice_gap"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:maxLines="1"
+    android:textSize="@dimen/row_meta" />

@@ -268,8 +268,6 @@
         <item quantity="one">%1$s juz</item>
         <item quantity="other">%1$s juz</item>
     </plurals>
-    <string name="goal_custom">Custom goal…</string>
-    <string name="goal_custom_ask">How many pages a day?</string>
     <string name="goal_custom_hint">Number</string>
     <string name="goal_keep">Save goal</string>
     <string name="goal_title">Your goal</string>
@@ -279,15 +277,7 @@
     <string name="goal_plan_days">%1$s on %2$s</string>
     <string name="goal_with_kahf">%1$s, with Al-Kahf on Friday</string>
     <string name="list_join">", "</string>
-    <string name="goal_kind_ask">What will you read?</string>
-    <string name="goal_kind_pages">A number of pages</string>
-    <string name="goal_kind_juz">A number of juz</string>
-    <string name="goal_kind_surah">A surah</string>
-    <string name="goal_juz_ask">How many juz?</string>
-    <string name="goal_surah_ask">Which surah?</string>
-    <string name="goal_days_ask">On which days?</string>
     <string name="goal_add_kahf">With Al-Kahf on Friday</string>
-    <string name="goal_next">Next</string>
     <string-array name="weekdays">
         <item>Sunday</item>
         <item>Monday</item>
@@ -312,13 +302,10 @@
     <string name="goal_change">Change</string>
     <string name="khatma_daily">%1$s a day to finish by %2$s</string>
     <string name="goal_khatma_by">A khatma by %1$s</string>
-    <string name="goal_kind_khatma">A khatma in a number of days</string>
-    <string name="goal_khatma_ask">Finish in how many days?</string>
 
     <!-- Memorisation: pages known by heart, kept on the phone -->
     <string name="hifz_add">Set a memorising goal</string>
     <string name="hifz_goal_title">Memorising goal</string>
-    <string name="hifz_custom_ask">How many pages a day?</string>
     <string name="hifz_stop">Remove the memorising goal</string>
     <string name="hifz_mine">Memorising record</string>
     <string name="hifz_mine_empty">Add the surahs and pages you know by heart</string>
@@ -376,4 +363,19 @@
     <string name="speed_per_page">%1$s a page</string>
     <string name="speed_per_hour">%1$s an hour, that is %2$s</string>
     <string name="khatma_read_left">Read %1$s, %2$s to go</string>
+    <!-- Setting a goal on its own screen -->
+    <string name="goal_ready">Ready goals</string>
+    <string name="goal_own">Or set your own</string>
+    <string name="kind_pages">Pages</string>
+    <string name="kind_juz">Juz</string>
+    <string name="kind_surah">Surah</string>
+    <string name="kind_khatma">Khatma</string>
+    <string name="goal_amount_pages">Pages</string>
+    <string name="goal_amount_juz">Juz</string>
+    <string name="goal_amount_surah">Surah</string>
+    <string name="goal_amount_days">Finish in how many days</string>
+    <string name="goal_on_days">On which days</string>
+    <string name="goal_pick_day">Pick at least one day</string>
+    <string name="step_less">Less</string>
+    <string name="step_more">More</string>
 </resources>

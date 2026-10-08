@@ -36,6 +36,7 @@ class DayBars(context: Context) : View(context) {
     private val goalLabel = text(R.color.text_mute, R.dimen.chart_label, bold = false)
     private val gap = resources.getDimension(R.dimen.chart_gap)
     private val barWide = resources.getDimension(R.dimen.chart_bar)
+    private val corner = resources.getDimension(R.dimen.chart_bar_corner)
 
     private fun text(colour: Int, size: Int, bold: Boolean) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.getColor(colour)
@@ -93,9 +94,9 @@ class DayBars(context: Context) : View(context) {
         val room = base - roof
 
         val slot = (right - left) / pages.size
-        // Slim bars with round ends, the same width however wide the screen
+        // Bars of one width however wide the screen; softly rounded, so a day of few pages is a low bar, not a dot
         val wide = minOf(barWide, slot * 0.62f)
-        val round = wide / 2f
+        val round = minOf(corner, wide / 2f)
         pages.forEachIndexed { i, n ->
             // Oldest first, so the newest day sits where the line of reading ends
             val centre = if (rtl) right - (i + 0.5f) * slot else left + (i + 0.5f) * slot
@@ -104,10 +105,10 @@ class DayBars(context: Context) : View(context) {
             val goal = goals.getOrElse(i) { 0 }
             val goalTop = base - room * goal / top
             if (goal > 0) canvas.drawRoundRect(l, goalTop, r, base, round, round, track)
-            val tall = if (n > 0) maxOf(room * n / top, wide) * rise(i) else 0f
+            val tall = if (n > 0) maxOf(room * n / top, round * 2f) * rise(i) else 0f
             if (n > 0) canvas.drawRoundRect(l, base - tall, r, base, round, round, bar)
             // A day with neither reading nor goal keeps a dot, so it still holds its place in the week
-            else if (goal == 0) canvas.drawRoundRect(l, base - wide, r, base, round, round, empty)
+            else if (goal == 0) canvas.drawRoundRect(l, base - round * 2f, r, base, round, round, empty)
             if (n > 0 && rise(i) == 1f) canvas.drawText(figures(n, resources), centre, minOf(base - tall, goalTop) - gap, count)
         }
 

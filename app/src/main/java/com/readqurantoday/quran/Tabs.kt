@@ -48,17 +48,20 @@ class SwipeTabs(
 
     val current: Int get() = pager.currentItem
 
-    private fun mark(on: Int) = segs.forEachIndexed { i, seg ->
-        val isOn = i == on
-        seg.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-        seg.setTextColor(seg.context.getColor(if (isOn) R.color.text else R.color.text_mute))
-        // Built from the theme's own face: defaultFromStyle would put the system font here
-        seg.typeface = Typeface.create(face, if (isOn) Typeface.BOLD else Typeface.NORMAL)
-    }
+    private fun mark(on: Int) = segs.forEachIndexed { i, seg -> seg.markSegment(i == on, face) }
 
     private companion object {
         val SEGMENTS = intArrayOf(R.id.seg_1, R.id.seg_2, R.id.seg_3, R.id.seg_4)
     }
+}
+
+/** A segment of a switch marked chosen or not; [face] is the switch's own, read before any bolding. */
+fun TextView.markSegment(on: Boolean, face: Typeface?) {
+    setBackgroundResource(if (on) R.drawable.seg_on else R.drawable.row_flat)
+    setTextColor(context.getColor(if (on) R.color.text else R.color.text_mute))
+    // Built from the theme's own face: defaultFromStyle would put the system font here
+    typeface = Typeface.create(face, if (on) Typeface.BOLD else Typeface.NORMAL)
+    isSelected = on
 }
 
 /** Pages made beforehand, one view each, for a pager whose pages are not lists of rows. */

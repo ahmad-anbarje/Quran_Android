@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The one button that finishes a screen, filled with the accent -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/primary_button"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/choice_tile"
+    android:layout_marginStart="@dimen/screen_margin"
+    android:layout_marginEnd="@dimen/screen_margin"
+    android:layout_marginTop="@dimen/group_gap"
+    android:gravity="center"
+    android:background="@drawable/choice_on"
+    android:clickable="true"
+    android:focusable="true"
+    android:textColor="@color/on_dark"
+    android:textSize="@dimen/row_title"
+    android:textStyle="bold" />

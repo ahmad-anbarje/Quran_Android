@@ -244,7 +244,7 @@
     <string name="stats_read_month">Reading time this month</string>
     <string name="cal_hijri">Hijri</string>
     <string name="cal_greg">Gregorian</string>
-    <string name="stats_page_times_open">Time on each page read today</string>
+    <string name="stats_page_times_open">Time on each page</string>
     <string name="goal_done">Today\'s goal is done</string>
     <string name="time_and">%1$s %2$s</string>
     <string name="stats_per_hour_note">Shows once you have read a few pages</string>
@@ -374,7 +374,7 @@
     <string name="ring_days_met">Days goal met</string>
     <string name="ring_pages_learned">Pages memorised</string>
     <string name="ring_of_quran">of the Quran</string>
-    <string name="stats_speed_today">Your speed today</string>
+    <string name="stats_speed_today">Reading speed</string>
     <string name="speed_per_page">%1$s a page</string>
     <string name="speed_per_hour">%1$s an hour, that is %2$s</string>
     <string name="khatma_read_left">Read %1$s, %2$s to go</string>

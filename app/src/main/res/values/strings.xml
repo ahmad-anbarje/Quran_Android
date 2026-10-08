@@ -294,7 +294,7 @@
     <string name="stats_read_month">وقت القراءة هذا الشهر</string>
     <string name="cal_hijri">هجري</string>
     <string name="cal_greg">ميلادي</string>
-    <string name="stats_page_times_open">وقت كل صفحة قرأتها اليوم</string>
+    <string name="stats_page_times_open">وقت كل صفحة قرأتها</string>
     <string name="goal_done">أتممت هدف اليوم</string>
     <string name="time_and">%1$s و%2$s</string>
     <string name="stats_per_hour_note">يظهر بعد أن تقرأ بضع صفحات</string>
@@ -443,7 +443,7 @@
     <string name="ring_days_met">أيام أتممتها</string>
     <string name="ring_pages_learned">صفحات حفظتها</string>
     <string name="ring_of_quran">من القرآن</string>
-    <string name="stats_speed_today">سرعتك اليوم</string>
+    <string name="stats_speed_today">سرعة قراءتك</string>
     <string name="speed_per_page">%1$s للصفحة</string>
     <string name="speed_per_hour">%1$s في الساعة، أي %2$s</string>
     <string name="khatma_read_left">قرأت %1$s، وبقي %2$s</string>

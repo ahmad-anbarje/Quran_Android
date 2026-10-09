@@ -127,7 +127,7 @@ fun Activity.colorSheet(
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         override fun afterTextChanged(s: Editable?) {
             if (echoing) return
-            val code = s?.toString()?.trim()?.removePrefix("#").orEmpty()
+            val code = latinDigits(s?.toString()?.trim()?.removePrefix("#").orEmpty())
             if (code.length != 6) return
             val rgb = code.toIntOrNull(16) ?: return
             typing = true

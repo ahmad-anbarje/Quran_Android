@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.jaredrummler.android.colorpicker.ColorPickerView
+import java.util.Locale
 
 // Quick picks per kind of colour: a good highlight colour is no colour for a page
 
@@ -77,7 +78,7 @@ fun Activity.colorSheet(
     fun sayHex(color: Int) {
         if (typing) return
         echoing = true
-        hex.setText(String.format("#%06X", 0xFFFFFF and color))
+        hex.setText(String.format(Locale.ROOT, "#%06X", 0xFFFFFF and color))
         hex.setSelection(hex.text.length)
         echoing = false
     }

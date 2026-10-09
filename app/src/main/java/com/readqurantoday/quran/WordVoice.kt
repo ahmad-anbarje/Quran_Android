@@ -25,6 +25,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy
 import java.io.File
 import java.util.concurrent.Executors
+import java.util.Locale
 
 // One word said on its own, from the word-by-word recordings; apart from Recite so a surah keeps its place
 @OptIn(UnstableApi::class)
@@ -58,8 +59,9 @@ object WordVoice {
 
     val saying get() = ended != null
 
+    // Latin digits whatever the phone's language: an Arabic-digit name is a file the server does not have
     private fun uri(surah: Int, ayah: Int, word: Int): Uri =
-        "$BASE/%03d_%03d_%03d.mp3".format(surah, ayah, word + 1).toUri()
+        "$BASE/%03d_%03d_%03d.mp3".format(Locale.ROOT, surah, ayah, word + 1).toUri()
 
     private fun sources(context: Context): CacheDataSource.Factory = sources ?: run {
         val app = context.applicationContext

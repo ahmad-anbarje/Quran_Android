@@ -2,7 +2,8 @@
 <!-- One page to tick: its number, filled when chosen -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
-    android:layout_height="@dimen/choice_tile"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/choice_tile"
     android:layout_weight="1"
     android:layout_margin="@dimen/choice_gap"
     android:gravity="center"

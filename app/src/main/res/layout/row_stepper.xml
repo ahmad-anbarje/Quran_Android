@@ -34,7 +34,8 @@
     <TextView
         android:id="@+id/step_value"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/step_button"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/step_button"
         android:minWidth="@dimen/step_value"
         android:gravity="center"
         android:background="@drawable/row_flat"

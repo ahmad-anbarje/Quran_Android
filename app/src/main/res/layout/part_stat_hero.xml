@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- A statistic told large: a ring with the figure inside, then a title, a line, a note and a trend beside it -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
                 android:textSize="@dimen/hero_value"
+                tools:ignore="SpUsage"
                 android:textStyle="bold"
                 android:includeFontPadding="false"
                 android:maxLines="1" />
@@ -40,7 +42,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_mute"
-                android:textSize="@dimen/row_meta"
+                android:textSize="@dimen/ring_unit"
+                tools:ignore="SpUsage"
                 android:includeFontPadding="false"
                 android:maxLines="1" />
         </LinearLayout>

@@ -81,10 +81,12 @@
     <!-- Statistics: the ring that tells a figure large, and the small tiles beside it -->
     <dimen name="ring_size">96dp</dimen>
     <dimen name="ring_stroke">8dp</dimen>
+    <!-- Text inside a ring is part of the ring, so it is sized in dp with it: large phone text would overflow the circle -->
+    <dimen name="ring_unit">11dp</dimen>
     <!-- Three goal rings side by side: today, the week, the month -->
     <dimen name="ring_small">80dp</dimen>
-    <dimen name="ring_small_value">22sp</dimen>
-    <dimen name="hero_value">26sp</dimen>
+    <dimen name="ring_small_value">22dp</dimen>
+    <dimen name="hero_value">26dp</dimen>
     <dimen name="tile_value">20sp</dimen>
     <!-- A long figure, such as hours and minutes, shrinks to this rather than being cut -->
     <dimen name="tile_value_min">12sp</dimen>

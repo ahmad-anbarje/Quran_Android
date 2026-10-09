@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- A ring: the figure inside; below, when or what it is, then what its figure counts -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_weight="1"
@@ -29,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text"
                 android:textSize="@dimen/ring_small_value"
+                tools:ignore="SpUsage"
                 android:textStyle="bold"
                 android:includeFontPadding="false"
                 android:maxLines="1" />
@@ -39,7 +41,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/text_mute"
-                android:textSize="@dimen/row_meta"
+                android:textSize="@dimen/ring_unit"
+                tools:ignore="SpUsage"
                 android:includeFontPadding="false"
                 android:maxLines="1" />
         </LinearLayout>

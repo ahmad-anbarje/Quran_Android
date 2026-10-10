@@ -25,8 +25,9 @@ class PlacesPane(
     private val tabs = SwipeTabs(
         pager, strip,
         intArrayOf(R.string.list_pages, R.string.list_surahs, R.string.marks_col_saved),
+        // The slide between lists is their movement; a rise on top of it blinked the rows out mid-swipe
         ViewPages(pages)
-    ) { page -> columns[page].riseChildren() }
+    )
 
     // Rebuilt on every return: reading changes the history and saved pages
     fun build() {

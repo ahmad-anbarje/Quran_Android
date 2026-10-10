@@ -8,15 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 
 /**
- * The switch over a pager, as the index and achievements both have it: tap a segment or swipe, and the segment of
- * the page in view is marked. [shown] hears each page as it comes into view.
+ * The switch over a pager, as the index, places and achievements have it: tap a segment or swipe, and the segment
+ * of the page in view is marked.
  */
 class SwipeTabs(
     private val pager: ViewPager2,
     strip: View,
     names: IntArray,
-    pages: RecyclerView.Adapter<*>,
-    private val shown: (Int) -> Unit = {}
+    pages: RecyclerView.Adapter<*>
 ) {
 
     // As many segments as names; the strip's spare ones are hidden
@@ -42,7 +41,6 @@ class SwipeTabs(
                 if (position == on) return
                 on = position
                 mark(position)
-                shown(position)
             }
         })
         mark(pager.currentItem)

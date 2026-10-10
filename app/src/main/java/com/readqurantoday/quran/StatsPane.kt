@@ -21,8 +21,9 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private val tabs = SwipeTabs(
         pager, strip,
         intArrayOf(R.string.sec_reading, R.string.sec_hifz, R.string.sec_khatma, R.string.sec_listening),
+        // The slide between tabs is their movement; a rise on top of it blinked the cards out mid-swipe
         ViewPages(pages)
-    ) { page -> if (built) columns[page].riseChildren() }
+    )
 
     private val cards = StatCards(host, columns[0])
     private val rings = GoalRings(cards)
@@ -33,8 +34,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
     private val hifz = HifzTab(cards, rings)
     private val khatma = KhatmaTab(cards) { build() }
     private val listening = ListeningTab(cards)
-
-    private var built = false
 
     // Rebuilt whole after any change: the cards are few and every number may move together
     fun build(motion: Motion = Motion.UPDATE) {
@@ -54,7 +53,6 @@ class StatsPane(private val host: Activity, strip: View, pager: ViewPager2) {
             columns[tabs.current].riseChildren()
             celebrateOnce()
         }
-        built = true
     }
 
     // The first look at the day's reached goal is met with a celebration; later looks are quiet

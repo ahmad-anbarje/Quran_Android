@@ -159,14 +159,14 @@ object Settings {
 
     // Enough to find one's way back; more becomes a list to search, not a place to return to
     private const val SURAHS_KEPT = 10
-    private const val PAGES_KEPT = 20
+    private const val PAGES_KEPT = 5
 
     /** Surahs read lately, newest first, each at the page it was left on. */
     fun recent(ctx: Context): List<Read> = reads(ctx, RECENT)
 
     /** Pages read lately, newest first, each once. Until any were kept, the surahs' last pages stand in. */
     fun recentPages(ctx: Context): List<Read> =
-        reads(ctx, RECENT_PAGES).ifEmpty { recent(ctx).sortedByDescending { it.at } }
+        reads(ctx, RECENT_PAGES).ifEmpty { recent(ctx).sortedByDescending { it.at } }.take(PAGES_KEPT)
 
     /** Note that [page] of [surah] was just read. */
     fun noteRead(ctx: Context, surah: Int, page: Int) {

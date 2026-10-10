@@ -20,7 +20,13 @@ class PageTimesActivity : CardsActivity(R.string.stats_page_times) {
         cards.removeAllViews()
         val today = Stats.day(this, Stats.today())
         val sec = today.pages.associateWith { today.pageSec.getValue(it) }
-        if (sec.isEmpty()) return
+        // Opened from the places tab before anything is read today: it says so rather than stand empty
+        if (sec.isEmpty()) {
+            layoutInflater.card(cards, 0, listOf(
+                (layoutInflater.inflate(R.layout.row_empty, cards, false) as TextView).apply { setText(R.string.stats_none_today) }
+            ))
+            return
+        }
 
         // The two ends of the day; its total and pace are on the achievements tab already
         val quickest = sec.minBy { it.value }

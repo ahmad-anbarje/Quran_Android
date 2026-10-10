@@ -33,7 +33,7 @@ class PlacesPane(
     fun build() {
         columns.forEach { it.removeAllViews() }
         fill(columns[PAGES], R.string.places_pages_head, Settings.recentPages(host).map(::pageRow), R.string.no_recent_pages)
-        todayRow()?.let { blow.card(columns[PAGES], 0, listOf(it)) }
+        blow.card(columns[PAGES], 0, listOf(todayRow()))
         fill(columns[SURAHS], R.string.places_surahs_head, recentSurahs().map(::surahRow), R.string.no_recent)
         fill(columns[SAVED], 0, Settings.marks(host).map(::savedRow), R.string.no_marks)
     }
@@ -44,13 +44,12 @@ class PlacesPane(
     private fun fill(into: LinearLayout, title: Int, rows: List<View>, none: Int) =
         blow.card(into, title, rows.ifEmpty { listOf(empty(into, none)) })
 
-    // Every page read today with the time it took, the screen achievements opens too; nothing read, no row
-    private fun todayRow(): View? {
+    // Every page read today with the time it took, the screen achievements opens too; always there, beneath the latest few
+    private fun todayRow(): View {
         val read = Stats.day(host, Stats.today()).pages.size
-        if (read == 0) return null
         return blow.inflate(R.layout.row_progress, columns[0], false).apply {
             findViewById<TextView>(R.id.prog_label).setText(R.string.places_today_all)
-            findViewById<TextView>(R.id.prog_value).text = pagesSaid(read, host.resources)
+            findViewById<TextView>(R.id.prog_value).text = if (read == 0) none(host.resources) else pagesSaid(read, host.resources)
             opens { host.startActivity(Intent(host, PageTimesActivity::class.java)) }
         }
     }

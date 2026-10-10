@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 
 // Juz, hizb or pages: each row opens, or recites from, the page it begins on
@@ -11,7 +12,7 @@ class DivisionAdapter(
     private val starts: IntArray,
     private val title: (Int) -> String,
     private val where: (Int) -> String,
-    private val more: ((Int) -> String)?,
+    private val quarters: ((Int) -> List<Int>)?,
     private val onOpen: (Int) -> Unit,
     private val onPlay: (Int) -> Unit,
     private val onReciter: (Int) -> Unit,
@@ -33,10 +34,7 @@ class DivisionAdapter(
         row.findViewById<TextView>(R.id.div_num).text = figures(number, row.resources)
         row.findViewById<TextView>(R.id.div_title).text = title(number)
         row.findViewById<TextView>(R.id.div_where).text = where(page)
-        row.findViewById<TextView>(R.id.div_more).apply {
-            visibility = if (more == null) View.GONE else View.VISIBLE
-            text = more?.invoke(number)
-        }
+        fillQuarters(row, quarters?.invoke(number).orEmpty())
 
         // The seam belongs between two rows, not under the last one
         row.findViewById<View>(R.id.divider).visibility =
@@ -49,5 +47,38 @@ class DivisionAdapter(
         // Only the row being recited shows pause, and only its own button waits for the audio
         val here = playing() == number
         sayPlayButton(row, playing = here && Recite.wantsToPlay(), waiting = here && Recite.waiting())
+    }
+
+    // A pie for each quarter in, with its page; heard whole as one sentence
+    private fun fillQuarters(row: View, pages: List<Int>) {
+        val line = row.findViewById<View>(R.id.div_quarters)
+        if (pages.size < QUARTERS.size) {
+            line.visibility = View.GONE
+            return
+        }
+        val res = row.resources
+        val size = res.getDimensionPixelSize(R.dimen.quarter_icon)
+        val tint = row.context.getColor(R.color.accent)
+        line.visibility = View.VISIBLE
+        QUARTERS.forEachIndexed { i, (id, icon) ->
+            row.findViewById<TextView>(id).apply {
+                text = figures(pages[i], res)
+                val pie = AppCompatResources.getDrawable(context, icon)?.mutate()?.apply {
+                    setBounds(0, 0, size, size)
+                    setTint(tint)
+                }
+                setCompoundDrawablesRelative(pie, null, null, null)
+            }
+        }
+        line.contentDescription = res.getString(R.string.hizb_quarters,
+            figures(pages[0], res), figures(pages[1], res), figures(pages[2], res))
+    }
+
+    private companion object {
+        val QUARTERS = listOf(
+            R.id.div_q1 to R.drawable.ic_quarter_1,
+            R.id.div_q2 to R.drawable.ic_quarter_2,
+            R.id.div_q3 to R.drawable.ic_quarter_3
+        )
     }
 }

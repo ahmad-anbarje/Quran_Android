@@ -31,12 +31,12 @@ class IndexPane(
     /** Rows show which part is being recited; called as the recitation moves or stops. */
     fun refresh() = lists.forEach { it.notifyDataSetChanged() }
 
-    private fun division(starts: IntArray, title: Int, where: (Int) -> String, more: ((Int) -> String)?, numberOf: (Int) -> Int) =
+    private fun division(starts: IntArray, title: Int, where: (Int) -> String, quarters: ((Int) -> List<Int>)?, numberOf: (Int) -> Int) =
         DivisionAdapter(
             starts = starts,
             title = { n -> host.getString(title, figures(n, res)) },
             where = where,
-            more = more,
+            quarters = quarters,
             onOpen = open,
             onPlay = { page -> play(page, numberOf) },
             onReciter = { page -> pickReciter(Surahs.ofPage(page)) },
@@ -45,18 +45,51 @@ class IndexPane(
         )
 
     // Where a hizb's quarter, half and three-quarters begin, by page
-    private fun quarters(hizb: Int): String {
-        val at = Surahs.quartersOf(hizb).drop(1).map { figures(it, res) }
-        if (at.size < 3) return ""
-        return host.getString(R.string.hizb_quarters, at[0], at[1], at[2])
-    }
+    private fun quarters(hizb: Int): List<Int> = Surahs.quartersOf(hizb).drop(1)
 
     // The surah it begins in, then the page
     private fun surahAndPage(page: Int): String = meta(page, host.getString(R.string.head_page, figures(page, res)))
 
-    // A page names its own number already, so its juz stands in for it
-    private fun surahAndJuz(page: Int): String =
-        meta(page, host.getString(R.string.head_juz, figures(Surahs.juzOfPage(page), res)))
+    // A page names its own number already, so its surahs and juz stand in: every surah on it, and both juz
+    // where one begins partway down, so the row never names only what the page ends in
+    private fun surahAndJuz(page: Int): String {
+        val surahs = Surahs.onPage(page)
+        val named = when (surahs.size) {
+            0 -> ""
+            1 -> host.getString(R.string.surah_named, surahs[0].name)
+            else -> surahs.joinToString(host.getString(R.string.list_join)) { it.name }
+        }
+        val juz = juzSaid(page)
+        return if (named.isEmpty()) juz else host.getString(R.string.place_line, named, juz)
+    }
+
+    private fun juzSaid(page: Int): String {
+        val span = Surahs.juzSpanOf(page)
+        return if (span.first == span.last) host.getString(R.string.head_juz, figures(span.first, res))
+        else host.getString(R.string.head_juz, host.getString(R.string.range, figures(span.first, res), figures(span.last, res)))
+    }
+
+    // --- finding one's way down a long list ---
+
+    // What the bubble beside a dragged handle says, for each list: the row at the top of the list
+    private fun dragLabel(list: Int): (Int) -> String = when (list) {
+        SURAHS -> { at -> Surahs.list().getOrNull(at)?.let { host.getString(R.string.surah_named, it.name) }.orEmpty() }
+        JUZ -> { at -> host.getString(R.string.head_juz, figures(at + 1, res)) }
+        HIZB -> { at -> host.getString(R.string.head_hizb, figures(at + 1, res)) }
+        else -> { at ->
+            host.getString(R.string.place_line, host.getString(R.string.head_page, figures(at + 1, res)), juzSaid(at + 1))
+        }
+    }
+
+    // The pages list is grouped by the juz each page opens in, its heading pinned over the rows
+    private val pageJuz by lazy { IntArray(Mushaf.PAGES) { Surahs.juzSpanOf(it + 1).first } }
+
+    private fun juzHead(juz: Int): String {
+        val first = pageJuz.indexOfFirst { it == juz } + 1
+        val last = pageJuz.indexOfLast { it == juz } + 1
+        return host.getString(R.string.place_line, host.getString(R.string.head_juz, figures(juz, res)),
+            host.getString(R.string.pages_range, figures(first, res), figures(last, res)))
+    }
 
     private fun meta(page: Int, after: String): String {
         val surah = Surahs.ofPage(page) ?: return after
@@ -77,16 +110,27 @@ class IndexPane(
 
         override fun getItemCount() = lists.size
 
+        // One view type a list, so each is made knowing which it is
+        override fun getItemViewType(position: Int) = position
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Page(
             (host.layoutInflater.inflate(R.layout.part_list, parent, false) as RecyclerView).apply {
                 layoutManager = LinearLayoutManager(parent.context)
                 keepToColumn()
-                addHandle()
+                addHandle(dragLabel(viewType))
+                if (viewType == PAGES) addPinnedHead(part = { pageJuz[it] }, said = ::juzHead)
             }
         )
 
         override fun onBindViewHolder(holder: Page, position: Int) {
             holder.list.adapter = lists[position]
         }
+    }
+
+    private companion object {
+        const val SURAHS = 0
+        const val JUZ = 1
+        const val HIZB = 2
+        const val PAGES = 3
     }
 }

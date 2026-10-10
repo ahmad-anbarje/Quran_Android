@@ -380,4 +380,5 @@
     <string name="no_recent_pages">No pages read yet</string>
     <string name="places_pages_head">Latest pages you’ve read</string>
     <string name="places_surahs_head">Latest you’ve read in each surah</string>
+    <string name="range">%1$s–%2$s</string>
 </resources>

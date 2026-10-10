@@ -55,15 +55,24 @@
                 android:textColor="@color/text_mute"
                 android:textSize="@dimen/row_meta" />
 
-            <!-- A hizb's quarters, where it has them -->
-            <TextView
-                android:id="@+id/div_more"
-                android:layout_width="match_parent"
+            <!-- A hizb's quarter, half and three-quarters, each a pie and the page it begins on -->
+            <LinearLayout
+                android:id="@+id/div_quarters"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="@color/text_mute"
-                android:textSize="@dimen/row_meta"
-                android:visibility="gone" />
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/div_q1"
+                    style="@style/QuarterMark" />
+                <TextView
+                    android:id="@+id/div_q2"
+                    style="@style/QuarterMark" />
+                <TextView
+                    android:id="@+id/div_q3"
+                    style="@style/QuarterMark" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Play starts the recitation here; the reciter is chosen for the whole app -->

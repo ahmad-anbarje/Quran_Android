@@ -157,8 +157,8 @@ object Settings {
     private const val RECENT = "recent"
     private const val RECENT_PAGES = "recent_pages"
 
-    // Enough to find one's way back; more becomes a list to search, not a place to return to
-    private const val SURAHS_KEPT = 10
+    // Every surah read, once each; pages only lately, or the list would grow toward the whole mushaf
+    private const val SURAHS_KEPT = 114
     private const val PAGES_KEPT = 20
 
     /** Surahs read lately, newest first, each at the page it was left on. */

@@ -447,4 +447,7 @@
     <string name="step_less">أقل</string>
     <string name="step_more">أكثر</string>
     <string name="no_recent_pages">لم تُقرأ أي صفحة بعد</string>
+    <string name="places_pages_head">آخر الصفحات التي قرأتها</string>
+    <string name="places_surahs_head">آخر ما قرأته من كل سورة</string>
+    <string name="places_today_all">كل الصفحات التي قرأتها اليوم</string>
 </resources>

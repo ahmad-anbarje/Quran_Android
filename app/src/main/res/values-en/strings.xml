@@ -213,7 +213,7 @@
     <string name="stats_week">Listening, last %1$s days</string>
     <string name="stats_chart_desc">Pages read on each of the last %1$s days, most on one day %2$s</string>
     <string name="stats_most_heard">Most heard in the last %1$s days</string>
-    <string name="stats_private">Your reading and memorising statistics stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen.</string>
+    <string name="stats_private">Your reading and memorising statistics stay on your phone and are never sent anywhere. A page counts as read after ten seconds on screen, or five for the two short opening pages, Al-Fatiha and the start of Al-Baqarah.</string>
     <string name="percent">%1$s%%</string>
     <string name="time_under_minute">Under a minute</string>
     <plurals name="pages_count">

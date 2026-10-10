@@ -9,7 +9,14 @@ import java.util.TimeZone
 object Stats {
 
     /** A page counts as read once it has been on screen this long in a day. */
-    const val READ_FROM_SEC = 10
+    private const val READ_FROM_SEC = 10
+
+    // Pages 1 and 2 are the mushaf's two half pages, about seven lines each, so half the time reads them
+    private const val SHORT_PAGES = 2
+    private const val SHORT_READ_FROM_SEC = 5
+
+    /** How long [page] must be on screen in a day to count as read. */
+    fun readFrom(page: Int) = if (page <= SHORT_PAGES) SHORT_READ_FROM_SEC else READ_FROM_SEC
 
     /** One stay on a page counts for at most this long; a page left open is not being read. */
     const val STAY_CAP_SEC = 300
@@ -40,7 +47,7 @@ object Stats {
 
     /** One day: seconds on each page, seconds heard from each surah, and whether the reader said the goal was done. */
     data class Day(val pageSec: Map<Int, Int>, val surahSec: Map<Int, Int>, val doneByHand: Boolean = false) {
-        val pages: List<Int> get() = pageSec.filterValues { it >= READ_FROM_SEC }.keys.sorted()
+        val pages: List<Int> get() = pageSec.filter { (page, sec) -> sec >= readFrom(page) }.keys.sorted()
         val readSec: Int get() = pageSec.values.sum()
         val listenSec: Int get() = surahSec.values.sum()
     }
@@ -71,7 +78,7 @@ object Stats {
         val total = (day.pageSec[page] ?: 0) + sec
         val after = day.copy(pageSec = day.pageSec + (page to total))
         save(ctx, today(), after)
-        if (total >= READ_FROM_SEC) markRead(ctx, page)
+        if (total >= readFrom(page)) markRead(ctx, page)
     }
 
     fun addHeard(ctx: Context, surah: Int, sec: Int) {

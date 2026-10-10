@@ -56,7 +56,6 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
-    <string name="marks_col_recent">Last read</string>
     <string name="marks_col_saved">Bookmarks</string>
     <string name="no_marks">No saved pages</string>
     <string name="no_recent">Nothing read yet</string>
@@ -378,4 +377,5 @@
     <string name="goal_pick_day">Pick at least one day</string>
     <string name="step_less">Less</string>
     <string name="step_more">More</string>
+    <string name="no_recent_pages">No pages read yet</string>
 </resources>

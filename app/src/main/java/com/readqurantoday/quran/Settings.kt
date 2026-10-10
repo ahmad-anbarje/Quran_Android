@@ -151,33 +151,43 @@ object Settings {
 
     // --- recently read ---
 
-    /** A surah read lately: the page it was last left on, and when, in epoch ms (0 unknown). */
+    /** A place read lately: its surah, the page, and when, in epoch ms (0 unknown). */
     data class Read(val surah: Int, val page: Int, val at: Long)
 
     private const val RECENT = "recent"
+    private const val RECENT_PAGES = "recent_pages"
 
-    // More than a few recent surahs becomes a list to search, not a place to return to
-    const val RECENT_KEEP = 5
+    // Enough to find one's way back; more becomes a list to search, not a place to return to
+    private const val SURAHS_KEPT = 10
+    private const val PAGES_KEPT = 20
 
-    // Newest first, one entry per surah, each at the page it was left on
-    fun recent(ctx: Context): List<Read> {
-        val saved = store(ctx).getString(RECENT, "").orEmpty()
-        return saved.split(';').mapNotNull { entry ->
+    /** Surahs read lately, newest first, each at the page it was left on. */
+    fun recent(ctx: Context): List<Read> = reads(ctx, RECENT)
+
+    /** Pages read lately, newest first, each once. Until any were kept, the surahs' last pages stand in. */
+    fun recentPages(ctx: Context): List<Read> =
+        reads(ctx, RECENT_PAGES).ifEmpty { recent(ctx).sortedByDescending { it.at } }
+
+    /** Note that [page] of [surah] was just read. */
+    fun noteRead(ctx: Context, surah: Int, page: Int) {
+        if (surah <= 0 || page <= 0) return
+        val now = Read(surah, page, System.currentTimeMillis())
+        store(ctx).edit {
+            putString(RECENT, said((listOf(now) + recent(ctx).filter { it.surah != surah }).take(SURAHS_KEPT)))
+            putString(RECENT_PAGES, said((listOf(now) + recentPages(ctx).filter { it.page != page }).take(PAGES_KEPT)))
+        }
+    }
+
+    private fun reads(ctx: Context, key: String): List<Read> =
+        store(ctx).getString(key, "").orEmpty().split(';').mapNotNull { entry ->
             val p = entry.split(':')
             if (p.size != 3) return@mapNotNull null
             val surah = p[0].toIntOrNull() ?: return@mapNotNull null
             val page = p[1].toIntOrNull() ?: return@mapNotNull null
             Read(surah, page, p[2].toLongOrNull() ?: 0L)
         }
-    }
 
-    /** Note that [page] of [surah] was just read. */
-    fun noteRead(ctx: Context, surah: Int, page: Int) {
-        if (surah <= 0 || page <= 0) return
-        val now = Read(surah, page, System.currentTimeMillis())
-        val kept = (listOf(now) + recent(ctx).filter { it.surah != surah }).take(RECENT_KEEP)
-        store(ctx).edit { putString(RECENT, kept.joinToString(";") { "${it.surah}:${it.page}:${it.at}" }) }
-    }
+    private fun said(reads: List<Read>) = reads.joinToString(";") { "${it.surah}:${it.page}:${it.at}" }
 
     // --- page style ---
 

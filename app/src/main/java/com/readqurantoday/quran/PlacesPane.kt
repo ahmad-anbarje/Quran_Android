@@ -6,32 +6,44 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.viewpager2.widget.ViewPager2
 
-// Places tab: recent surahs first, then saved pages in mushaf order
+// Places tab: pages read lately, surahs read lately and saved pages, a swipe apart and never mixed
 class PlacesPane(
     private val host: Activity,
-    private val into: LinearLayout,
+    strip: View,
+    pager: ViewPager2,
     private val open: (Int) -> Unit
 ) {
 
     private val blow = host.layoutInflater
 
+    // One scrolling column a list
+    private val pages = List(LISTS) { blow.inflate(R.layout.part_scroll_column, pager, false).apply { keepToColumn() } }
+    private val columns = pages.map { it.findViewById<LinearLayout>(R.id.column) }
+
+    private val tabs = SwipeTabs(
+        pager, strip,
+        intArrayOf(R.string.list_pages, R.string.list_surahs, R.string.marks_col_saved),
+        ViewPages(pages)
+    ) { page -> columns[page].riseChildren() }
+
+    // Rebuilt on every return: reading changes the history and saved pages
     fun build() {
-        into.removeAllViews()
-
-        val recent = recent()
-        blow.card(into, R.string.marks_col_recent,
-            if (recent.isEmpty()) listOf(empty(R.string.no_recent))
-            else recent.map { recentRow(it) })
-
-        val saved = Settings.marks(host)
-        blow.card(into, R.string.marks_col_saved,
-            if (saved.isEmpty()) listOf(empty(R.string.no_marks))
-            else saved.map { savedRow(it) })
+        columns.forEach { it.removeAllViews() }
+        fill(columns[PAGES], Settings.recentPages(host).map(::pageRow), R.string.no_recent_pages)
+        fill(columns[SURAHS], recentSurahs().map(::surahRow), R.string.no_recent)
+        fill(columns[SAVED], Settings.marks(host).map(::savedRow), R.string.no_marks)
     }
 
+    /** The list in view comes in, as every tab does when it is opened. */
+    fun rise() = columns[tabs.current].riseChildren()
+
+    private fun fill(into: LinearLayout, rows: List<View>, none: Int) =
+        blow.card(into, 0, rows.ifEmpty { listOf(empty(into, none)) })
+
     /* The reading history; before any was kept, the one last page stands in for it. */
-    private fun recent(): List<Settings.Read> {
+    private fun recentSurahs(): List<Settings.Read> {
         val kept = Settings.recent(host)
         if (kept.isNotEmpty()) return kept
         val last = Settings.lastPage(host)
@@ -39,7 +51,23 @@ class PlacesPane(
         return if (last in 1..604) listOf(Settings.Read(surah.id, last, 0L)) else emptyList()
     }
 
-    private fun recentRow(read: Settings.Read): View {
+    // A page is the row's own title, in plain type; its surah is only where it is, so it sits in the line beneath
+    private fun pageRow(read: Settings.Read): View {
+        val row = place(R.drawable.ic_surahs, read.page)
+        row.findViewById<View>(R.id.place_title).visibility = View.GONE
+        row.findViewById<TextView>(R.id.place_heading).apply {
+            text = host.getString(R.string.head_page, figures(read.page, host.resources))
+            visibility = View.VISIBLE
+        }
+        val surah = Surahs.ofPage(read.page)
+        val juz = host.getString(R.string.head_juz, figures(Surahs.juzOfPage(read.page), host.resources))
+        row.findViewById<TextView>(R.id.place_detail).text =
+            if (surah == null) juz else host.getString(R.string.place_line, host.getString(R.string.surah_named, surah.name), juz)
+        stamp(row, read.at)
+        return row
+    }
+
+    private fun surahRow(read: Settings.Read): View {
         val row = place(R.drawable.ic_surahs, read.page)
         val surah = Surahs.list().firstOrNull { it.id == read.surah }
         fillSurahTitle(row.findViewById(R.id.place_title), read.surah, R.dimen.surah_title_row)
@@ -56,14 +84,7 @@ class PlacesPane(
                 )
             }
         }
-
-        // Entries carried over from before times were kept have no time
-        if (read.at > 0L) {
-            row.findViewById<TextView>(R.id.place_when).apply {
-                text = ago(read.at, host.resources)
-                visibility = View.VISIBLE
-            }
-        }
+        stamp(row, read.at)
         return row
     }
 
@@ -74,7 +95,7 @@ class PlacesPane(
         row.findViewById<ImageView>(R.id.place_remove).apply {
             imageTintList = ColorStateList.valueOf(host.getColor(R.color.text_mute))
             visibility = View.VISIBLE
-            /* Dropping a saved page rebuilds the tab, so the card closes up at once. */
+            /* Dropping a saved page rebuilds the lists, so the card closes up at once. */
             setOnClickListener {
                 Settings.toggleMark(host, page)
                 build()
@@ -83,9 +104,18 @@ class PlacesPane(
         return row
     }
 
-    /* The row both kinds share: the disc with its icon, and the tap that goes there. */
+    // How long ago; entries carried over from before times were kept have none
+    private fun stamp(row: View, at: Long) {
+        if (at <= 0L) return
+        row.findViewById<TextView>(R.id.place_when).apply {
+            text = ago(at, host.resources)
+            visibility = View.VISIBLE
+        }
+    }
+
+    /* The row every list shares: the disc with its icon, and the tap that goes there. */
     private fun place(icon: Int, page: Int): View {
-        val row = blow.inflate(R.layout.row_place, into, false)
+        val row = blow.inflate(R.layout.row_place, columns[0], false)
         row.findViewById<ImageView>(R.id.place_icon).apply {
             setImageResource(icon)
             imageTintList = ColorStateList.valueOf(host.getColor(R.color.accent))
@@ -103,6 +133,13 @@ class PlacesPane(
         )
     }
 
-    private fun empty(said: Int): View =
+    private fun empty(into: LinearLayout, said: Int): View =
         (blow.inflate(R.layout.row_empty, into, false) as TextView).apply { setText(said) }
+
+    private companion object {
+        const val LISTS = 3
+        const val PAGES = 0
+        const val SURAHS = 1
+        const val SAVED = 2
+    }
 }

@@ -130,20 +130,26 @@
                 android:paddingBottom="@dimen/list_end_pad" />
         </LinearLayout>
 
-        <!-- Places pane: recent surahs and saved pages, filled by PlacesPane -->
-        <ScrollView
+        <!-- Places: pages read, surahs read and saved pages, a swipe apart; filled by PlacesPane -->
+        <LinearLayout
             android:id="@+id/pane_marks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:visibility="gone">
 
-            <LinearLayout
-                android:id="@+id/places_groups"
+            <!-- First child, so the status bar takes its colour -->
+            <include
+                android:id="@+id/marks_segments"
+                layout="@layout/part_segments" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/marks_pages"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="24dp" />
-        </ScrollView>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layoutDirection="locale" />
+        </LinearLayout>
 
         <!-- Achievements: goal, reading, khatma and listening, a swipe apart; filled by StatsPane -->
         <LinearLayout

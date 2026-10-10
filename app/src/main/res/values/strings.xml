@@ -84,8 +84,7 @@
     <string name="theme_system">حسب النظام</string>
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
-    <string name="marks_col_recent">آخر قراءة</string>
-    <string name="marks_col_saved">المحفوظ</string>
+    <string name="marks_col_saved">المحفوظة</string>
     <string name="no_marks">لا توجد صفحات محفوظة</string>
     <string name="no_recent">لم تُقرأ أي سورة بعد</string>
     <string name="ago_now">الآن</string>
@@ -447,4 +446,5 @@
     <string name="goal_pick_day">اختر يومًا واحدًا على الأقل</string>
     <string name="step_less">أقل</string>
     <string name="step_more">أكثر</string>
+    <string name="no_recent_pages">لم تُقرأ أي صفحة بعد</string>
 </resources>

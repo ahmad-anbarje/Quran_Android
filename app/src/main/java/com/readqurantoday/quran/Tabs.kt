@@ -19,7 +19,8 @@ class SwipeTabs(
     private val shown: (Int) -> Unit = {}
 ) {
 
-    private val segs = SEGMENTS.map { strip.findViewById<TextView>(it) }
+    // As many segments as names; the strip's spare ones are hidden
+    private val segs = SEGMENTS.take(names.size).map { strip.findViewById<TextView>(it) }
 
     /* The switch's own face, read before the first bolding, so the app font survives it. */
     private val face = segs[0].typeface
@@ -27,6 +28,7 @@ class SwipeTabs(
     private var on = pager.currentItem
 
     init {
+        SEGMENTS.drop(names.size).forEach { strip.findViewById<View>(it).visibility = View.GONE }
         segs.forEachIndexed { i, seg ->
             seg.setText(names[i])
             seg.setOnClickListener { pager.currentItem = i }

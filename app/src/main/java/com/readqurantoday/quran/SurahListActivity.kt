@@ -32,6 +32,9 @@ class SurahListActivity : LanguageActivity() {
     private val iconsOutline = intArrayOf(R.drawable.ic_surahs_outline, R.drawable.ic_search, R.drawable.ic_bookmark_outline, R.drawable.ic_stats_outline, R.drawable.ic_settings_outline)
 
     // Kept, not made anew, so it remembers where its rings stood
+    private val placesPane by lazy {
+        PlacesPane(this, findViewById(R.id.marks_segments), findViewById(R.id.marks_pages)) { page -> answer(page) }
+    }
     private val statsPane by lazy { StatsPane(this, findViewById(R.id.stats_segments), findViewById(R.id.stats_pages)) }
 
     private lateinit var panes: List<View>
@@ -69,7 +72,7 @@ class SurahListActivity : LanguageActivity() {
         Surahs.load(this)
         Recite.load(this)
         setContentView(R.layout.activity_index)
-        keepToColumn(R.id.search_head, R.id.segments, R.id.search_list, R.id.pane_marks, R.id.stats_segments, R.id.pane_settings, R.id.card_resume)
+        keepToColumn(R.id.search_head, R.id.segments, R.id.search_list, R.id.marks_segments, R.id.stats_segments, R.id.pane_settings, R.id.card_resume)
         // Back from the menu leaves the app rather than returning to the reader behind it
         onBackPressedDispatcher.addCallback(this) { finishAffinity() }
         watchKeyboard()
@@ -128,7 +131,7 @@ class SurahListActivity : LanguageActivity() {
         // Every tab comes in the same way; achievements also fills its rings, so it brings itself in
         if (enter) when (paneIds[which]) {
             R.id.pane_stats -> statsPane.build(StatsPane.Motion.OPEN)
-            R.id.pane_marks -> findViewById<ViewGroup>(R.id.places_groups).riseChildren()
+            R.id.pane_marks -> placesPane.rise()
             R.id.pane_settings -> findViewById<ViewGroup>(R.id.settings_groups).riseChildren()
             else -> panes[which].riseWhole()
         }
@@ -317,9 +320,7 @@ class SurahListActivity : LanguageActivity() {
 
 
     // Rebuilt on every return: reading changes the history and saved pages
-    private fun marks() {
-        PlacesPane(this, findViewById(R.id.places_groups)) { page -> answer(page) }.build()
-    }
+    private fun marks() = placesPane.build()
 
     // Rebuilt on every return: reading and listening move the numbers, and the rings move with them
     private fun stats() = statsPane.build()

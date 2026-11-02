@@ -93,13 +93,12 @@ class TajweedCard(private val host: Activity, private val closed: () -> Unit) {
     // Hears the word on its own; while a recitation plays it is paused, as the player's Word button does
     private fun listen(surah: Int, ayah: Int, word: Int): View = host.layoutInflater.inflate(R.layout.part_word_listen, rows, false).apply {
         val icon = findViewById<ImageView>(R.id.word_listen_icon)
-        val label = findViewById<TextView>(R.id.word_listen_label)
         val accent = ColorStateList.valueOf(host.getColor(R.color.accent))
         icon.imageTintList = accent
         WordVoice.warm(host, surah, ayah, word)
+        // Faded while the word is fetched
         fun say() {
             icon.imageAlpha = if (WordVoice.loading) LOADING_ALPHA else 0xFF
-            label.setText(if (WordVoice.loading) R.string.loading else R.string.label_word)
         }
         setOnClickListener {
             if (WordVoice.loading) return@setOnClickListener

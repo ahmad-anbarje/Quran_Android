@@ -145,6 +145,8 @@
     <dimen name="quarter_text">@dimen/text_meta</dimen>
     <dimen name="quarter_gap">4dp</dimen>
     <dimen name="quarter_chip_height">36dp</dimen>
+    <!-- The Tajweed card's round button to hear its word -->
+    <dimen name="word_listen">44dp</dimen>
     <dimen name="quarter_chip_radius">18dp</dimen>
     <!-- Between a juz or hizb row's name and its surah beside it -->
     <dimen name="part_surah_gap">8dp</dimen>

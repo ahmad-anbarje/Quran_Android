@@ -1362,9 +1362,9 @@ class MushafPageView @JvmOverloads constructor(
         private const val LIT_BOX_ALPHA = 0x5C
         private const val LIT_ROUND = 0.12f
         // The folio's cartouche: its height and middle in the foot's margin, and padding either side of the figure
-        private const val FOOT_TALL = 0.62f
+        private const val FOOT_TALL = 0.6f
         // The frame's foot stands this share of the bottom margin above the screen's edge, clear of the gesture bar
-        private const val FOOT_LIFT = 0.3f
+        private const val FOOT_LIFT = 0.4f
         private const val FOOT_PAD = 0.6f
         // The titles font's letters stand smaller than the labels' at one size; this evens them
         private const val HEAD_TITLE_MATCH = 1.4f

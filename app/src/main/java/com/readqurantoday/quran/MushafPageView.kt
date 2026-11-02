@@ -1136,8 +1136,18 @@ class MushafPageView @JvmOverloads constructor(
         // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
         val band = padX * BAND
         val outside = side - padX
-        // The head and foot bands each fill their whole margin, the page's top to its text and its text to its end
-        if (adorned) frame.frame(canvas, outside, 0f, width - outside, pageTall, band, padTop + headBand, padBottom, edge, ink, paperColour)
+        if (adorned) {
+            // Thin over the labels' line, or filling the page's top to its text
+            val thinHead = frameStyle != FRAME_FULL
+            val top = if (thinHead) mid - band / 2f else 0f
+            val head = if (thinHead) band else padTop + headBand
+            val (bottom, foot) = when (frameStyle) {
+                FRAME_RAISED -> pageTall - padBottom * RAISED_LIFT to padBottom * FOOT_TALL
+                FRAME_THIN -> pageTall - padBottom / 2f + band / 2f to band
+                else -> pageTall to padBottom
+            }
+            frame.frame(canvas, outside, top, width - outside, bottom, band, head, foot, edge, ink, paperColour)
+        }
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
@@ -1177,7 +1187,11 @@ class MushafPageView @JvmOverloads constructor(
     }
 
     // Where the folio sits: the middle of the foot, which on a scrolling page is below the screen
-    private fun footMid() = pageTall - padBottom / 2f
+    private fun footMid() =
+        if (frameStyle == FRAME_RAISED) pageTall - padBottom * (RAISED_LIFT + FOOT_TALL / 2f) else pageTall - padBottom / 2f
+
+    // The frame's style: full head and foot, the earlier raised foot, thin head and foot, or a thin head over a full foot
+    private val frameStyle get() = Settings.frameStyle(context)
 
     // The labels' weight as a stroke around each letter, in step with their size: shrunk labels thin with them
     private fun thicken() {
@@ -1364,6 +1378,11 @@ class MushafPageView @JvmOverloads constructor(
         private const val LIT_ROUND = 0.12f
         // The folio's cartouche: its height and middle in the foot's margin, and padding either side of the figure
         private const val FOOT_TALL = 0.6f
+        // The frame styles to try, and how far the raised foot stands above the screen's edge, as a share of the margin
+        private const val FRAME_FULL = 0
+        private const val FRAME_RAISED = 1
+        private const val FRAME_THIN = 2
+        private const val RAISED_LIFT = 0.4f
         private const val FOOT_PAD = 0.6f
         // The titles font's letters stand smaller than the labels' at one size; this evens them
         private const val HEAD_TITLE_MATCH = 1.4f

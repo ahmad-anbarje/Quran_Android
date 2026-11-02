@@ -172,6 +172,7 @@ class ReaderActivity : LanguageActivity() {
         dressWindow()
         EndPages.load(this)
         buildPager()
+        frameTrial()
 
         sayThemeBtn()
         // click targets are the full-height containers, not the inner ImageViews
@@ -691,6 +692,29 @@ class ReaderActivity : LanguageActivity() {
             Settings.DARK -> R.string.theme_dark
             else -> R.string.theme_system
         })
+    }
+
+    // Debug builds only: a button cycling the page frame's styles, to choose among them on the phone
+    private fun frameTrial() {
+        if (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE == 0) return
+        val names = listOf("Full", "Old", "Thin", "Mixed")
+        val button = TextView(this).apply {
+            fun say() { text = "Frame ${Settings.frameStyle(this@ReaderActivity) + 1}: ${names[Settings.frameStyle(this@ReaderActivity)]}" }
+            say()
+            setTextColor(android.graphics.Color.WHITE)
+            setBackgroundColor(0xCC000000.toInt())
+            val pad = (8 * resources.displayMetrics.density).toInt()
+            setPadding(pad * 2, pad, pad * 2, pad)
+            setOnClickListener {
+                Settings.setFrameStyle(this@ReaderActivity, (Settings.frameStyle(this@ReaderActivity) + 1) % Settings.FRAME_STYLES)
+                say()
+                redrawPages()
+            }
+        }
+        findViewById<FrameLayout>(R.id.root).addView(button, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT,
+            android.view.Gravity.BOTTOM or android.view.Gravity.START
+        ).apply { bottomMargin = (4 * resources.displayMetrics.density).toInt(); marginStart = (12 * resources.displayMetrics.density).toInt() })
     }
 
     private fun redrawPages() {

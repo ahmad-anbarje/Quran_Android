@@ -43,7 +43,7 @@ object Mushaf {
     /** The plain edition, which every page has. */
     val plain = Book("data/mushaf.json", "v4", { "gq$it.txt" }, Packed)
 
-    /** The Tajweed edition: the 1421 lines, coloured, each page's font downloaded on first need. */
+    /** The Tajweed edition: the same 1441 rows, coloured by rule; its fonts ship in the app. */
     val tajweed = Book("data/mushaf-tajweed.json", "v2", { "gt$it.txt" }, TajweedFonts)
 
     private var nameFamily: Typeface? = null

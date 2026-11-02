@@ -170,8 +170,6 @@ object Settings {
 
     fun setTajweedExplained(context: Context) = store(context).edit { putBoolean(TAJWEED_EXPLAINED, true) }
 
-    /** A page's coloured font arrived: pages and their pictures are drawn again. */
-    fun tajweedArrived() = restyled()
 
     // --- recently read ---
 

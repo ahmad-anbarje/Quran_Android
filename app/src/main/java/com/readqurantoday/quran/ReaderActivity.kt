@@ -725,12 +725,11 @@ class ReaderActivity : LanguageActivity() {
         }.also { it.show(page, surah, ayah, word) }
     }
 
-    // Tajweed just switched on over a marked word: its card, once its page's coloured font is here
+    // Tajweed just switched on over a marked word: its card
     private fun showMarkedTajweed() {
         val (surah, ayah, word) = shownWord ?: return
         val from = Ayat.pageOf(surah, ayah).takeIf { it > 0 } ?: return
-        val page = pageWith(surah, ayah, word, from)
-        if (TajweedFonts.has(this, page)) openCard(page, surah, ayah, word)
+        openCard(pageWith(surah, ayah, word, from), surah, ayah, word)
     }
 
     // The page a word is printed on: an ayah may run on past the page it opens on
@@ -755,11 +754,6 @@ class ReaderActivity : LanguageActivity() {
         rc.syncWithRecite()
 
         Recite.onChange = heard
-        // A page's coloured font arriving redraws the pages, and their pictures with them
-        TajweedFonts.arrived = {
-            Settings.tajweedArrived()
-            redrawPages()
-        }
         clock.listening(Recite.isPlaying())
         // The page opens clear even mid-recitation; the lit word shows where it is, a tap brings the player
         if (Recite.playing != 0) {
@@ -788,7 +782,6 @@ class ReaderActivity : LanguageActivity() {
 
     override fun onPause() {
         super.onPause()
-        TajweedFonts.arrived = null
         clock.pause()
         WordVoice.stop()
         /* Only if it is still ours: see heard. */

@@ -1,10 +1,10 @@
 # Builds the Tajweed edition's data and each page font's glyph table. The fonts are drawn for the 1441 lines, numbered as
 # the 1421 edition's glyphs: their words are taken in the 1421 data's order and set in the 1441 edition's rows.
-# The fonts themselves are downloaded by the app (TajweedFonts); only their measures ship.
+# The fonts ship beside their tables as tj{page}.otf, so the build keeps them compressed (only .ttf is left stored).
 # Usage: python tools/tajweed_build.py <v2 mushaf.json> <Tajweed font dir: p1.ttf .. p604.ttf>
 #   v2 mushaf.json: git show 79039dd:app/src/main/assets/data/mushaf.json
 #   fonts: https://static-cdn.tarteel.ai/qul/fonts/quran_fonts/v4-tajweed/ttf/p{page}.ttf
-import json, os, sys
+import json, os, shutil, sys
 from fontTools.ttLib import TTFont
 
 OLD, FONTS = sys.argv[1], sys.argv[2]
@@ -28,6 +28,7 @@ for p in range(1, 605):
     cm, mt, up = f.getBestCmap(), f['hmtx'].metrics, f['head'].unitsPerEm
     rows = [str(up)] + [f'{c} {f.getGlyphID(cm[c])} {mt[cm[c]][0]}' for c in sorted(cm)]
     open(os.path.join(TABLES, f'gt{p}.txt'), 'w', newline='\n').write('\n'.join(rows) + '\n')
+    shutil.copyfile(os.path.join(FONTS, f'p{p}.ttf'), os.path.join(TABLES, f'tj{p}.otf'))
 
     marks = old['marks'][str(p)]
     # The page's words in reading order, the recited pairs split as the recitation counts them

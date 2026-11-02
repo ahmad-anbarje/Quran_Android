@@ -739,14 +739,9 @@ class MushafPageView @JvmOverloads constructor(
         step = 0f
     }
 
-    // Tajweed once this page's font and the Basmalahs' are here; until then it is asked for and the plain page stands in
-    private fun bookFor(page: Int): Book {
-        if (plainOnly || previewMode || !Settings.tajweed(context)) return Mushaf.plain
-        val need = listOf(page, Mushaf.tajweed.basmalahPage)
-        if (need.all { TajweedFonts.has(context, it) }) return Mushaf.tajweed
-        TajweedFonts.fetch(context, need + (1..Mushaf.AHEAD).flatMap { listOf(page + it, page - it) })
-        return Mushaf.plain
-    }
+    // Tajweed when it is on, except where only the plain page will do
+    private fun bookFor(page: Int): Book =
+        if (plainOnly || previewMode || !Settings.tajweed(context)) Mushaf.plain else Mushaf.tajweed
 
     override fun onDraw(canvas: Canvas) {
         // The view may have been cached when the style changed, with no bind to tell it

@@ -4,80 +4,37 @@ import android.content.Context
 import android.graphics.Typeface
 import android.graphics.fonts.Font
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import java.io.File
-import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
 
 /**
- * The Tajweed edition's page fonts (King Fahd Complex, coloured by rule), fetched one page at a time as they are first needed.
- * Each is rewritten for the screen: its plain letters take the reader's ink; its Tajweed colours stay the same by day and by night.
+ * The Tajweed edition's page fonts (King Fahd Complex, coloured by rule), shipped compressed in the app's assets.
+ * Each is rewritten for the screen once, into the cache: its plain letters take the reader's ink; its Tajweed
+ * colours stay the same by day and by night.
  */
 object TajweedFonts : FontSource {
 
-    private const val SOURCE = "https://static-cdn.tarteel.ai/qul/fonts/quran_fonts/v4-tajweed/ttf/p%d.ttf"
     private const val FOLDER = "tajweed"
     // The palette slots of the plain letters, which then follow the paint
     private val LETTERS = setOf(0, 13, 14)
     private const val FOREGROUND = 0xFFFF
 
-    /** Heard on the main thread when a page's font has arrived. */
-    var arrived: (() -> Unit)? = null
-
-    private val main = Handler(Looper.getMainLooper())
-    private val fetching = Executors.newFixedThreadPool(2)
-    private val asked = ConcurrentHashMap.newKeySet<Int>()
     // Keyed by page
     private val fonts = ConcurrentHashMap<Int, Font>()
     private val faces = ConcurrentHashMap<Int, Typeface>()
 
-    private fun folder(context: Context) = File(context.filesDir, FOLDER)
-    private fun file(context: Context, page: Int) = File(folder(context), "p$page.ttf")
-
-    /** Whether [page] can be drawn in colour now. */
-    fun has(context: Context, page: Int) = file(context, page).exists()
-
-    /** Fetches the fonts of [pages] not yet here, nearest first; [arrived] hears each. */
-    fun fetch(context: Context, pages: List<Int>) {
-        val app = context.applicationContext
-        for (page in pages) {
-            if (page !in 1..Mushaf.PAGES || has(app, page) || !asked.add(page)) continue
-            fetching.execute {
-                if (download(app, page)) main.post { arrived?.invoke() }
-                asked.remove(page)
-            }
-        }
-    }
-
-    private fun download(context: Context, page: Int): Boolean {
-        val target = file(context, page)
-        val part = File(target.path + ".part")
-        return try {
-            target.parentFile?.mkdirs()
-            val link = URL(SOURCE.format(page)).openConnection() as HttpURLConnection
-            link.connectTimeout = 15_000
-            link.readTimeout = 30_000
-            if (link.responseCode != HttpURLConnection.HTTP_OK) return false
-            link.inputStream.use { input -> part.outputStream().use { input.copyTo(it) } }
-            part.renameTo(target)
-        } catch (_: Exception) {
-            part.delete()
-            false
-        }
-    }
+    // A page's font as the app carries it
+    private fun bytes(context: Context, page: Int): ByteArray =
+        context.assets.open("tj$page.otf").use { it.readBytes() }
 
     // The page's font as the screen wants it, written once into the cache
     private fun ready(context: Context, page: Int): File? {
-        if (!has(context, page)) return null
         val out = File(context.cacheDir, "$FOLDER/p$page-ink.ttf")
         if (out.exists()) return out
         return try {
             out.parentFile?.mkdirs()
-            out.writeBytes(recolour(file(context, page).readBytes()))
+            out.writeBytes(recolour(bytes(context, page)))
             out
         } catch (_: Exception) {
             null
@@ -116,10 +73,7 @@ object TajweedFonts : FontSource {
 
     /** The palette slots [glyphIds] on [page] are coloured with: the Tajweed rules they carry. */
     fun slotsOf(context: Context, page: Int, glyphIds: List<Int>): Set<Int> {
-        val all = slots.getOrPut(page) {
-            if (!has(context, page)) return emptySet()
-            layersOf(file(context, page).readBytes())
-        }
+        val all = slots.getOrPut(page) { layersOf(bytes(context, page)) }
         return glyphIds.flatMap { all[it].orEmpty() }.toSet()
     }
 

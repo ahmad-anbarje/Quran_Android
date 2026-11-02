@@ -38,34 +38,54 @@ fun Activity.showTajweedLegend() {
     raise(dialog, view)
 }
 
-/** Word [word] of [surah]:[ayah] on [page] as the Tajweed edition prints it, large, with only the rules its colours mark; [closed] hears it go. */
-fun Activity.showTajweedWord(page: Int, surah: Int, ayah: Int, word: Int, closed: () -> Unit) {
-    val glyphs = Mushaf.tajweed.glyphsOf(page, surah, ayah, word) ?: return
-    val table = Mushaf.tajweed.glyphs(this, page) ?: return
-    val ids = glyphs.codePoints().toArray().map { table.id(it) }.filter { it >= 0 }
-    val used = TajweedFonts.slotsOf(this, page, ids)
-    val rules = RULES.filter { rule -> rule.slots.any { it in used } }
+/**
+ * A card of one word as the Tajweed edition prints it, large, with only the rules its colours mark.
+ * While a recitation plays it is handed each word the reciter reaches; [closed] hears it go.
+ */
+class TajweedCard(private val host: Activity, private val closed: () -> Unit) {
 
-    val dialog = Dialog(this, R.style.SheetDialog)
-    val view = layoutInflater.inflate(R.layout.part_sheet, null)
-    view.findViewById<TextView>(R.id.sheet_title).setText(R.string.tajweed_word)
-    val rows = view.findViewById<LinearLayout>(R.id.sheet_rows)
-    rows.addView(TextView(this).apply {
-        gravity = Gravity.CENTER
-        setTextColor(Settings.inkColor(this@showTajweedWord))
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_heading))
-        val shown = (WORD_PAD * resources.displayMetrics.density).toInt()
-        setPadding(0, shown, 0, shown)
-        text = SpannableString(OBJECT).apply {
-            setSpan(QuranWordSpan(this@showTajweedWord, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed), 0, 1, 0)
-        }
-    })
-    if (rules.isEmpty()) rows.addView((layoutInflater.inflate(R.layout.row_setting_note, rows, false) as TextView).apply {
-        setText(R.string.tajweed_word_plain)
-    })
-    for (rule in rules) rows.addView(ruleRow(rows, rule))
-    dialog.setOnDismissListener { closed() }
-    raise(dialog, view)
+    private val dialog = Dialog(host, R.style.SheetDialog)
+    private val view = host.layoutInflater.inflate(R.layout.part_sheet, null)
+    private val rows = view.findViewById<LinearLayout>(R.id.sheet_rows)
+    private var shown: IntArray? = null
+
+    val open get() = dialog.isShowing
+
+    init {
+        view.findViewById<TextView>(R.id.sheet_title).setText(R.string.tajweed_word)
+        dialog.setOnDismissListener { closed() }
+    }
+
+    /** Shows word [word] of [surah]:[ayah] on [page], raising the card the first time. */
+    fun show(page: Int, surah: Int, ayah: Int, word: Int) {
+        val now = intArrayOf(page, surah, ayah, word)
+        if (now.contentEquals(shown)) return
+        val glyphs = Mushaf.tajweed.glyphsOf(page, surah, ayah, word) ?: return
+        val table = Mushaf.tajweed.glyphs(host, page) ?: return
+        shown = now
+        val ids = glyphs.codePoints().toArray().map { table.id(it) }.filter { it >= 0 }
+        val used = TajweedFonts.slotsOf(host, page, ids)
+        val rules = RULES.filter { rule -> rule.slots.any { it in used } }
+
+        rows.removeAllViews()
+        rows.addView(TextView(host).apply {
+            gravity = Gravity.CENTER
+            setTextColor(Settings.inkColor(host))
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_heading))
+            val pad = (WORD_PAD * resources.displayMetrics.density).toInt()
+            setPadding(0, pad, 0, pad)
+            text = SpannableString(OBJECT).apply {
+                setSpan(QuranWordSpan(host, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed), 0, 1, 0)
+            }
+        })
+        if (rules.isEmpty()) rows.addView((host.layoutInflater.inflate(R.layout.row_setting_note, rows, false) as TextView).apply {
+            setText(R.string.tajweed_word_plain)
+        })
+        for (rule in rules) rows.addView(host.ruleRow(rows, rule))
+        if (!dialog.isShowing) host.raise(dialog, view)
+    }
+
+    fun close() = dialog.dismiss()
 }
 
 private fun Activity.ruleRow(rows: LinearLayout, rule: Rule) = layoutInflater.inflate(R.layout.item_tajweed_rule, rows, false).apply {

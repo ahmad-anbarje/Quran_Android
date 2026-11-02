@@ -1355,7 +1355,7 @@ class MushafPageView @JvmOverloads constructor(
         // How far the ornament's colour is drawn toward the page by night
         private const val NIGHT_RECEDE = 0.3f
         // The box behind a lit word that keeps its colours: its alpha out of 255, and its corners as a share of a line
-        private const val LIT_BOX_ALPHA = 0x40
+        private const val LIT_BOX_ALPHA = 0x5C
         private const val LIT_ROUND = 0.12f
         // The folio's cartouche: its height and middle in the foot's margin, and padding either side of the figure
         private const val FOOT_TALL = 0.75f

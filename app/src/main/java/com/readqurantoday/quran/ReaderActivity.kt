@@ -310,15 +310,15 @@ class ReaderActivity : LanguageActivity() {
                 val page = view as MushafPageView
                 page.wordUnder(lastTouchX, lastTouchY)?.let {
                     when {
-                        // Mid-recitation the recitation goes on from the held word, its rules shown beside it
+                        // Mid-recitation the recitation goes on from the held word, and the card follows it word by word
                         page.inTajweed && Recite.isPlaying() -> {
                             controls.offer(surah = it[0], ayah = it[1], w = it[2])
-                            showTajweedWord(page.page, it[0], it[1], it[2]) {}
+                            openCard(page.page, it[0], it[1], it[2])
                         }
                         // Otherwise in Tajweed a held word shows its rules and nothing else, and is let go with them
                         page.inTajweed -> {
                             lit(it[0], it[1], it[2])
-                            showTajweedWord(page.page, it[0], it[1], it[2]) { if (!Recite.isPlaying()) lit(-1, -1, -1) }
+                            openCard(page.page, it[0], it[1], it[2])
                         }
                         else -> controls.offer(surah = it[0], ayah = it[1], w = it[2])
                     }
@@ -706,7 +706,26 @@ class ReaderActivity : LanguageActivity() {
         for (i in 0 until pager.childCount) {
             (pager.getChildAt(i) as? MushafPageView)?.light(surah, ayah, word)
         }
+        // An open Tajweed card shows the word now lit, as the recitation moves on
+        if (word >= 0 && card?.open == true) Ayat.pageOf(surah, ayah).takeIf { it > 0 }?.let { at ->
+            card?.show(pageWith(surah, ayah, word, at), surah, ayah, word)
+        }
     }
+
+    /* The Tajweed card open over the page, if any. */
+    private var card: TajweedCard? = null
+
+    private fun openCard(page: Int, surah: Int, ayah: Int, word: Int) {
+        card = TajweedCard(this) {
+            card = null
+            // Held with nothing playing, the word is let go with its card
+            if (!Recite.isPlaying()) lit(-1, -1, -1)
+        }.also { it.show(page, surah, ayah, word) }
+    }
+
+    // The page a word is printed on: an ayah may run on past the page it opens on
+    private fun pageWith(surah: Int, ayah: Int, word: Int, from: Int): Int =
+        (from..minOf(from + 1, pages)).firstOrNull { Mushaf.tajweed.glyphsOf(it, surah, ayah, word) != null } ?: from
 
     // --- lifecycle ---
 

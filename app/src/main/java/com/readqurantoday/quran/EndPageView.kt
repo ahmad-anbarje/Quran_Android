@@ -134,7 +134,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         val mark = Settings.resolvedAyahColor(context)
         val ink = if (night) ColorUtils.blendARGB(mark, Settings.paperColor(context), NIGHT_RECEDE) else mark
         val bottom = height - inset - FOOT * dp / 2f
-        frame.frame(canvas, inset, inset, width - inset, bottom, edge, ink)
+        frame.frame(canvas, 0f, inset, width.toFloat(), bottom + FOOT * dp / 2f, inset * BAND, FOOT * dp, edge, ink, Settings.paperColor(context))
         // The page's letter in a cartouche on the frame's foot, as a Quran page's number
         label.textSize = LABEL * dp
         label.color = mark
@@ -162,5 +162,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         const val LABEL_TALL = 1.6f
         const val LABEL_PAD = 0.5f
         const val NIGHT_RECEDE = 0.3f
+        // The frame's band as a share of the margin round the text
+        const val BAND = 0.9f
     }
 }

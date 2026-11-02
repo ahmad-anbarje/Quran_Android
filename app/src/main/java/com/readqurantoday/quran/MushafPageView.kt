@@ -1129,11 +1129,14 @@ class MushafPageView @JvmOverloads constructor(
         // The surah's name the size of the juz and page beside it, kept small enough that its marks clear the cartouche
         val titleSize = minOf(label.textSize * HEAD_TITLE_MATCH, tall * LABEL_CLEAR / Mushaf.HEAD_TALL)
 
-        // The frame runs from the labels' middle down to the folio's, just outside the text
+        // The frame's band fills the margins to the page's own edges, from the labels' line down to its foot
         val mid = y + (label.ascent() + label.descent()) / 2f
         val edge = resources.displayMetrics.density * FRAME_EDGE
         val ink = adornInk()
-        if (adorned) frame.frame(canvas, left - padX * FRAME_GAP, mid, left + measure + padX * FRAME_GAP, footMid(), edge, ink)
+        // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
+        val band = padX * BAND
+        val outside = side - padX
+        if (adorned) frame.frame(canvas, outside, mid - band / 2f, width - outside, pageTall, band, padBottom * FOOT_TALL, edge, ink, paperColour)
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
@@ -1173,7 +1176,7 @@ class MushafPageView @JvmOverloads constructor(
     }
 
     // Where the folio sits: the middle of the foot, which on a scrolling page is below the screen
-    private fun footMid() = pageTall - padBottom * FOOT_MID
+    private fun footMid() = pageTall - padBottom * FOOT_TALL / 2f
 
     // The labels' weight as a stroke around each letter, in step with their size: shrunk labels thin with them
     private fun thicken() {
@@ -1267,7 +1270,7 @@ class MushafPageView @JvmOverloads constructor(
         label.textAlign = Paint.Align.CENTER
         val mid = footMid()
         if (adorned) {
-            // Within the foot's margin, clear of the last line and of the page's edge
+            // On the frame's foot, as tall as it, as the printed page's number sits on its border
             val tall = padBottom * FOOT_TALL
             val edge = resources.displayMetrics.density * FRAME_EDGE
             frame.label(canvas, width / 2f, mid, label.measureText(folioText) / 2f + tall * FOOT_PAD, tall, edge, adornInk(), paperColour)
@@ -1345,7 +1348,8 @@ class MushafPageView @JvmOverloads constructor(
         // The frame: its rules' thickness in dp, its gap outside the text as a share of the side margin,
         // and its label cartouches' height in the head band and padding either side of their words
         private const val FRAME_EDGE = 1.2f
-        private const val FRAME_GAP = 0.6f
+        // The frame's band as a share of the side margin, leaving a little of it clear beside the text
+        private const val BAND = 0.7f
         private const val LABEL_TALL = 1.1f
         // Of a label cartouche's height, what a title may fill
         private const val LABEL_CLEAR = 0.86f
@@ -1358,8 +1362,7 @@ class MushafPageView @JvmOverloads constructor(
         private const val LIT_BOX_ALPHA = 0x5C
         private const val LIT_ROUND = 0.12f
         // The folio's cartouche: its height and middle in the foot's margin, and padding either side of the figure
-        private const val FOOT_TALL = 0.75f
-        private const val FOOT_MID = 0.55f
+        private const val FOOT_TALL = 0.62f
         private const val FOOT_PAD = 0.6f
         // The titles font's letters stand smaller than the labels' at one size; this evens them
         private const val HEAD_TITLE_MATCH = 1.4f

@@ -441,7 +441,7 @@
     <string name="tajweed_legend_intro">The colours of the Tajweed Mushaf by Dar Al-Maarifa.</string>
     <string name="tajweed_necessary">Necessary madd (6 counts)</string>
     <string name="tajweed_obligatory">Connected madd (4 or 5 counts)</string>
-    <string name="tajweed_permissible">Madd (2, 4 or 6 counts)</string>
+    <string name="tajweed_permissible">Separated madd (2 / 4 / 6 counts)</string>
     <string name="tajweed_natural">Madd of 2 counts</string>
     <string name="tajweed_ghunnah">Ghunnah / ikhfa</string>
     <string name="tajweed_qalqalah">Qalqalah</string>

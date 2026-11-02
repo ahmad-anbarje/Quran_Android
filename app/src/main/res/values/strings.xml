@@ -518,9 +518,9 @@
     <string name="places_tab_places">آخر المواضع</string>
     <string name="tajweed_legend">ألوان التجويد</string>
     <string name="tajweed_legend_intro">ألوان مصحف التجويد من دار المعرفة.</string>
-    <string name="tajweed_necessary">المد اللازم (٦ حركات)</string>
-    <string name="tajweed_obligatory">المد المتصل (٤ أو ٥ حركات)</string>
-    <string name="tajweed_permissible">مدّ (٢ أو ٤ أو ٦ حركات)</string>
+    <string name="tajweed_necessary">المد اللازم (6 حركات)</string>
+    <string name="tajweed_obligatory">المد المتصل (4 أو 5 حركات)</string>
+    <string name="tajweed_permissible">المد المنفصل (2 / 4 / 6 حركات)</string>
     <string name="tajweed_natural">مدّ حركتان</string>
     <string name="tajweed_ghunnah">غنة / إخفاء</string>
     <string name="tajweed_qalqalah">قلقلة</string>

@@ -1,5 +1,6 @@
 package com.readqurantoday.quran
 
+import android.content.Context
 import android.app.Activity
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -217,12 +218,16 @@ class ReaderPlayer(
         }
         /* Speed: each tap steps to the next, round to the start. */
         panel.findViewById<View>(R.id.p_speed).setOnClickListener {
-            val now = SPEEDS.indexOfFirst { it == Settings.speed(host) }
-            val next = SPEEDS[(now + 1) % SPEEDS.size]
-            Settings.setSpeed(host, next)
-            Recite.setSpeed(next)
+            stepSpeed(host)
             say()
         }
+    }
+
+    /** Recites from word [w] of [surah]:[ayah], or pauses a recitation that is sounding. */
+    fun playOrPause(surah: Int, ayah: Int, w: Int) {
+        if (Recite.wantsToPlay()) { play(); return }
+        offer(surah, ayah, w)
+        if (!Recite.wantsToPlay()) play()
     }
 
     /* Play: start from the pending position, or toggle if already running. */
@@ -320,9 +325,21 @@ class ReaderPlayer(
         const val PENDING_SURAH = "pending-surah"
         const val PENDING_FROM = "pending-from"
         const val PENDING_AUTO = "pending-auto"
-
-        /* The speeds a tap steps through, and what each is called; in step with each other. */
-        val SPEEDS = floatArrayOf(0.75f, 1f, 1.25f)
-        val SPEED_NAMES = listOf(R.string.speed_slow, R.string.speed_normal, R.string.speed_fast)
     }
 }
+
+/* The speeds a tap steps through, and what each is called; in step with each other. */
+private val SPEEDS = floatArrayOf(0.75f, 1f, 1.25f)
+private val SPEED_NAMES = listOf(R.string.speed_slow, R.string.speed_normal, R.string.speed_fast)
+
+/** The recitation's next speed, round to the start, kept and put in force. */
+fun stepSpeed(context: Context) {
+    val now = SPEEDS.indexOfFirst { it == Settings.speed(context) }
+    val next = SPEEDS[(now + 1) % SPEEDS.size]
+    Settings.setSpeed(context, next)
+    Recite.setSpeed(next)
+}
+
+/** What the recitation's speed now is called. */
+fun speedName(context: Context): Int =
+    SPEED_NAMES.getOrElse(SPEEDS.indexOfFirst { it == Settings.speed(context) }) { R.string.speed_normal }

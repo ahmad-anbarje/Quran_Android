@@ -310,12 +310,13 @@ class ReaderActivity : LanguageActivity() {
                 val page = view as MushafPageView
                 page.wordUnder(lastTouchX, lastTouchY)?.let {
                     when {
-                        // Mid-recitation the recitation goes on from the held word, and the card follows it word by word
-                        page.inTajweed && Recite.isPlaying() -> {
+                        // A recitation under way, sounding or paused, is moved to the held word, so it marks that word
+                        // and not the one it was at; the card follows it word by word
+                        page.inTajweed && Recite.playing != 0 -> {
                             controls.offer(surah = it[0], ayah = it[1], w = it[2])
                             openCard(page.page, it[0], it[1], it[2])
                         }
-                        // Otherwise in Tajweed a held word shows its rules and nothing else, and is let go with them
+                        // With no recitation a held word shows its rules and nothing else, and is let go with them
                         page.inTajweed -> {
                             lit(it[0], it[1], it[2])
                             openCard(page.page, it[0], it[1], it[2])
@@ -716,10 +717,10 @@ class ReaderActivity : LanguageActivity() {
     private var card: TajweedCard? = null
 
     private fun openCard(page: Int, surah: Int, ayah: Int, word: Int) {
-        card = TajweedCard(this) {
+        card = TajweedCard(this, playOrPause = controls::playOrPause, speedChanged = { controls.say() }) {
             card = null
-            // Held with nothing playing, the word is let go with its card
-            if (!Recite.isPlaying()) lit(-1, -1, -1)
+            // Held with no recitation, the word is let go with its card
+            if (Recite.playing == 0) lit(-1, -1, -1)
         }.also { it.show(page, surah, ayah, word) }
     }
 

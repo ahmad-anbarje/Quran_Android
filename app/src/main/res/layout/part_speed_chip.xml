@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The recitation's speed beside a word's listen button: an outlined chip, its icon and the speed now -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/speed_chip"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/word_listen"
+    android:layout_marginStart="10dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layoutDirection="locale"
+    android:background="@drawable/chip_outline"
+    android:paddingStart="12dp"
+    android:paddingEnd="14dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:contentDescription="@string/speed_name">
+
+    <ImageView
+        android:id="@+id/speed_chip_icon"
+        android:layout_width="@dimen/quarter_icon"
+        android:layout_height="@dimen/quarter_icon"
+        android:layout_marginEnd="6dp"
+        android:src="@drawable/ic_speed"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/speed_chip_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text"
+        android:textSize="@dimen/text_body" />
+</LinearLayout>

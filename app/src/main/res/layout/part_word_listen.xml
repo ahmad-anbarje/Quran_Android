@@ -4,8 +4,6 @@
     android:id="@+id/word_listen"
     android:layout_width="@dimen/word_listen"
     android:layout_height="@dimen/word_listen"
-    android:layout_gravity="center_horizontal"
-    android:layout_marginBottom="12dp"
     android:background="@drawable/chip_outline"
     android:clickable="true"
     android:focusable="true"

@@ -1136,8 +1136,10 @@ class MushafPageView @JvmOverloads constructor(
         // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
         val band = padX * BAND
         val outside = side - padX
-        // The head and foot bands each fill their whole margin, the page's top to its text and its text to its end
-        if (adorned) frame.frame(canvas, outside, 0f, width - outside, pageTall, band, padTop + headBand, padBottom, edge, ink, paperColour)
+        // The head band as deep as the foot, which fills the margin under the text, so the two match; it starts at the
+        // labels' tops rather than the page's, leaving no empty band over the surah's name
+        val depth = minOf(padBottom, padTop + headBand)
+        if (adorned) frame.frame(canvas, outside, padTop + headBand - depth, width - outside, pageTall, band, depth, padBottom, edge, ink, paperColour)
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {

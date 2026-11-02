@@ -24,6 +24,8 @@ class ReaderPlayer(
         fun shownWord(): IntArray?
         fun lit(surah: Int, ayah: Int, word: Int)
         fun redrawPages()
+        /** Shows the Tajweed card of the word marked now, if one is. */
+        fun showMarkedTajweed()
         /** Shows the player, and the controls with it. */
         fun showPlayer()
         /** Lets the controls leave a moment after the sound starts. */
@@ -198,11 +200,11 @@ class ReaderPlayer(
                 Settings.setTajweed(host, on)
                 say()
                 reader.redrawPages()
-                // The first time, the colours are explained, so they are no puzzle
+                // The first time, the colours are explained, so they are no puzzle; after that a word marked shows its rules
                 if (on && !Settings.tajweedExplained(host)) {
                     Settings.setTajweedExplained(host)
                     host.showTajweedLegend()
-                }
+                } else if (on) reader.showMarkedTajweed()
             }
             setOnLongClickListener { host.showTajweedLegend(); true }
         }

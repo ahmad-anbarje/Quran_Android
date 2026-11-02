@@ -50,6 +50,7 @@ class ReaderActivity : LanguageActivity() {
         override fun shownWord() = this@ReaderActivity.shownWord
         override fun lit(surah: Int, ayah: Int, word: Int) = this@ReaderActivity.lit(surah, ayah, word)
         override fun redrawPages() = this@ReaderActivity.redrawPages()
+        override fun showMarkedTajweed() = this@ReaderActivity.showMarkedTajweed()
         override fun showPlayer() = this@ReaderActivity.showPlayer()
         override fun closeSoon() = this@ReaderActivity.closeSoon()
         override fun armClose() = this@ReaderActivity.armClose()
@@ -722,6 +723,14 @@ class ReaderActivity : LanguageActivity() {
             // Held with no recitation, the word is let go with its card
             if (Recite.playing == 0) lit(-1, -1, -1)
         }.also { it.show(page, surah, ayah, word) }
+    }
+
+    // Tajweed just switched on over a marked word: its card, once its page's coloured font is here
+    private fun showMarkedTajweed() {
+        val (surah, ayah, word) = shownWord ?: return
+        val from = Ayat.pageOf(surah, ayah).takeIf { it > 0 } ?: return
+        val page = pageWith(surah, ayah, word, from)
+        if (TajweedFonts.has(this, page)) openCard(page, surah, ayah, word)
     }
 
     // The page a word is printed on: an ayah may run on past the page it opens on

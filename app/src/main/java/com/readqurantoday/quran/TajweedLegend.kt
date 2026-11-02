@@ -85,14 +85,15 @@ class TajweedCard(
                 setSpan(QuranWordSpan(host, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed), 0, 1, 0)
             }
         })
-        // Recite from the word, hear it alone, and while a recitation sounds its speed
+        // Recite from the word, hear it alone, and while a recitation is under way, sounding or paused, its speed;
+        // so pausing and playing never move the buttons
         rows.addView(LinearLayout(host).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
             layoutDirection = View.LAYOUT_DIRECTION_LOCALE
             addView(recite(this, page, surah, ayah, word))
             addView(listen(surah, ayah, word))
-            if (Recite.wantsToPlay()) addView(speed(this))
+            if (Recite.playing != 0) addView(speed(this))
         })
         if (rules.isEmpty()) rows.addView((host.layoutInflater.inflate(R.layout.row_setting_note, rows, false) as TextView).apply {
             setText(R.string.tajweed_word_plain)

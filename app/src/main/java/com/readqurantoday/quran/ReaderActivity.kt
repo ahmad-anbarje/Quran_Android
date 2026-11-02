@@ -172,7 +172,6 @@ class ReaderActivity : LanguageActivity() {
         dressWindow()
         EndPages.load(this)
         buildPager()
-        frameTrial()
 
         sayThemeBtn()
         // click targets are the full-height containers, not the inner ImageViews
@@ -692,40 +691,6 @@ class ReaderActivity : LanguageActivity() {
             Settings.DARK -> R.string.theme_dark
             else -> R.string.theme_system
         })
-    }
-
-    // Debug builds only: a button in the top bar cycling the page frame's styles, to choose among them on the phone
-    private fun frameTrial() {
-        if (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE == 0) return
-        val names = listOf("Full", "Old", "Thin", "Mixed")
-        val beside = findViewById<View>(R.id.btn_theme_wrap)
-        val number = TextView(this).apply {
-            setTextColor(getColor(R.color.accent))
-            setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_heading))
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
-            gravity = android.view.Gravity.CENTER
-        }
-        val name = TextView(this, null, 0, R.style.IconLabel)
-        fun say() {
-            val style = Settings.frameStyle(this)
-            number.text = (style + 1).toString()
-            name.text = names[style]
-        }
-        say()
-        val button = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            gravity = android.view.Gravity.CENTER
-            setBackgroundResource(R.drawable.row_flat)
-            addView(number)
-            addView(name)
-            setOnClickListener {
-                Settings.setFrameStyle(this@ReaderActivity, (Settings.frameStyle(this@ReaderActivity) + 1) % Settings.FRAME_STYLES)
-                say()
-                redrawPages()
-            }
-        }
-        val row = beside.parent as ViewGroup
-        row.addView(button, row.indexOfChild(beside) + 1, android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f))
     }
 
     private fun redrawPages() {

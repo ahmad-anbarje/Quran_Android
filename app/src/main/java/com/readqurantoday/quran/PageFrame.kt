@@ -33,32 +33,25 @@ class PageFrame {
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
 
-        // The almonds along each side, end to end between the corners, each band's as large as its depth allows,
-        // and a rosette in each corner
+        // The almonds along each side, end to end between the corners, and a rosette in each corner
         val half = band / 2f
-        chain(canvas, left + band, top + head / 2f, right - band, top + head / 2f, deep(head, band), edge, ink, paper)
-        chain(canvas, left + band, bottom - foot / 2f, right - band, bottom - foot / 2f, deep(foot, band), edge, ink, paper)
+        chain(canvas, left + band, top + head / 2f, right - band, top + head / 2f, band, edge, ink, paper)
+        chain(canvas, left + band, bottom - foot / 2f, right - band, bottom - foot / 2f, band, edge, ink, paper)
         chain(canvas, left + half, top + head, left + half, bottom - foot, band, edge, ink, paper)
         chain(canvas, right - half, top + head, right - half, bottom - foot, band, edge, ink, paper)
         for (x in floatArrayOf(left + half, right - half)) for (y in floatArrayOf(top + head / 2f, bottom - foot / 2f)) {
             rosette(canvas, x, y, half * ROSETTE, edge, ink, paper)
         }
 
-        // Its rules: a bold one outside with a fine one just within it, and a fine one round the text
+        // Its rules: a bold one outside, a fine one inside
         line.color = ink
         line.strokeWidth = edge
         box.set(left + edge / 2f, top + edge / 2f, right - edge / 2f, bottom - edge / 2f)
         canvas.drawRect(box, line)
         line.strokeWidth = edge / 2f
-        val within = edge * DOUBLE
-        box.set(left + within, top + within, right - within, bottom - within)
-        canvas.drawRect(box, line)
         box.set(left + band, top + head, right - band, bottom - foot)
         canvas.drawRect(box, line)
     }
-
-    // The size a chain is drawn at in a band [depth] deep: no smaller than the sides', no more than the depth holds
-    private fun deep(depth: Float, band: Float) = maxOf(band, depth * DEEP)
 
     // Almonds end to end from (x0, y0) to (x1, y1), along the middle of a band [band] wide, a dot between each two
     private fun chain(canvas: Canvas, x0: Float, y0: Float, x1: Float, y1: Float, band: Float, edge: Float, ink: Int, paper: Int) {
@@ -139,8 +132,5 @@ class PageFrame {
         const val STEP = 1.9f
         const val DOT = 0.07f
         const val ROSETTE = 0.62f
-        // A deep band's chain as a share of its depth, and the fine outer rule's distance within the bold one, in rules
-        const val DEEP = 0.5f
-        const val DOUBLE = 2.6f
     }
 }

@@ -1136,7 +1136,8 @@ class MushafPageView @JvmOverloads constructor(
         // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
         val band = padX * BAND
         val outside = side - padX
-        if (adorned) frame.frame(canvas, outside, mid - band / 2f, width - outside, pageTall - padBottom * FOOT_LIFT, band, padBottom * FOOT_TALL, edge, ink, paperColour)
+        // The head and foot bands each fill their whole margin, the page's top to its text and its text to its end
+        if (adorned) frame.frame(canvas, outside, 0f, width - outside, pageTall, band, padTop + headBand, padBottom, edge, ink, paperColour)
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
@@ -1176,7 +1177,7 @@ class MushafPageView @JvmOverloads constructor(
     }
 
     // Where the folio sits: the middle of the foot, which on a scrolling page is below the screen
-    private fun footMid() = pageTall - padBottom * (FOOT_LIFT + FOOT_TALL / 2f)
+    private fun footMid() = pageTall - padBottom / 2f
 
     // The labels' weight as a stroke around each letter, in step with their size: shrunk labels thin with them
     private fun thicken() {
@@ -1270,7 +1271,7 @@ class MushafPageView @JvmOverloads constructor(
         label.textAlign = Paint.Align.CENTER
         val mid = footMid()
         if (adorned) {
-            // On the frame's foot, as tall as it, as the printed page's number sits on its border
+            // On the frame's foot, as the printed page's number sits on its border
             val tall = padBottom * FOOT_TALL
             val edge = resources.displayMetrics.density * FRAME_EDGE
             frame.label(canvas, width / 2f, mid, label.measureText(folioText) / 2f + tall * FOOT_PAD, tall, edge, adornInk(), paperColour)
@@ -1363,8 +1364,6 @@ class MushafPageView @JvmOverloads constructor(
         private const val LIT_ROUND = 0.12f
         // The folio's cartouche: its height and middle in the foot's margin, and padding either side of the figure
         private const val FOOT_TALL = 0.6f
-        // The frame's foot stands this share of the bottom margin above the screen's edge, clear of the gesture bar
-        private const val FOOT_LIFT = 0.4f
         private const val FOOT_PAD = 0.6f
         // The titles font's letters stand smaller than the labels' at one size; this evens them
         private const val HEAD_TITLE_MATCH = 1.4f

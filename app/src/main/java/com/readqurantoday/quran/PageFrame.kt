@@ -20,24 +20,26 @@ class PageFrame {
     private val shape = Path()
 
     /**
-     * The band round [left], [top], [right], [bottom], [band] wide inward from those edges and [foot] at the bottom,
-     * where the page's number sits; its rules [edge] thick, tinted with [ink], its almonds filled with [paper].
+     * The band round [left], [top], [right], [bottom]: [band] wide at the sides, [head] deep at the top where the page's
+     * labels sit and [foot] at the bottom where its number sits; its rules [edge] thick, tinted with [ink], its almonds
+     * filled with [paper].
      */
-    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, band: Float, foot: Float, edge: Float, ink: Int, paper: Int) {
+    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, band: Float, head: Float, foot: Float,
+              edge: Float, ink: Int, paper: Int) {
         // Only the band is tinted, so what is drawn inside stays as it is
         strip.reset()
         strip.addRect(left, top, right, bottom, Path.Direction.CW)
-        strip.addRect(left + band, top + band, right - band, bottom - foot, Path.Direction.CW)
+        strip.addRect(left + band, top + head, right - band, bottom - foot, Path.Direction.CW)
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
 
         // The almonds along each side, end to end between the corners, and a rosette in each corner
         val half = band / 2f
-        chain(canvas, left + band, top + half, right - band, top + half, band, edge, ink, paper)
+        chain(canvas, left + band, top + head / 2f, right - band, top + head / 2f, band, edge, ink, paper)
         chain(canvas, left + band, bottom - foot / 2f, right - band, bottom - foot / 2f, band, edge, ink, paper)
-        chain(canvas, left + half, top + band, left + half, bottom - foot, band, edge, ink, paper)
-        chain(canvas, right - half, top + band, right - half, bottom - foot, band, edge, ink, paper)
-        for (x in floatArrayOf(left + half, right - half)) for (y in floatArrayOf(top + half, bottom - foot / 2f)) {
+        chain(canvas, left + half, top + head, left + half, bottom - foot, band, edge, ink, paper)
+        chain(canvas, right - half, top + head, right - half, bottom - foot, band, edge, ink, paper)
+        for (x in floatArrayOf(left + half, right - half)) for (y in floatArrayOf(top + head / 2f, bottom - foot / 2f)) {
             rosette(canvas, x, y, half * ROSETTE, edge, ink, paper)
         }
 
@@ -47,7 +49,7 @@ class PageFrame {
         box.set(left + edge / 2f, top + edge / 2f, right - edge / 2f, bottom - edge / 2f)
         canvas.drawRect(box, line)
         line.strokeWidth = edge / 2f
-        box.set(left + band, top + band, right - band, bottom - foot)
+        box.set(left + band, top + head, right - band, bottom - foot)
         canvas.drawRect(box, line)
     }
 

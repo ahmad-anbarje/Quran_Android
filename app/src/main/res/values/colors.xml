@@ -35,7 +35,7 @@
     <color name="tip_mute">#AEBBC7</color>
     <!-- The disc a list row's number sits in: deep enough that its light figure reads plainly -->
     <color name="num_ground">@color/accent</color>
-    <!-- The Tajweed font colours by day, for its legend -->
+    <!-- The Tajweed font's own colours, the same by day and by night, for its legend -->
     <color name="tajweed_necessary">#B50000</color>
     <color name="tajweed_obligatory">#F40000</color>
     <color name="tajweed_permissible">#FF7B00</color>

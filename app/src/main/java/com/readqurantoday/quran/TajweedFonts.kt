@@ -1,7 +1,6 @@
 package com.readqurantoday.quran
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.fonts.Font
 import android.os.Build
@@ -16,7 +15,7 @@ import java.util.concurrent.Executors
 
 /**
  * The Tajweed edition's page fonts (King Fahd Complex, coloured by rule), fetched one page at a time as they are first needed.
- * Each is rewritten for the screen: its plain letters take the reader's ink, and by night it takes the font's own night colours.
+ * Each is rewritten for the screen: its plain letters take the reader's ink; its Tajweed colours stay the same by day and by night.
  */
 object TajweedFonts : FontSource {
 
@@ -25,7 +24,6 @@ object TajweedFonts : FontSource {
     // The palette slots of the plain letters, which then follow the paint
     private val LETTERS = setOf(0, 13, 14)
     private const val FOREGROUND = 0xFFFF
-    private const val NIGHT_PALETTE = 1
 
     /** Heard on the main thread when a page's font has arrived. */
     var arrived: (() -> Unit)? = null
@@ -33,7 +31,7 @@ object TajweedFonts : FontSource {
     private val main = Handler(Looper.getMainLooper())
     private val fetching = Executors.newFixedThreadPool(2)
     private val asked = ConcurrentHashMap.newKeySet<Int>()
-    // Keyed by page and by day or night
+    // Keyed by page
     private val fonts = ConcurrentHashMap<Int, Font>()
     private val faces = ConcurrentHashMap<Int, Typeface>()
 
@@ -72,20 +70,14 @@ object TajweedFonts : FontSource {
         }
     }
 
-    private fun night(context: Context) =
-        context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-    private fun keyOf(context: Context, page: Int) = page * 2 + if (night(context)) 1 else 0
-
-    // The page's font as the screen wants it: written once into the cache, by day and by night
+    // The page's font as the screen wants it, written once into the cache
     private fun ready(context: Context, page: Int): File? {
         if (!has(context, page)) return null
-        val dark = night(context)
-        val out = File(context.cacheDir, "$FOLDER/p$page-${if (dark) "night" else "day"}.ttf")
+        val out = File(context.cacheDir, "$FOLDER/p$page-ink.ttf")
         if (out.exists()) return out
         return try {
             out.parentFile?.mkdirs()
-            out.writeBytes(recolour(file(context, page).readBytes(), dark))
+            out.writeBytes(recolour(file(context, page).readBytes()))
             out
         } catch (_: Exception) {
             null
@@ -94,22 +86,20 @@ object TajweedFonts : FontSource {
 
     override fun font(context: Context, n: Int): Font? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-        val key = keyOf(context, n)
-        fonts[key]?.let { return it }
+        fonts[n]?.let { return it }
         val file = ready(context, n) ?: return null
         return try {
-            Font.Builder(file).build().also { fonts[key] = it }
+            Font.Builder(file).build().also { fonts[n] = it }
         } catch (_: Exception) {
             null
         }
     }
 
     override fun face(context: Context, n: Int): Typeface? {
-        val key = keyOf(context, n)
-        faces[key]?.let { return it }
+        faces[n]?.let { return it }
         val file = ready(context, n) ?: return null
         return try {
-            Typeface.createFromFile(file).also { faces[key] = it }
+            Typeface.createFromFile(file).also { faces[n] = it }
         } catch (_: RuntimeException) {
             null
         }
@@ -117,8 +107,8 @@ object TajweedFonts : FontSource {
 
     /** Lets go of the fonts of pages away from [near]; the first page's, which holds the Basmalah, stays. */
     fun keepOnly(near: IntRange) {
-        fonts.keys.retainAll { it / 2 in near || it / 2 == 1 }
-        faces.keys.retainAll { it / 2 in near || it / 2 == 1 }
+        fonts.keys.retainAll { it in near || it == 1 }
+        faces.keys.retainAll { it in near || it == 1 }
     }
 
     /** Forgets every downloaded page, freeing their space. */
@@ -169,33 +159,19 @@ object TajweedFonts : FontSource {
         return out
     }
 
-    // The font's colour layers: plain letters follow the paint, and by night the night palette stands in for the day's
-    private fun recolour(bytes: ByteArray, dark: Boolean): ByteArray {
+    // The font's colour layers: plain letters follow the paint, the rules keep the font's own colours
+    private fun recolour(bytes: ByteArray): ByteArray {
         val b = ByteBuffer.wrap(bytes)
         var colr = -1
-        var cpal = -1
         for (i in 0 until (b.getShort(4).toInt() and 0xFFFF)) {
             val record = 12 + 16 * i
-            when (String(bytes, record, 4, Charsets.US_ASCII)) {
-                "COLR" -> colr = b.getInt(record + 8)
-                "CPAL" -> cpal = b.getInt(record + 8)
-            }
+            if (String(bytes, record, 4, Charsets.US_ASCII) == "COLR") colr = b.getInt(record + 8)
         }
         if (colr >= 0) {
             val layers = colr + b.getInt(colr + 8)
             for (i in 0 until (b.getShort(colr + 12).toInt() and 0xFFFF)) {
                 val slot = layers + i * 4 + 2
                 if ((b.getShort(slot).toInt() and 0xFFFF) in LETTERS) b.putShort(slot, FOREGROUND.toShort())
-            }
-        }
-        if (dark && cpal >= 0) {
-            val entries = b.getShort(cpal + 2).toInt() and 0xFFFF
-            val palettes = b.getShort(cpal + 4).toInt() and 0xFFFF
-            if (palettes > NIGHT_PALETTE) {
-                val records = cpal + b.getInt(cpal + 8)
-                val day = records + 4 * (b.getShort(cpal + 12).toInt() and 0xFFFF)
-                val nightAt = records + 4 * (b.getShort(cpal + 12 + 2 * NIGHT_PALETTE).toInt() and 0xFFFF)
-                System.arraycopy(bytes, nightAt, bytes, day, entries * 4)
             }
         }
         return bytes

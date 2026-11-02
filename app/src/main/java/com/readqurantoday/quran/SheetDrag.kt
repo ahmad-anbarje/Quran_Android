@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.jaredrummler.android.colorpicker.ColorPickerView
 import kotlin.math.abs
 
 /**
- * Holds a sheet so it can be slid down to close, as its grip promises. A list inside it scrolls first:
- * the sheet only follows a downward drag that nothing under the finger can scroll.
+ * Holds a sheet so it can be slid down to close, as its grip promises. A list inside it scrolls first, and a
+ * control that is dragged, as the colour field, keeps its drag: the sheet only follows a downward drag nothing
+ * under the finger takes.
  */
 @SuppressLint("ViewConstructor")
 class SheetDrag(context: Context, private val close: () -> Unit) : FrameLayout(context) {
@@ -21,14 +23,21 @@ class SheetDrag(context: Context, private val close: () -> Unit) : FrameLayout(c
     private val fling = ViewConfiguration.get(context).scaledMinimumFlingVelocity * FLING
     private var downX = 0f
     private var downY = 0f
+    // Where the touch began within the sheet: what lies there decides who has the drag
+    private var atX = 0f
+    private var atY = 0f
     private var tracker: VelocityTracker? = null
 
     override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
         when (e.actionMasked) {
-            MotionEvent.ACTION_DOWN -> start(e)
+            MotionEvent.ACTION_DOWN -> {
+                start(e)
+                atX = e.x
+                atY = e.y
+            }
             MotionEvent.ACTION_MOVE -> {
                 val dy = e.rawY - downY
-                if (dy > slop && dy > abs(e.rawX - downX) && !scrollsUp(this, e.x, e.y)) return true
+                if (dy > slop && dy > abs(e.rawX - downX) && !takesDrag(this, atX, atY)) return true
             }
         }
         return false
@@ -62,8 +71,9 @@ class SheetDrag(context: Context, private val close: () -> Unit) : FrameLayout(c
         tracker = VelocityTracker.obtain().apply { addMovement(e) }
     }
 
-    // Whether something under ([x], [y]) in [view] can still scroll back up, and so should have the drag
-    private fun scrollsUp(view: View, x: Float, y: Float): Boolean {
+    // Whether something under ([x], [y]) in [view] should have the drag: a list that can still scroll back up, or a dragged control
+    private fun takesDrag(view: View, x: Float, y: Float): Boolean {
+        if (view is ColorPickerView) return true
         if (view !== this && view.canScrollVertically(-1)) return true
         if (view !is ViewGroup) return false
         for (i in view.childCount - 1 downTo 0) {
@@ -71,7 +81,7 @@ class SheetDrag(context: Context, private val close: () -> Unit) : FrameLayout(c
             if (child.visibility != VISIBLE) continue
             val cx = x + view.scrollX - child.left - child.translationX
             val cy = y + view.scrollY - child.top - child.translationY
-            if (cx >= 0 && cy >= 0 && cx < child.width && cy < child.height) return scrollsUp(child, cx, cy)
+            if (cx >= 0 && cy >= 0 && cx < child.width && cy < child.height) return takesDrag(child, cx, cy)
         }
         return false
     }

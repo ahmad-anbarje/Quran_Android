@@ -1119,27 +1119,30 @@ class MushafPageView @JvmOverloads constructor(
     /* Running head: juz on the right, surah name centred, the hizb mark or else the page on the left. */
     private fun runningHead(canvas: Canvas, left: Float, measure: Float) {
         if (pageNo <= 0) return
-        val y = padTop + headBand * 0.62f
-        val tall = headBand * LABEL_TALL
-        val pad = tall * LABEL_PAD
+        val pad = headBand * LABEL_TALL * LABEL_PAD
         // One size on every page: what the longest corner label and the longest surah name both fit at
         val full = label.textSize
         label.textSize = full * headFit(measure, pad)
         thicken()
+
+        // The head band as deep as the foot, which fills the margin under the text, so the two match; it ends where
+        // the text begins, and every label stands centred in it
+        val depth = minOf(padBottom, padTop + headBand)
+        val headTop = padTop + headBand - depth
+        val edge = resources.displayMetrics.density * FRAME_EDGE
+        // Centred between the bold outer rule's inner edge and the fine rule at the text
+        val mid = headTop + (depth + edge) / 2f
+        val y = mid - (label.ascent() + label.descent()) / 2f
+        // The surah's cartouche fits within the band, clear of its rules; the juz and page ones a little lower
+        val tall = minOf(headBand * LABEL_TALL, depth - 2 * HEAD_CLEAR * resources.displayMetrics.density)
         // The surah's name the size of the juz and page beside it, kept small enough that its marks clear the cartouche
         val titleSize = minOf(label.textSize * HEAD_TITLE_MATCH, tall * LABEL_CLEAR / Mushaf.HEAD_TALL)
 
-        // The frame's band fills the margins to the page's own edges, from the labels' line down to its foot
-        val mid = y + (label.ascent() + label.descent()) / 2f
-        val edge = resources.displayMetrics.density * FRAME_EDGE
         val ink = adornInk()
         // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
         val band = padX * BAND
         val outside = side - padX
-        // The head band as deep as the foot, which fills the margin under the text, so the two match; it starts at the
-        // labels' tops rather than the page's, leaving no empty band over the surah's name
-        val depth = minOf(padBottom, padTop + headBand)
-        if (adorned) frame.frame(canvas, outside, padTop + headBand - depth, width - outside, pageTall, band, depth, padBottom, edge, ink, paperColour)
+        if (adorned) frame.frame(canvas, outside, headTop, width - outside, pageTall, band, depth, padBottom, edge, ink, paperColour)
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
@@ -1355,10 +1358,12 @@ class MushafPageView @JvmOverloads constructor(
         private const val BAND = 0.7f
         private const val LABEL_TALL = 1.1f
         // Of a label cartouche's height, what a title may fill
-        private const val LABEL_CLEAR = 0.86f
+        private const val LABEL_CLEAR = 0.94f
         private const val LABEL_PAD = 0.28f
         // The juz and page cartouches stand lower than the surah's, which must hold its marks
         private const val SIDE_TALL = 0.82f
+        // The surah's cartouche's clearance from the head band's rules, in dp
+        private const val HEAD_CLEAR = 2.5f
         // How far the ornament's colour is drawn toward the page by night
         private const val NIGHT_RECEDE = 0.3f
         // The box behind a lit word that keeps its colours: its alpha out of 255, and its corners as a share of a line

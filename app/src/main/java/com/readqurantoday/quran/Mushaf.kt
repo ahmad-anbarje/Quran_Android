@@ -46,8 +46,6 @@ object Mushaf {
     /** The Tajweed edition: the 1421 lines, coloured, each page's font downloaded on first need. */
     val tajweed = Book("data/mushaf-tajweed.json", "v2", { "gt$it.txt" }, TajweedFonts)
 
-    private var nameTable: Book.Glyphs? = null
-    private var nameFont: Font? = null
     private var nameFamily: Typeface? = null
     private var headTable: Book.Glyphs? = null
     private var headFont: Font? = null
@@ -64,13 +62,9 @@ object Mushaf {
     }
 
     // The plain edition, as most of the app reads it
-    val emWidth get() = plain.emWidth
     val basmalahPage get() = plain.basmalahPage
     fun lines(page: Int) = plain.lines(page)
     fun marksOn(page: Int) = plain.marksOn(page)
-    fun glyphs(context: Context, page: Int) = plain.glyphs(context, page)
-    fun font(context: Context, page: Int) = plain.font(context, page)
-    fun face(context: Context, page: Int) = plain.face(context, page)
 
     /** Pre-load pages around the current one on a background thread to avoid jank. */
     fun warm(context: Context, page: Int, book: Book = plain) {
@@ -108,26 +102,7 @@ object Mushaf {
         TajweedFonts.keepOnly(near)
     }
 
-    /** The surah names font: 114 names + the word سورة, addressed by surah number. */
-    @Synchronized
-    fun names(context: Context): Book.Glyphs? {
-        nameTable?.let { return it }
-        nameTable = readGlyphs(context, "gsura-names.txt")
-        return nameTable
-    }
-
-    @Synchronized
-    fun nameFace(context: Context): Font? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-        nameFont?.let { return it }
-        nameFont = try {
-            Font.Builder(context.assets, "sura-names.ttf").build()
-        } catch (_: Exception) {
-            null
-        }
-        return nameFont
-    }
-
+    /** The surah names font for the lists: 114 names + the word سورة, addressed by surah number. */
     @Synchronized
     fun nameTypeface(context: Context): Typeface? {
         nameFamily?.let { return it }

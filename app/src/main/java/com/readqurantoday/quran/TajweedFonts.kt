@@ -111,20 +111,6 @@ object TajweedFonts : FontSource {
         faces.keys.retainAll { it in near || it == 1 }
     }
 
-    /** Forgets every downloaded page, freeing their space. */
-    fun clear(context: Context) {
-        fonts.clear()
-        faces.clear()
-        folder(context).deleteRecursively()
-        File(context.cacheDir, FOLDER).deleteRecursively()
-    }
-
-    /** Bytes the downloaded pages take. */
-    fun size(context: Context): Long = folder(context).listFiles()?.sumOf { it.length() } ?: 0L
-
-    /** How many of the 604 pages are here. */
-    fun count(context: Context): Int = folder(context).listFiles()?.count { it.name.endsWith(".ttf") } ?: 0
-
     // Each page's glyphs and the palette slots their colour layers use, read once from its font
     private val slots = ConcurrentHashMap<Int, Map<Int, Set<Int>>>()
 

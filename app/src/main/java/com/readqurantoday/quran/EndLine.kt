@@ -8,6 +8,7 @@ import android.text.StaticLayout
 import android.text.TextDirectionHeuristics
 import android.text.TextPaint
 import android.view.View
+import androidx.core.graphics.withTranslation
 import kotlin.math.ceil
 
 /**
@@ -83,10 +84,7 @@ class EndLine(context: Context, private val text: CharSequence, private val mode
         val baseline = height / 2f + size * (BASELINE - TALL / 2f)
         for (i in laid.indices) {
             val layout = laid[i]
-            canvas.save()
-            canvas.translate(right - layout.width, baseline - layout.getLineBaseline(0))
-            layout.draw(canvas)
-            canvas.restore()
+            canvas.withTranslation(right - layout.width, baseline - layout.getLineBaseline(0)) { layout.draw(this) }
             right -= widths[i] + gap
         }
     }

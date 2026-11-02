@@ -309,14 +309,19 @@ class ReaderActivity : LanguageActivity() {
             v.setOnLongClickListener { view ->
                 val page = view as MushafPageView
                 page.wordUnder(lastTouchX, lastTouchY)?.let {
-                    // In Tajweed a held word shows its rules and nothing else, and is let go with them
-                    if (page.inTajweed) {
-                        val was = shownWord
-                        lit(it[0], it[1], it[2])
-                        showTajweedWord(page.page, it[0], it[1], it[2]) {
-                            if (was == null) lit(-1, -1, -1) else lit(was[0], was[1], was[2])
+                    when {
+                        // Mid-recitation the recitation goes on from the held word, its rules shown beside it
+                        page.inTajweed && Recite.isPlaying() -> {
+                            controls.offer(surah = it[0], ayah = it[1], w = it[2])
+                            showTajweedWord(page.page, it[0], it[1], it[2]) {}
                         }
-                    } else controls.offer(surah = it[0], ayah = it[1], w = it[2])
+                        // Otherwise in Tajweed a held word shows its rules and nothing else, and is let go with them
+                        page.inTajweed -> {
+                            lit(it[0], it[1], it[2])
+                            showTajweedWord(page.page, it[0], it[1], it[2]) { if (!Recite.isPlaying()) lit(-1, -1, -1) }
+                        }
+                        else -> controls.offer(surah = it[0], ayah = it[1], w = it[2])
+                    }
                 }
                 true
             }

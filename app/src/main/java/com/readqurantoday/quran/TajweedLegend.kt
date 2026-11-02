@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.text.SpannableString
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -31,9 +32,6 @@ fun Activity.showTajweedLegend() {
     val view = layoutInflater.inflate(R.layout.part_sheet, null)
     view.findViewById<TextView>(R.id.sheet_title).setText(R.string.tajweed_legend)
     val rows = view.findViewById<LinearLayout>(R.id.sheet_rows)
-    rows.addView((layoutInflater.inflate(R.layout.row_setting_note, rows, false) as TextView).apply {
-        setText(R.string.tajweed_legend_intro)
-    })
     for (rule in RULES) rows.addView(ruleRow(rows, rule))
     raise(dialog, view)
 }
@@ -52,8 +50,12 @@ class TajweedCard(private val host: Activity, private val closed: () -> Unit) {
     val open get() = dialog.isShowing
 
     init {
-        view.findViewById<TextView>(R.id.sheet_title).setText(R.string.tajweed_word)
-        dialog.setOnDismissListener { closed() }
+        // The word speaks for itself: no title above it
+        view.findViewById<TextView>(R.id.sheet_title).visibility = View.GONE
+        dialog.setOnDismissListener {
+            if (WordVoice.saying) WordVoice.stop()
+            closed()
+        }
     }
 
     /** Shows word [word] of [surah]:[ayah] on [page], raising the card the first time. */
@@ -78,6 +80,7 @@ class TajweedCard(private val host: Activity, private val closed: () -> Unit) {
                 setSpan(QuranWordSpan(host, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed), 0, 1, 0)
             }
         })
+        rows.addView(listen(surah, ayah, word))
         if (rules.isEmpty()) rows.addView((host.layoutInflater.inflate(R.layout.row_setting_note, rows, false) as TextView).apply {
             setText(R.string.tajweed_word_plain)
         })
@@ -86,6 +89,33 @@ class TajweedCard(private val host: Activity, private val closed: () -> Unit) {
     }
 
     fun close() = dialog.dismiss()
+
+    // Hears the word on its own; while a recitation plays it is paused, as the player's Word button does
+    private fun listen(surah: Int, ayah: Int, word: Int): View = host.layoutInflater.inflate(R.layout.part_word_listen, rows, false).apply {
+        val icon = findViewById<ImageView>(R.id.word_listen_icon)
+        val label = findViewById<TextView>(R.id.word_listen_label)
+        val accent = ColorStateList.valueOf(host.getColor(R.color.accent))
+        icon.imageTintList = accent
+        WordVoice.warm(host, surah, ayah, word)
+        fun say() {
+            icon.imageAlpha = if (WordVoice.loading) LOADING_ALPHA else 0xFF
+            label.setText(if (WordVoice.loading) R.string.loading else R.string.label_word)
+        }
+        setOnClickListener {
+            if (WordVoice.loading) return@setOnClickListener
+            if (WordVoice.saying) { WordVoice.stop(); return@setOnClickListener }
+            if (Recite.wantsToPlay()) Recite.toggle()
+            host.warnIfMuted()
+            WordVoice.say(host, surah, ayah, word, changed = ::say) { how ->
+                say()
+                when (how) {
+                    WordVoice.End.MISSING -> host.notice(host.getString(R.string.word_missing))
+                    WordVoice.End.UNREACHABLE -> host.notice(host.getString(R.string.word_unheard))
+                    WordVoice.End.HEARD -> {}
+                }
+            }
+        }
+    }
 }
 
 private fun Activity.ruleRow(rows: LinearLayout, rule: Rule) = layoutInflater.inflate(R.layout.item_tajweed_rule, rows, false).apply {
@@ -97,3 +127,4 @@ private fun Activity.ruleRow(rows: LinearLayout, rule: Rule) = layoutInflater.in
 private const val OBJECT = "￼"
 private const val WORD_SCALE = 3f
 private const val WORD_PAD = 12f
+private const val LOADING_ALPHA = 0x66

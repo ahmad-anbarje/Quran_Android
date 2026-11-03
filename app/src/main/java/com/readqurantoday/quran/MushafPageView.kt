@@ -1147,15 +1147,19 @@ class MushafPageView @JvmOverloads constructor(
         val ink = adornInk()
         // On a phone the band runs to the screen's edges; a wide screen's narrowed page keeps it to its own width
         val outside = side - padX
+        val juzHalf = if (headJuz.isEmpty()) 0f else label.measureText(headJuz) / 2f + pad
+        val sideHalf = if (headSide.isEmpty()) 0f else label.measureText(headSide) / 2f + pad
+        // The head's almonds on the labels' middle, from one corner label to the other, so none shows cut beyond them
         if (adorned) frame.frame(
             canvas, left = outside, top = headTop, right = width - outside, bottom = pageTall, bleed = headroom,
             side = PageFrame.SIDE * resources.displayMetrics.density, head = depth, foot = footDepth(),
-            almond = padX * ALMOND, edge = edge, ink = ink, paper = paperColour
+            almond = padX * ALMOND, edge = edge, ink = ink, paper = paperColour,
+            headFrom = left + sideHalf, headTo = left + measure - juzHalf, headMid = mid
         )
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
-            val half = label.measureText(headJuz) / 2f + pad
+            val half = juzHalf
             if (adorned) frame.label(canvas, left + measure - half, mid, half, tall * SIDE_TALL, edge, ink, paperColour)
             canvas.drawText(headJuz, left + measure - half, y, label)
         }
@@ -1166,7 +1170,7 @@ class MushafPageView @JvmOverloads constructor(
         }
 
         if (headSide.isNotEmpty()) {
-            val half = label.measureText(headSide) / 2f + pad
+            val half = sideHalf
             if (adorned) frame.label(canvas, left + half, mid, half, tall * SIDE_TALL, edge, ink, paperColour)
             canvas.drawText(headSide, left + half, y, label)
         }

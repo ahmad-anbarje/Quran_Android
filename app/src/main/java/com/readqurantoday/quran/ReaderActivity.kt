@@ -408,7 +408,7 @@ class ReaderActivity : LanguageActivity() {
         val on = Settings.pageTurn(this)
         // The button names the motion in use; tapping switches to the other
         btnTurn.setImageResource(if (on) R.drawable.ic_motion_turn else R.drawable.ic_motion_slide)
-        btnTurn.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
+        btnTurn.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
         turnLabel.setText(if (on) R.string.motion_turn else R.string.motion_slide)
     }
 
@@ -646,11 +646,12 @@ class ReaderActivity : LanguageActivity() {
             getString(R.string.bar_place, juzNamed(juz, resources), at)
         } else at
 
-        // Icon fill shows the saved state; the label turns accent only when saved
+        // Filled and accent when saved, as the player's switches show theirs on; muted otherwise
         val marked = Settings.marked(this, page)
+        val colour = getColor(if (marked) R.color.accent else R.color.text_mute)
         mark.setImageResource(if (marked) R.drawable.ic_bookmark else R.drawable.ic_bookmark_off)
-        mark.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
-        markLabel.setTextColor(getColor(if (marked) R.color.accent else R.color.text_mute))
+        mark.imageTintList = ColorStateList.valueOf(colour)
+        markLabel.setTextColor(colour)
     }
 
     // --- recitation ---
@@ -697,7 +698,7 @@ class ReaderActivity : LanguageActivity() {
             Settings.DARK -> R.drawable.ic_moon
             else -> R.drawable.ic_theme_system
         })
-        btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.accent))
+        btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
         themeLabel.setText(when (mode) {
             Settings.LIGHT -> R.string.theme_light
             Settings.DARK -> R.string.theme_dark

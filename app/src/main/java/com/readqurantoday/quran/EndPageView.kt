@@ -32,6 +32,18 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         setOnClickListener { tapped() }
     }
     private var letter = ""
+
+    /** Room at the top for the phone's status band, as on the Quran's pages: the frame's tint fills it. */
+    var headroom = 0
+        set(value) {
+            if (field == value) return
+            field = value
+            val inset = ((INSET + TEXT_INSET) * dp).toInt()
+            (getChildAt(0).layoutParams as LayoutParams).topMargin = inset + value
+            fittedTall = -1
+            requestLayout()
+            invalidate()
+        }
     private val lines = ArrayList<Pair<EndPages.Kind, EndLine>>()
     // The width the lines were last sized for
     private var fitted = -1
@@ -86,7 +98,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
             fittedTall = high
             fit(wide)
             // The lines share the frame's height, as printed, unless they need more and scroll
-            val room = high - (2 * (INSET + TEXT_INSET) + FOOT) * dp
+            val room = high - headroom - (2 * (INSET + TEXT_INSET) + FOOT) * dp
             if (room > 0f) for ((_, line) in lines) line.tall = room / lines.size
         }
         super.onMeasure(widthSpec, heightSpec)
@@ -133,10 +145,12 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         val night = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val mark = Settings.resolvedAyahColor(context)
         val ink = if (night) ColorUtils.blendARGB(mark, Settings.paperColor(context), NIGHT_RECEDE) else mark
-        val bottom = height - inset - FOOT * dp / 2f
+        // The foot band runs to the screen's foot, as the Quran's pages' does, its letter in the middle
+        val foot = inset + FOOT * dp
+        val bottom = height - foot / 2f
         frame.frame(
-            canvas, left = 0f, top = inset, right = width.toFloat(), bottom = bottom + FOOT * dp / 2f,
-            side = PageFrame.SIDE * dp, head = inset * BAND, foot = FOOT * dp, almond = inset * BAND,
+            canvas, left = 0f, top = headroom + inset, right = width.toFloat(), bottom = height.toFloat(), bleed = headroom + inset,
+            side = PageFrame.SIDE * dp, head = inset * BAND, foot = foot, almond = inset * BAND,
             edge = edge, ink = ink, paper = Settings.paperColor(context)
         )
         // The page's letter in a cartouche on the frame's foot, as a Quran page's number

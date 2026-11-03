@@ -21,14 +21,15 @@ class PageFrame {
 
     /**
      * The band round [left], [top], [right], [bottom]: [head] deep at the top where the page's labels sit, [foot] at the
-     * bottom where its number sits, and [side] at the sides. Its rules are [edge] thick, tinted with [ink]; the head's
-     * and foot's almonds, [almond] across, are filled with [paper].
+     * bottom where its number sits, and [side] at the sides, its tint running [bleed] further up, off the page's top
+     * as the screen's edge. One rule, [edge] thick, edges the text; all in [ink], the head's and foot's almonds,
+     * [almond] across, filled with [paper].
      */
-    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, side: Float, head: Float, foot: Float,
-              almond: Float, edge: Float, ink: Int, paper: Int) {
+    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, bleed: Float, side: Float, head: Float,
+              foot: Float, almond: Float, edge: Float, ink: Int, paper: Int) {
         // Only the band is tinted, so what is drawn inside stays as it is
         strip.reset()
-        strip.addRect(left, top, right, bottom, Path.Direction.CW)
+        strip.addRect(left, top - bleed, right, bottom, Path.Direction.CW)
         strip.addRect(left + side, top + head, right - side, bottom - foot, Path.Direction.CW)
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
@@ -36,12 +37,9 @@ class PageFrame {
         chain(canvas, left + side, top + head / 2f, right - side, top + head / 2f, almond, edge, ink, paper)
         chain(canvas, left + side, bottom - foot / 2f, right - side, bottom - foot / 2f, almond, edge, ink, paper)
 
-        // Its rules, one weight outside and in, so the thin sides read as an even double rule
-        val rule = edge * RULE
+        // The screen's edge is the band's outer edge, so the one rule is at the text
         line.color = ink
-        line.strokeWidth = rule
-        box.set(left + rule / 2f, top + rule / 2f, right - rule / 2f, bottom - rule / 2f)
-        canvas.drawRect(box, line)
+        line.strokeWidth = edge * RULE
         box.set(left + side, top + head, right - side, bottom - foot)
         canvas.drawRect(box, line)
     }

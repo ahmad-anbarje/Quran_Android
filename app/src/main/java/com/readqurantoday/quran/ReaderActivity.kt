@@ -83,6 +83,8 @@ class ReaderActivity : LanguageActivity() {
     /* Status-bar height, settled once; everything about page layout follows from it. */
     private var band = 0
     private var bandSet = false
+    // The pages' room for the status band: the band upright, none on its side
+    private var headroom = 0
 
     /* Navigation-bar inset: keeps player above the nav bar when it is visible. */
     private var foot = 0
@@ -331,6 +333,7 @@ class ReaderActivity : LanguageActivity() {
             return Holder(v)
         }
         override fun onBindViewHolder(holder: Holder, position: Int) {
+            roomFor(holder.itemView)
             when (val v = holder.itemView) {
                 is MushafPageView -> {
                     v.show(position + 1)
@@ -543,10 +546,18 @@ class ReaderActivity : LanguageActivity() {
         bar.setPadding(maxOf(cutLeft, navLeft), band, maxOf(cutRight, navRight), 0)
     }
 
-    // Upright the cutout is the status band; on its side it is one edge
+    // Upright the cutout is the status band, which the pages fill with their head's tint; on its side it is one edge
     private fun padPage() {
         val upright = resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE
-        pager.setPadding(cutLeft, if (upright) band else cutTop, cutRight, 0)
+        pager.setPadding(cutLeft, if (upright) 0 else cutTop, cutRight, 0)
+        headroom = if (upright) band else 0
+        shots.headroom = headroom.toFloat()
+        for (i in 0 until pager.childCount) roomFor(pager.getChildAt(i))
+    }
+
+    private fun roomFor(page: View) {
+        (page as? MushafPageView)?.headroom = headroom.toFloat()
+        (page as? EndPageView)?.headroom = headroom
     }
 
     /* Keeps the player above the navigation bar whenever it is visible. */

@@ -23,6 +23,14 @@ class PageShots(private val context: Context, private val landed: (Int) -> Unit)
 
     /* A page view never attached to anything, used only to record pages into Pictures. */
     private val painter by lazy { MushafPageView(context) }
+
+    /** The pages' room for the status band, as the reader's pages have it; shots made with other room are dropped. */
+    var headroom = 0f
+        set(value) {
+            if (field == value) return
+            field = value
+            shots.clear()
+        }
     private val main = Handler(Looper.getMainLooper())
     private val raster = Executors.newSingleThreadExecutor { r -> Thread(r, "page-shots") }
 
@@ -95,6 +103,7 @@ class PageShots(private val context: Context, private val landed: (Int) -> Unit)
 
     /* The page as the reader draws it at rest: unzoomed, unscrolled, no word lit. */
     private fun record(page: Int, width: Int, height: Int): Picture {
+        painter.headroom = headroom
         painter.show(page)
         painter.measure(
             View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),

@@ -122,6 +122,19 @@ class MushafPageView @JvmOverloads constructor(
     private var padBottom = 0f
     private var headBand = 0f
 
+    /** Room at the top for the phone's status band: the head band's tint fills it, the page starts under it. */
+    var headroom = 0f
+        set(value) {
+            if (field == value) return
+            field = value
+            laidOut = false
+            step = 0f
+            invalidate()
+        }
+
+    // Where the first row's slot begins
+    private fun textTop() = headroom + padTop + headBand
+
     /* Reused across draws to avoid per-frame allocation. */
     private var ids = IntArray(320)
     private var spots = FloatArray(640)
@@ -508,7 +521,7 @@ class MushafPageView @JvmOverloads constructor(
         if (wide <= 0f) return
         body = (wide / book.emWidth).toFloat()
         side = padX
-        val top = padTop + headBand
+        val top = textTop()
         val fit = (height - top - padBottom) / GRID
         // Too wide for its height: narrow the page to fit whole, unless that shrinks the type below a phone's
         val fitted = fit * TALL_FROM
@@ -718,7 +731,7 @@ class MushafPageView @JvmOverloads constructor(
         laidOut = false
 
         // Rotation keeps the top row, measured in rows; a lit word then takes priority
-        val top = padTop + headBand
+        val top = textTop()
         val row = if (step > 0f && scrollTop > top) (scrollTop - top) / step else -1f
         flinger.forceFinished(true)
         layOut()
@@ -768,7 +781,7 @@ class MushafPageView @JvmOverloads constructor(
             return
         }
 
-        val top = padTop + headBand
+        val top = textTop()
         val left = side
         val measure = width - 2 * side
 
@@ -1120,11 +1133,10 @@ class MushafPageView @JvmOverloads constructor(
         label.textSize = full * headFit(measure, pad)
         thicken()
 
-        // The head band from the page's top, ending clear of the first row's marks, every label centred in it
+        // The head band under the headroom, ending clear of the first row's marks, every label centred in it
         val depth = minOf(padBottom, padTop + headBand)
-        val headTop = 0f
+        val headTop = headroom
         val edge = resources.displayMetrics.density * FRAME_EDGE
-        // Centred between the bold outer rule's inner edge and the fine rule at the text
         val mid = headTop + (depth + edge) / 2f
         val y = mid - (label.ascent() + label.descent()) / 2f
         // The surah's cartouche fits within the band, clear of its rules; the juz and page ones a little lower
@@ -1136,7 +1148,7 @@ class MushafPageView @JvmOverloads constructor(
         // On a phone the band runs to the screen's edges; a wide screen's narrowed page keeps it to its own width
         val outside = side - padX
         if (adorned) frame.frame(
-            canvas, left = outside, top = headTop, right = width - outside, bottom = pageTall,
+            canvas, left = outside, top = headTop, right = width - outside, bottom = pageTall, bleed = headroom,
             side = PageFrame.SIDE * resources.displayMetrics.density, head = depth, foot = footDepth(),
             almond = padX * ALMOND, edge = edge, ink = ink, paper = paperColour
         )

@@ -84,8 +84,9 @@ class TajweedCard(
             val sounding = Recite.wantsToPlay()
             contentDescription = host.getString(if (sounding) R.string.stop else R.string.play)
             findViewById<ImageView>(R.id.word_listen_icon).apply {
+                // Its shape tells play from pause, so it stays muted with the buttons beside it
                 setImageResource(if (sounding) R.drawable.ic_pause else R.drawable.ic_play)
-                imageTintList = ColorStateList.valueOf(host.getColor(R.color.accent))
+                imageTintList = ColorStateList.valueOf(host.getColor(R.color.text_mute))
             }
             (layoutParams as LinearLayout.LayoutParams).marginEnd = (BUTTON_GAP * resources.displayMetrics.density).toInt()
             setOnClickListener {

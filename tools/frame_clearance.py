@@ -12,7 +12,7 @@ NEAR = float(sys.argv[sys.argv.index('--near') + 1]) if '--near' in sys.argv els
 # MushafPageView's constants
 PAD_X, PAD_TOP, PAD_BOTTOM, HEAD_BAND = 14, 8, 32, 30
 GRID, TALL_FROM, READING_ROW, MIN_FIT_BODY = 15, 0.6, 0.45, 20
-BAND_TALL, FOOT_CLEAR = 0.86, 6
+BAND_TALL, FOOT_CLEAR, SIDE_BAND = 0.86, 6, 4
 CENTRE_GAP, INNER_SPACE = 0.32, 0.04
 # The boldest ink setting's nudge, as a share of the type size
 SPREAD = 0.018
@@ -151,10 +151,9 @@ def edition(name, asset, key, folder, font_name, table_name):
             body = fit * TALL_FROM
             side = (w - body * em) / 2
         step = fit if fit > 0 and body / fit <= TALL_FROM else body / READING_ROW
-        # The frame's fine rules: the head band's foot from the page's top, the foot band's head under the text, and the page's sides
+        # The frame's fine rules: the head band's foot from the page's top, the foot band's head under the text, and each thin side band's inner edge
         rule_top, rule_bottom = min(PAD_BOTTOM, PAD_TOP + HEAD_BAND) * d, top + step * GRID + FOOT_CLEAR * d
-        # The sides are open, so a letter only has to stay on the page
-        rule_side = pad_x
+        rule_side = pad_x - SIDE_BAND * d
         band_half = step * BAND_TALL / 2
         spread = body * SPREAD
 

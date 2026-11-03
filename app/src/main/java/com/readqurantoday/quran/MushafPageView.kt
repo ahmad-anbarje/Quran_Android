@@ -1133,9 +1133,13 @@ class MushafPageView @JvmOverloads constructor(
         val titleSize = minOf(label.textSize * HEAD_TITLE_MATCH, tall * LABEL_CLEAR / Mushaf.HEAD_TALL)
 
         val ink = adornInk()
-        // On a phone the bands run to the screen's edges; a wide screen's narrowed page keeps them to its own width
+        // On a phone the band runs to the screen's edges; a wide screen's narrowed page keeps it to its own width
         val outside = side - padX
-        if (adorned) frame.frame(canvas, outside, headTop, width - outside, pageTall, depth, footDepth(), padX * ALMOND, edge, ink, paperColour)
+        if (adorned) frame.frame(
+            canvas, left = outside, top = headTop, right = width - outside, bottom = pageTall,
+            side = PageFrame.SIDE * resources.displayMetrics.density, head = depth, foot = footDepth(),
+            almond = padX * ALMOND, edge = edge, ink = ink, paper = paperColour
+        )
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {

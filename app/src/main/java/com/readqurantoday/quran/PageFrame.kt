@@ -20,31 +20,30 @@ class PageFrame {
     private val shape = Path()
 
     /**
-     * A band across the page's head, [head] deep from [top], where its labels sit, and one across its foot, [foot] deep
-     * up from [bottom], where its number sits, both from [left] to [right]; the sides are left open, so a letter that
-     * reaches past the measure never meets a rule. Its rules are [edge] thick, tinted with [ink]; its almonds, [almond]
-     * across, are filled with [paper].
+     * The band round [left], [top], [right], [bottom]: [head] deep at the top where the page's labels sit, [foot] at the
+     * bottom where its number sits, and [side] at the sides. Its rules are [edge] thick, tinted with [ink]; the head's
+     * and foot's almonds, [almond] across, are filled with [paper].
      */
-    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, head: Float, foot: Float, almond: Float,
-              edge: Float, ink: Int, paper: Int) {
-        // Only the bands are tinted, so what is drawn between them stays as it is
+    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, side: Float, head: Float, foot: Float,
+              almond: Float, edge: Float, ink: Int, paper: Int) {
+        // Only the band is tinted, so what is drawn inside stays as it is
         strip.reset()
-        strip.addRect(left, top, right, top + head, Path.Direction.CW)
-        strip.addRect(left, bottom - foot, right, bottom, Path.Direction.CW)
+        strip.addRect(left, top, right, bottom, Path.Direction.CW)
+        strip.addRect(left + side, top + head, right - side, bottom - foot, Path.Direction.CW)
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
 
-        chain(canvas, left, top + head / 2f, right, top + head / 2f, almond, edge, ink, paper)
-        chain(canvas, left, bottom - foot / 2f, right, bottom - foot / 2f, almond, edge, ink, paper)
+        chain(canvas, left + side, top + head / 2f, right - side, top + head / 2f, almond, edge, ink, paper)
+        chain(canvas, left + side, bottom - foot / 2f, right - side, bottom - foot / 2f, almond, edge, ink, paper)
 
-        // Each band's rules: a bold one at the page's edge, a fine one at the text
+        // Its rules: a bold one outside, a fine one inside
         line.color = ink
         line.strokeWidth = edge
-        canvas.drawLine(left, top + edge / 2f, right, top + edge / 2f, line)
-        canvas.drawLine(left, bottom - edge / 2f, right, bottom - edge / 2f, line)
+        box.set(left + edge / 2f, top + edge / 2f, right - edge / 2f, bottom - edge / 2f)
+        canvas.drawRect(box, line)
         line.strokeWidth = edge / 2f
-        canvas.drawLine(left, top + head, right, top + head, line)
-        canvas.drawLine(left, bottom - foot, right, bottom - foot, line)
+        box.set(left + side, top + head, right - side, bottom - foot)
+        canvas.drawRect(box, line)
     }
 
     // Almonds end to end from (x0, y0) to (x1, y1), along the middle of a band [band] wide, a dot between each two
@@ -97,14 +96,17 @@ class PageFrame {
         canvas.drawPath(shape, line)
     }
 
-    private companion object {
+    companion object {
+        /** The side band's width in dp: thin, so a letter reaching past the measure stays clear of it. */
+        const val SIDE = 4f
+
         // The band's tint out of 255
-        const val TINT = 70
+        private const val TINT = 70
         // Shares of the almonds' size: an almond's length (of its step), its width, the gap between almonds' centres,
         // and the dots between them
-        const val ALMOND_LONG = 0.82f
-        const val ALMOND_WIDE = 0.5f
-        const val STEP = 1.9f
-        const val DOT = 0.07f
+        private const val ALMOND_LONG = 0.82f
+        private const val ALMOND_WIDE = 0.5f
+        private const val STEP = 1.9f
+        private const val DOT = 0.07f
     }
 }

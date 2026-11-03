@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/word_listen_icon"
-        android:layout_width="@dimen/quarter_icon"
-        android:layout_height="@dimen/quarter_icon"
+        android:layout_width="@dimen/icon_nav"
+        android:layout_height="@dimen/icon_nav"
         android:layout_gravity="center"
         android:src="@drawable/ic_word_play"
         android:contentDescription="@null" />

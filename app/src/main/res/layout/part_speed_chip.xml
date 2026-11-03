@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/speed_chip_icon"
-        android:layout_width="@dimen/quarter_icon"
-        android:layout_height="@dimen/quarter_icon"
+        android:layout_width="@dimen/icon_nav"
+        android:layout_height="@dimen/icon_nav"
         android:layout_marginEnd="6dp"
         android:src="@drawable/ic_speed"
         android:contentDescription="@null" />

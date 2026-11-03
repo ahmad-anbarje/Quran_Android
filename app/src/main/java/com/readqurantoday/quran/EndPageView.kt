@@ -159,16 +159,17 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         // The foot band runs to the screen's foot, as the Quran's pages' does, its letter in the middle
         val foot = inset + FOOT * dp
         val bottom = height - foot / 2f
-        frame.frame(
-            canvas, left = 0f, top = headroom + inset, right = width.toFloat(), bottom = height.toFloat(), bleed = headroom + inset,
-            side = PageFrame.SIDE * dp, head = inset * BAND, foot = foot, almond = inset * BAND,
-            edge = edge, ink = ink, paper = Settings.paperColor(context)
-        )
-        // The page's letter in a cartouche on the frame's foot, as a Quran page's number
+        // The page's letter in a cartouche on the frame's foot, as a Quran page's number, the foot's almonds out from it
         label.textSize = LABEL * dp
         label.color = mark
         val tall = label.textSize * LABEL_TALL
-        frame.label(canvas, width / 2f, bottom, label.measureText(letter) / 2f + tall * LABEL_PAD, tall, edge, ink, Settings.paperColor(context))
+        val half = label.measureText(letter) / 2f + tall * LABEL_PAD
+        frame.frame(
+            canvas, left = 0f, top = headroom + inset, right = width.toFloat(), bottom = height.toFloat(), bleed = headroom + inset,
+            side = PageFrame.SIDE * dp, head = inset * BAND, foot = foot, almond = inset * BAND,
+            edge = edge, ink = ink, paper = Settings.paperColor(context), footGap = half
+        )
+        frame.label(canvas, width / 2f, bottom, half, tall, edge, ink, Settings.paperColor(context))
         canvas.drawText(letter, width / 2f, bottom - (label.ascent() + label.descent()) / 2f, label)
     }
 

@@ -1130,6 +1130,7 @@ class MushafPageView @JvmOverloads constructor(
         val pad = headBand * LABEL_TALL * LABEL_PAD
         // One size on every page: what the longest corner label and the longest surah name both fit at
         val full = label.textSize
+        val folioHalf = folioHalf()
         label.textSize = full * headFit(measure, pad)
         thicken()
 
@@ -1149,11 +1150,13 @@ class MushafPageView @JvmOverloads constructor(
         val outside = side - padX
         val juzHalf = if (headJuz.isEmpty()) 0f else label.measureText(headJuz) / 2f + pad
         val sideHalf = if (headSide.isEmpty()) 0f else label.measureText(headSide) / 2f + pad
-        // The head's almonds on the labels' middle, from one corner label to the other, so none shows cut beyond them
+        val surahHalf = if (headSurah > 0) titleWidth(headSurah, titleSize) / 2f + pad else 0f
+        // The head's almonds on the labels' middle, out from the surah's to under the corner ones, so none shows cut
         if (adorned) frame.frame(
             canvas, left = outside, top = headTop, right = width - outside, bottom = pageTall, bleed = headroom,
             side = PageFrame.SIDE * resources.displayMetrics.density, head = depth, foot = footDepth(),
             almond = padX * ALMOND, edge = edge, ink = ink, paper = paperColour,
+            headGap = surahHalf, footGap = folioHalf,
             headFrom = left + sideHalf, headTo = left + measure - juzHalf, headMid = mid
         )
 
@@ -1165,7 +1168,7 @@ class MushafPageView @JvmOverloads constructor(
         }
 
         if (headSurah > 0) {
-            if (adorned) frame.label(canvas, left + measure / 2f, mid, titleWidth(headSurah, titleSize) / 2f + pad, tall, edge, ink, paperColour)
+            if (adorned) frame.label(canvas, left + measure / 2f, mid, surahHalf, tall, edge, ink, paperColour)
             title(canvas, headSurah, left + measure / 2f, titleSize, mid + Mushaf.HEAD_RISE * titleSize)
         }
 
@@ -1193,6 +1196,9 @@ class MushafPageView @JvmOverloads constructor(
         val night = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         return if (night) ColorUtils.blendARGB(markPaint.color, paperColour, NIGHT_RECEDE) else markPaint.color
     }
+
+    // Half the folio's cartouche, measured at the labels' full size
+    private fun folioHalf() = label.measureText(folioText) / 2f + padBottom * FOOT_TALL * FOOT_PAD
 
     // The foot band, starting a little under the text so the last row's marks clear it
     private fun footDepth() = padBottom - FOOT_CLEAR * resources.displayMetrics.density
@@ -1293,9 +1299,8 @@ class MushafPageView @JvmOverloads constructor(
         val mid = footMid()
         if (adorned) {
             // On the frame's foot, as the printed page's number sits on its border
-            val tall = padBottom * FOOT_TALL
             val edge = resources.displayMetrics.density * FRAME_EDGE
-            frame.label(canvas, width / 2f, mid, label.measureText(folioText) / 2f + tall * FOOT_PAD, tall, edge, adornInk(), paperColour)
+            frame.label(canvas, width / 2f, mid, folioHalf(), padBottom * FOOT_TALL, edge, adornInk(), paperColour)
         }
         canvas.drawText(folioText, width / 2f, mid - (label.ascent() + label.descent()) / 2f, label)
     }

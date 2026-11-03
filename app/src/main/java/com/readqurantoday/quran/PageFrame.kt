@@ -5,7 +5,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import androidx.core.graphics.ColorUtils
-import kotlin.math.floor
 
 /**
  * The page's frame, after the printed mushaf's: a tinted band between two rules across its head and its foot,
@@ -23,10 +22,12 @@ class PageFrame {
      * The band round [left], [top], [right], [bottom]: [head] deep at the top where the page's labels sit, [foot] at the
      * bottom where its number sits, and [side] at the sides, its tint running [bleed] further up, off the page's top
      * as the screen's edge. One rule, [edge] thick, edges the text; all in [ink], the head's and foot's almonds,
-     * [almond] across, filled with [paper]; the head's run from [headFrom] to [headTo] along [headMid], between its labels.
+     * [almond] across, filled with [paper]. Each chain of almonds starts either side of its middle box, [headGap] or
+     * [footGap] from the centre, so both sides mirror; the head's runs along [headMid] no further than [headFrom] and
+     * [headTo], under its corner labels.
      */
     fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, bleed: Float, side: Float, head: Float,
-              foot: Float, almond: Float, edge: Float, ink: Int, paper: Int,
+              foot: Float, almond: Float, edge: Float, ink: Int, paper: Int, headGap: Float = 0f, footGap: Float = 0f,
               headFrom: Float = left + side, headTo: Float = right - side, headMid: Float = top + head / 2f) {
         // Only the band is tinted, so what is drawn inside stays as it is
         strip.reset()
@@ -35,8 +36,9 @@ class PageFrame {
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
 
-        chain(canvas, headFrom, headMid, headTo, headMid, almond, edge, ink, paper)
-        chain(canvas, left + side, bottom - foot / 2f, right - side, bottom - foot / 2f, almond, edge, ink, paper)
+        val centre = (left + right) / 2f
+        chain(canvas, headMid, centre, headGap, headFrom, headTo, almond, edge, ink, paper)
+        chain(canvas, bottom - foot / 2f, centre, footGap, left + side, right - side, almond, edge, ink, paper)
 
         // The screen's edge is the band's outer edge, so the one rule is at the text
         line.color = ink
@@ -45,42 +47,35 @@ class PageFrame {
         canvas.drawRect(box, line)
     }
 
-    // Almonds end to end from (x0, y0) to (x1, y1), along the middle of a band [band] wide, a dot between each two
-    private fun chain(canvas: Canvas, x0: Float, y0: Float, x1: Float, y1: Float, band: Float, edge: Float, ink: Int, paper: Int) {
-        val length = maxOf(x1 - x0, y1 - y0)
+    // Almonds along [y], [gap] either side of [centre] outward, whole ones only within [from] and [to], a dot between each two
+    private fun chain(canvas: Canvas, y: Float, centre: Float, gap: Float, from: Float, to: Float, band: Float, edge: Float,
+                      ink: Int, paper: Int) {
         val step = band * STEP
-        val count = floor(length / step).toInt()
-        if (count < 1) return
-        // Spread to fill the side exactly, so both ends meet the corners alike
-        val each = length / count
-        val along = x1 - x0 > y1 - y0
-        val a = each * ALMOND_LONG / 2f
+        val a = step * ALMOND_LONG / 2f
         val b = band * ALMOND_WIDE / 2f
-        for (i in 0 until count) {
-            val c = (i + 0.5f) * each
-            val cx = if (along) x0 + c else x0
-            val cy = if (along) y0 else y0 + c
-            shape.reset()
-            if (along) {
-                shape.moveTo(cx - a, cy)
-                shape.quadTo(cx, cy - b * 2f, cx + a, cy)
-                shape.quadTo(cx, cy + b * 2f, cx - a, cy)
-            } else {
-                shape.moveTo(cx, cy - a)
-                shape.quadTo(cx + b * 2f, cy, cx, cy + a)
-                shape.quadTo(cx - b * 2f, cy, cx, cy - a)
-            }
-            shape.close()
-            fill.color = paper
-            canvas.drawPath(shape, fill)
-            line.color = ink
-            line.strokeWidth = edge / 2f
-            canvas.drawPath(shape, line)
-            // A dot where two almonds meet
-            if (i > 0) {
-                fill.color = ink
-                val d = i * each
-                canvas.drawCircle(if (along) x0 + d else x0, if (along) y0 else y0 + d, band * DOT, fill)
+        for (way in intArrayOf(1, -1)) {
+            var i = 0
+            while (true) {
+                val start = centre + way * (gap + i * step)
+                val c = start + way * step / 2f
+                val end = c + way * a
+                if (end > to || end < from) break
+                shape.reset()
+                shape.moveTo(c - a, y)
+                shape.quadTo(c, y - b * 2f, c + a, y)
+                shape.quadTo(c, y + b * 2f, c - a, y)
+                shape.close()
+                fill.color = paper
+                canvas.drawPath(shape, fill)
+                line.color = ink
+                line.strokeWidth = edge / 2f
+                canvas.drawPath(shape, line)
+                // A dot where two almonds meet
+                if (i > 0) {
+                    fill.color = ink
+                    canvas.drawCircle(start, y, band * DOT, fill)
+                }
+                i++
             }
         }
     }

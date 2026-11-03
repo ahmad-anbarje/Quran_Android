@@ -1120,10 +1120,9 @@ class MushafPageView @JvmOverloads constructor(
         label.textSize = full * headFit(measure, pad)
         thicken()
 
-        // The head band as deep as the foot, which fills the margin under the text, so the two match; it ends where
-        // the text begins, and every label stands centred in it
+        // The head band from the page's top, ending clear of the first row's marks, every label centred in it
         val depth = minOf(padBottom, padTop + headBand)
-        val headTop = padTop + headBand - depth
+        val headTop = 0f
         val edge = resources.displayMetrics.density * FRAME_EDGE
         // Centred between the bold outer rule's inner edge and the fine rule at the text
         val mid = headTop + (depth + edge) / 2f
@@ -1134,10 +1133,9 @@ class MushafPageView @JvmOverloads constructor(
         val titleSize = minOf(label.textSize * HEAD_TITLE_MATCH, tall * LABEL_CLEAR / Mushaf.HEAD_TALL)
 
         val ink = adornInk()
-        // On a phone the margin is all band, to the screen's edges; a wide screen's narrowed page keeps the band beside its text
-        val band = padX * BAND
+        // On a phone the bands run to the screen's edges; a wide screen's narrowed page keeps them to its own width
         val outside = side - padX
-        if (adorned) frame.frame(canvas, outside, headTop, width - outside, pageTall, band, depth, padBottom, edge, ink, paperColour)
+        if (adorned) frame.frame(canvas, outside, headTop, width - outside, pageTall, depth, footDepth(), padX * ALMOND, edge, ink, paperColour)
 
         label.textAlign = Paint.Align.CENTER
         if (headJuz.isNotEmpty()) {
@@ -1176,8 +1174,11 @@ class MushafPageView @JvmOverloads constructor(
         return if (night) ColorUtils.blendARGB(markPaint.color, paperColour, NIGHT_RECEDE) else markPaint.color
     }
 
-    // Where the folio sits: the middle of the foot, which on a scrolling page is below the screen
-    private fun footMid() = pageTall - padBottom / 2f
+    // The foot band, starting a little under the text so the last row's marks clear it
+    private fun footDepth() = padBottom - FOOT_CLEAR * resources.displayMetrics.density
+
+    // Where the folio sits: the middle of the foot band, which on a scrolling page is below the screen
+    private fun footMid() = pageTall - footDepth() / 2f
 
     // The labels' weight as a stroke around each letter, in step with their size: shrunk labels thin with them
     private fun thicken() {
@@ -1346,11 +1347,12 @@ class MushafPageView @JvmOverloads constructor(
         // A surah's band, as a share of its line's height
         private const val BAND_TALL = 0.86f
 
-        // The frame: its rules' thickness in dp, its gap outside the text as a share of the side margin,
-        // and its label cartouches' height in the head band and padding either side of their words
+        // The frame: its rules' thickness in dp, and its label cartouches' height in the head band and padding either side of their words
         private const val FRAME_EDGE = 1.2f
-        // The frame's band as a share of the side margin, leaving a little of it clear beside the text
-        private const val BAND = 0.7f
+        // The almonds' size as a share of the side margin
+        private const val ALMOND = 0.7f
+        // The foot band's distance under the text, in dp
+        private const val FOOT_CLEAR = 6f
         private const val LABEL_TALL = 1.1f
         // Of a label cartouche's height, what a title may fill
         private const val LABEL_CLEAR = 0.94f

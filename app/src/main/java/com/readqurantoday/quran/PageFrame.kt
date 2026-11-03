@@ -8,8 +8,8 @@ import androidx.core.graphics.ColorUtils
 import kotlin.math.floor
 
 /**
- * The page's frame, after the printed mushaf's: a tinted band between two rules running round the page,
- * a chain of almonds along it and a rosette at each corner, and cartouches for its labels.
+ * The page's frame, after the printed mushaf's: a tinted band between two rules across its head and its foot,
+ * a chain of almonds along each, and cartouches for its labels.
  */
 class PageFrame {
 
@@ -20,37 +20,31 @@ class PageFrame {
     private val shape = Path()
 
     /**
-     * The band round [left], [top], [right], [bottom]: [band] wide at the sides, [head] deep at the top where the page's
-     * labels sit and [foot] at the bottom where its number sits; its rules [edge] thick, tinted with [ink], its almonds
-     * filled with [paper].
+     * A band across the page's head, [head] deep from [top], where its labels sit, and one across its foot, [foot] deep
+     * up from [bottom], where its number sits, both from [left] to [right]; the sides are left open, so a letter that
+     * reaches past the measure never meets a rule. Its rules are [edge] thick, tinted with [ink]; its almonds, [almond]
+     * across, are filled with [paper].
      */
-    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, band: Float, head: Float, foot: Float,
+    fun frame(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float, head: Float, foot: Float, almond: Float,
               edge: Float, ink: Int, paper: Int) {
-        // Only the band is tinted, so what is drawn inside stays as it is
+        // Only the bands are tinted, so what is drawn between them stays as it is
         strip.reset()
-        strip.addRect(left, top, right, bottom, Path.Direction.CW)
-        strip.addRect(left + band, top + head, right - band, bottom - foot, Path.Direction.CW)
+        strip.addRect(left, top, right, top + head, Path.Direction.CW)
+        strip.addRect(left, bottom - foot, right, bottom, Path.Direction.CW)
         fill.color = ColorUtils.setAlphaComponent(ink, TINT)
         canvas.drawPath(strip, fill)
 
-        // The almonds along each side, end to end between the corners, and a rosette in each corner
-        val half = band / 2f
-        chain(canvas, left + band, top + head / 2f, right - band, top + head / 2f, band, edge, ink, paper)
-        chain(canvas, left + band, bottom - foot / 2f, right - band, bottom - foot / 2f, band, edge, ink, paper)
-        chain(canvas, left + half, top + head, left + half, bottom - foot, band, edge, ink, paper)
-        chain(canvas, right - half, top + head, right - half, bottom - foot, band, edge, ink, paper)
-        for (x in floatArrayOf(left + half, right - half)) for (y in floatArrayOf(top + head / 2f, bottom - foot / 2f)) {
-            rosette(canvas, x, y, half * ROSETTE, edge, ink, paper)
-        }
+        chain(canvas, left, top + head / 2f, right, top + head / 2f, almond, edge, ink, paper)
+        chain(canvas, left, bottom - foot / 2f, right, bottom - foot / 2f, almond, edge, ink, paper)
 
-        // Its rules: a bold one outside, a fine one inside
+        // Each band's rules: a bold one at the page's edge, a fine one at the text
         line.color = ink
         line.strokeWidth = edge
-        box.set(left + edge / 2f, top + edge / 2f, right - edge / 2f, bottom - edge / 2f)
-        canvas.drawRect(box, line)
+        canvas.drawLine(left, top + edge / 2f, right, top + edge / 2f, line)
+        canvas.drawLine(left, bottom - edge / 2f, right, bottom - edge / 2f, line)
         line.strokeWidth = edge / 2f
-        box.set(left + band, top + head, right - band, bottom - foot)
-        canvas.drawRect(box, line)
+        canvas.drawLine(left, top + head, right, top + head, line)
+        canvas.drawLine(left, bottom - foot, right, bottom - foot, line)
     }
 
     // Almonds end to end from (x0, y0) to (x1, y1), along the middle of a band [band] wide, a dot between each two
@@ -93,25 +87,6 @@ class PageFrame {
         }
     }
 
-    // Two squares, one turned an eighth, about ([x], [y]): the corner's star
-    private fun rosette(canvas: Canvas, x: Float, y: Float, r: Float, edge: Float, ink: Int, paper: Int) {
-        val d = r * 1.4142f
-        shape.reset()
-        shape.addRect(x - r, y - r, x + r, y + r, Path.Direction.CW)
-        shape.moveTo(x, y - d)
-        shape.lineTo(x + d, y)
-        shape.lineTo(x, y + d)
-        shape.lineTo(x - d, y)
-        shape.close()
-        fill.color = paper
-        canvas.drawPath(shape, fill)
-        line.color = ink
-        line.strokeWidth = edge / 2f
-        canvas.drawPath(shape, line)
-        fill.color = ink
-        canvas.drawCircle(x, y, r * 0.35f, fill)
-    }
-
     /** A cartouche for a label [half] either side of [centre], [tall] high about [mid], filled with [paper] and edged in [ink]. */
     fun label(canvas: Canvas, centre: Float, mid: Float, half: Float, tall: Float, edge: Float, ink: Int, paper: Int) {
         shape.cartouche(centre, mid, half, tall, box)
@@ -125,12 +100,11 @@ class PageFrame {
     private companion object {
         // The band's tint out of 255
         const val TINT = 70
-        // Shares of the band's width: an almond's length (of its step), its width, the gap between almonds' centres,
-        // the dots between them, and the corner rosette's half-size (of half the band)
+        // Shares of the almonds' size: an almond's length (of its step), its width, the gap between almonds' centres,
+        // and the dots between them
         const val ALMOND_LONG = 0.82f
         const val ALMOND_WIDE = 0.5f
         const val STEP = 1.9f
         const val DOT = 0.07f
-        const val ROSETTE = 0.62f
     }
 }

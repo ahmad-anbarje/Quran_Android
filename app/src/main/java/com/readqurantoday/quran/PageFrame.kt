@@ -53,10 +53,12 @@ class PageFrame {
         val step = band * STEP
         val a = step * ALMOND_LONG / 2f
         val b = band * ALMOND_WIDE / 2f
+        // The first dot stands off the middle box as far as each dot stands off its almonds
+        val lead = if (gap > 0f) step / 2f - a else 0f
         for (way in intArrayOf(1, -1)) {
             var i = 0
             while (true) {
-                val start = centre + way * (gap + i * step)
+                val start = centre + way * (gap + lead + i * step)
                 val c = start + way * step / 2f
                 val end = c + way * a
                 if (end > to || end < from) break
@@ -70,11 +72,9 @@ class PageFrame {
                 line.color = ink
                 line.strokeWidth = edge / 2f
                 canvas.drawPath(shape, line)
-                // A dot where two almonds meet
-                if (i > 0) {
-                    fill.color = ink
-                    canvas.drawCircle(start, y, band * DOT, fill)
-                }
+                // A dot before each almond: between two, or between the first and the middle box
+                fill.color = ink
+                canvas.drawCircle(start, y, band * DOT, fill)
                 i++
             }
         }

@@ -36,12 +36,12 @@ class PageFrame {
         chain(canvas, left + side, top + head / 2f, right - side, top + head / 2f, almond, edge, ink, paper)
         chain(canvas, left + side, bottom - foot / 2f, right - side, bottom - foot / 2f, almond, edge, ink, paper)
 
-        // Its rules: a bold one outside, a fine one inside
+        // Its rules, one weight outside and in, so the thin sides read as an even double rule
+        val rule = edge * RULE
         line.color = ink
-        line.strokeWidth = edge
-        box.set(left + edge / 2f, top + edge / 2f, right - edge / 2f, bottom - edge / 2f)
+        line.strokeWidth = rule
+        box.set(left + rule / 2f, top + rule / 2f, right - rule / 2f, bottom - rule / 2f)
         canvas.drawRect(box, line)
-        line.strokeWidth = edge / 2f
         box.set(left + side, top + head, right - side, bottom - foot)
         canvas.drawRect(box, line)
     }
@@ -100,8 +100,9 @@ class PageFrame {
         /** The side band's width in dp: thin, so a letter reaching past the measure stays clear of it. */
         const val SIDE = 4f
 
-        // The band's tint out of 255
+        // The band's tint out of 255, and its rules' weight as a share of the cartouches' edge
         private const val TINT = 70
+        private const val RULE = 0.75f
         // Shares of the almonds' size: an almond's length (of its step), its width, the gap between almonds' centres,
         // and the dots between them
         private const val ALMOND_LONG = 0.82f

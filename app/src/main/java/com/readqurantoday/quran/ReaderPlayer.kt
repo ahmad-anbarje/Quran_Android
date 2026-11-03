@@ -200,11 +200,8 @@ class ReaderPlayer(
                 Settings.setTajweed(host, on)
                 say()
                 reader.redrawPages()
-                // The first time, the colours are explained, so they are no puzzle; after that a word marked shows its rules
-                if (on && !Settings.tajweedExplained(host)) {
-                    Settings.setTajweedExplained(host)
-                    host.showTajweedLegend()
-                } else if (on) reader.showMarkedTajweed()
+                // A word marked shows its rules; the colours' legend is a long press away, and in settings
+                if (on) reader.showMarkedTajweed()
             }
             setOnLongClickListener { host.showTajweedLegend(); true }
         }

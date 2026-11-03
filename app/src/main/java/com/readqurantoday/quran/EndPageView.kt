@@ -45,7 +45,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
             invalidate()
         }
     private val blocks = ArrayList<Pair<EndPages.Kind, EndBlock>>()
-    // The size the paragraphs were last fitted to
+    // The room the paragraphs were last fitted to
     private var fitted = -1
     private var fittedTall = -1
     private val prose = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { typeface = Typeface.SERIF }

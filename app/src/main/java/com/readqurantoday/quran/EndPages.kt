@@ -4,7 +4,10 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** The mushaf's closing pages, أ to ل, line for line as printed: how it was written and marked. Built by tools/end_pages.py. */
+/**
+ * The mushaf's closing pages, أ to ل: how it was written and marked, kept line for line as printed, so each paragraph's
+ * lines and where it ends are known. Built by tools/end_pages.py.
+ */
 object EndPages {
 
     /** One printed word of a Quranic example: the mushaf page it is drawn from and its glyphs there. */

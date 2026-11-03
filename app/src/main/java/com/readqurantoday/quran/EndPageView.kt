@@ -9,13 +9,13 @@ import android.graphics.Typeface
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import androidx.core.graphics.ColorUtils
 
-/** One of the mushaf's closing pages, framed as the Quran's pages are, its text scrolling inside the frame. */
+/** One of the mushaf's closing pages, framed as the Quran's pages are, its paragraphs wrapped to fit the frame whole. */
 @SuppressLint("ViewConstructor")
 class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayout(context) {
 
@@ -28,6 +28,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
     private val rows = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         layoutDirection = View.LAYOUT_DIRECTION_RTL
+        gravity = Gravity.CENTER_VERTICAL
         // A tap anywhere on the text brings the reader's bars, as on a Quran page
         setOnClickListener { tapped() }
     }
@@ -38,14 +39,13 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         set(value) {
             if (field == value) return
             field = value
-            val inset = ((INSET + TEXT_INSET) * dp).toInt()
-            (getChildAt(0).layoutParams as LayoutParams).topMargin = inset + value
-            fittedTall = -1
+            (rows.layoutParams as LayoutParams).topMargin = ((INSET + TEXT_INSET) * dp).toInt() + value
+            fitted = -1
             requestLayout()
             invalidate()
         }
-    private val lines = ArrayList<Pair<EndPages.Kind, EndLine>>()
-    // The width the lines were last sized for
+    private val blocks = ArrayList<Pair<EndPages.Kind, EndBlock>>()
+    // The size the paragraphs were last fitted to
     private var fitted = -1
     private var fittedTall = -1
     private val prose = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { typeface = Typeface.SERIF }
@@ -54,16 +54,13 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
     init {
         setWillNotDraw(false)
         val inset = (INSET + TEXT_INSET) * dp
-        addView(ScrollView(context).apply {
-            isVerticalScrollBarEnabled = false
-            addView(rows)
-        }, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
+        addView(rows, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT).apply {
             setMargins(inset.toInt(), inset.toInt(), inset.toInt(), (inset + FOOT * dp).toInt())
         })
         setOnClickListener { tapped() }
     }
 
-    /** Shows the closing page at [index], from أ. */
+    /** Shows the closing page at [index], from أ: the printed lines of each paragraph run together and wrap. */
     fun show(index: Int) {
         val page = EndPages.pages.getOrNull(index) ?: return
         letter = page.letter
@@ -72,51 +69,64 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         prose.color = ink
         titles.color = ink
         rows.removeAllViews()
-        lines.clear()
-        for (line in page.lines) {
-            val view = when (line.kind) {
-                EndPages.Kind.BASMALAH -> EndLine(context, quran(listOf(EndPages.Word(Mushaf.basmalahPage, BASMALAH)), BASMALAH_SCALE, "-"), EndLine.Mode.CENTER, prose)
-                EndPages.Kind.TITLE -> EndLine(context, runs(line.parts), EndLine.Mode.CENTER, titles)
-                EndPages.Kind.LINE -> EndLine(context, runs(line.parts), EndLine.Mode.JUSTIFY, prose)
-                EndPages.Kind.END -> EndLine(context, runs(line.parts), EndLine.Mode.START, prose)
-            }
-            lines.add(line.kind to view)
-            rows.addView(view)
+        blocks.clear()
+        var paragraph: SpannableStringBuilder? = null
+        fun close() {
+            paragraph?.let { blocks.add(EndPages.Kind.LINE to EndBlock(context, it, centred = false, paint = prose)) }
+            paragraph = null
         }
+        for (line in page.lines) when (line.kind) {
+            EndPages.Kind.BASMALAH -> {
+                close()
+                val basmalah = quran(listOf(EndPages.Word(Mushaf.basmalahPage, BASMALAH)), BASMALAH_SCALE, "-")
+                blocks.add(line.kind to EndBlock(context, basmalah, centred = true, paint = prose))
+            }
+            EndPages.Kind.TITLE -> {
+                close()
+                blocks.add(line.kind to EndBlock(context, runs(line.parts), centred = true, paint = titles))
+            }
+            EndPages.Kind.LINE, EndPages.Kind.END -> {
+                val text = paragraph ?: SpannableStringBuilder().also { paragraph = it }
+                if (text.isNotEmpty()) text.append(' ')
+                text.append(runs(line.parts))
+                if (line.kind == EndPages.Kind.END) close()
+            }
+        }
+        close()
+        for ((_, block) in blocks) rows.addView(block, LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         fitted = -1
-        fittedTall = -1
         requestLayout()
         invalidate()
     }
 
-    // Sized as the page is measured, when its width is known
+    // Sized as the page is measured, when its room is known
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         val wide = MeasureSpec.getSize(widthSpec)
         val high = MeasureSpec.getSize(heightSpec)
         if (wide != fitted || high != fittedTall) {
             fitted = wide
             fittedTall = high
-            fit(wide)
-            // The lines share the frame's height, as printed, unless they need more and scroll
-            val room = high - headroom - (2 * (INSET + TEXT_INSET) + FOOT) * dp
-            if (room > 0f) for ((_, line) in lines) line.tall = room / lines.size
+            fit((wide - 2 * (INSET + TEXT_INSET) * dp).toInt(), high - headroom - (2 * (INSET + TEXT_INSET) + FOOT) * dp)
         }
         super.onMeasure(widthSpec, heightSpec)
     }
 
-    // One size for the page's text: the largest at which every printed line still fits the width whole
-    private fun fit(wide: Int) {
-        val room = wide - 2 * (INSET + TEXT_INSET) * dp
-        if (room <= 0f || lines.isEmpty()) return
-        val most = resources.getDimension(R.dimen.end_page_text)
-        var size = most
-        for ((kind, line) in lines) {
-            val scale = if (kind == EndPages.Kind.TITLE) TITLE_SCALE else 1f
-            val wide = line.natural(most * scale)
-            if (wide > room) size = minOf(size, most * room / wide)
+    // One size for the page's text: the largest, up to the reading size, at which all of it fits the frame unscrolled
+    private fun fit(wide: Int, high: Float) {
+        if (wide <= 0 || high <= 0f || blocks.isEmpty()) return
+        var size = resources.getDimension(R.dimen.end_page_text)
+        val least = LEAST * dp
+        while (size > least && tallAt(wide, size) > high) size -= STEP * dp
+        blocks.forEachIndexed { i, (kind, block) ->
+            block.size = size * if (kind == EndPages.Kind.TITLE) TITLE_SCALE else 1f
+            (block.layoutParams as LinearLayout.LayoutParams).topMargin = if (i == 0) 0 else (size * GAP).toInt()
         }
-        for ((kind, line) in lines) line.size = size * if (kind == EndPages.Kind.TITLE) TITLE_SCALE else 1f
     }
+
+    // The page's paragraphs stacked at [size], with the gaps between them
+    private fun tallAt(wide: Int, size: Float): Float =
+        blocks.sumOf { (kind, block) -> block.tallAt(wide, size * if (kind == EndPages.Kind.TITLE) TITLE_SCALE else 1f) }.toFloat() +
+            size * GAP * (blocks.size - 1)
 
     // The text as typed, each Quranic example in the mushaf's own hand, in the brackets it shows
     private fun runs(parts: List<EndPages.Part>): CharSequence = SpannableStringBuilder().apply {
@@ -129,7 +139,8 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
     private fun quran(words: List<EndPages.Word>, scale: Float, brackets: String): CharSequence = SpannableStringBuilder().apply {
         if ('(' in brackets) append("(")
         words.forEachIndexed { i, word ->
-            if (i > 0) append(' ')
+            // An ayah's number never wraps away from its last word
+            if (i > 0) append(if (word.glyphs in Mushaf.marksOn(word.page)) NO_BREAK else " ")
             val at = length
             append(OBJECT)
             setSpan(QuranWordSpan(context.applicationContext, word, scale), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -164,15 +175,20 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
     private companion object {
         // The object character a word's span stands on
         const val OBJECT = "￼"
+        const val NO_BREAK = " "
         // The compact Basmalah in the first page font
         const val BASMALAH = ""
         const val BASMALAH_SCALE = 2.2f
         const val WORD_SCALE = 1.25f
         const val TITLE_SCALE = 1.4f
+        // In ems: the gap between paragraphs; in dp: the least size the text shrinks to and the steps it shrinks by
+        const val GAP = 0.6f
+        const val LEAST = 9f
+        const val STEP = 0.25f
         // In dp: the frame's distance from the edge, the text's inside it, the foot left for the letter,
         // the frame's rule and the letter's size
         const val INSET = 10f
-        const val TEXT_INSET = 14f
+        const val TEXT_INSET = 6f
         const val FOOT = 24f
         const val EDGE = 1.2f
         const val LABEL = 15f

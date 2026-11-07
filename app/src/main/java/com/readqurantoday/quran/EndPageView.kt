@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.text.TextPaint
 import android.view.Gravity
 import android.view.View
@@ -138,13 +137,7 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
 
     private fun quran(words: List<EndPages.Word>, scale: Float, brackets: String): CharSequence = SpannableStringBuilder().apply {
         if ('(' in brackets) append("(")
-        words.forEachIndexed { i, word ->
-            // An ayah's number never wraps away from its last word
-            if (i > 0) append(if (word.glyphs in Mushaf.marksOn(word.page)) NO_BREAK else " ")
-            val at = length
-            append(OBJECT)
-            setSpan(QuranWordSpan(context.applicationContext, word, scale), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
+        for (word in words) appendQuranWord(context, word, scale)
         if (')' in brackets) append(")")
     }
 
@@ -174,9 +167,6 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
     }
 
     private companion object {
-        // The object character a word's span stands on
-        const val OBJECT = "￼"
-        const val NO_BREAK = " "
         // The compact Basmalah in the first page font
         const val BASMALAH = ""
         const val BASMALAH_SCALE = 2.2f

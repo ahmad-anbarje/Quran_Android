@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.style.ReplacementSpan
 
 /** One printed word of the mushaf inside running text, drawn from its page's own font in [book], [scale] times the text's size. */
@@ -83,3 +85,15 @@ class QuranWordSpan(
         const val INNER = 0.04f
     }
 }
+
+/** Appends [word] as the mushaf prints it, after a space, or a no-break one before an ayah's number so it never wraps from its last word. */
+fun SpannableStringBuilder.appendQuranWord(context: Context, word: EndPages.Word, scale: Float, book: Book = Mushaf.plain) {
+    if (isNotEmpty() && last() != '(') append(if (word.glyphs in book.marksOn(word.page)) NO_BREAK else " ")
+    val at = length
+    append(OBJECT)
+    setSpan(QuranWordSpan(context.applicationContext, word, scale, book), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+}
+
+// The object character a word's span stands on, and the space that keeps an ayah's number on its last word's line
+private const val OBJECT = "￼"
+private const val NO_BREAK = " "

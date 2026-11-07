@@ -147,7 +147,6 @@
     <string name="speed_slow">0.75×</string>
     <string name="speed_normal">1×</string>
     <string name="speed_fast">1.25×</string>
-    <string name="translit_name">Transliteration</string>
     <string name="set_group_help">Help</string>
     <string name="set_report">Report an issue or suggest</string>
     <string name="report_subject">Issue in %1$s</string>

@@ -88,7 +88,7 @@ private class TranslationChoices(
         })
         return buildList {
             for (group in groups) {
-                add(Line.Language(translationLanguage(group[0], arabic)))
+                add(Line.Language(group[0].language(arabic)))
                 group.forEach { add(Line.One(it)) }
             }
         }
@@ -110,7 +110,7 @@ private class TranslationChoices(
             is Line.One -> {
                 val row = holder as Row
                 val t = line.t
-                row.label.text = (if (arabic) t.nameAr else t.nameEn).ifEmpty { t.nameEn }
+                row.label.text = t.name(arabic)
                 val complex = row.itemView.context.getString(R.string.meaning_complex)
                 row.note.text = complex
                 row.note.visibility = if (t.complex && row.label.text != complex) View.VISIBLE else View.GONE

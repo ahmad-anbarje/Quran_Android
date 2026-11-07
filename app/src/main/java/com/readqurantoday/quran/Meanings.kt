@@ -29,12 +29,6 @@ object Meanings {
         nameAr = "صحيح إنترناشيونال", nameEn = "Saheeh International", source = "tanzil", key = "", complex = false
     )
 
-    /** The translation chosen, as [offered] has it now; one gone from the list falls back to the first. */
-    fun chosen(context: Context, offered: List<Translation>): Translation {
-        val id = Settings.translation(context) ?: firstChoice(offered)
-        return offered.firstOrNull { it.id == id } ?: offered.firstOrNull { it.id == first.id } ?: first
-    }
-
     /** One translation in the list: its language in Arabic, English and its own name, and its translator. */
     data class Translation(
         val id: String,
@@ -48,7 +42,16 @@ object Meanings {
         val source: String,
         val key: String,
         val complex: Boolean
-    )
+    ) {
+        /** The translator's name in the app's language. */
+        fun name(arabic: Boolean) = (if (arabic) nameAr else nameEn).ifEmpty { nameEn }
+
+        /** The language in the app's language, with its own name for itself beside it where that differs. */
+        fun language(arabic: Boolean): String {
+            val mine = (if (arabic) languageAr else languageEn).ifEmpty { languageEn }
+            return if (native.isNotEmpty() && !native.equals(mine, ignoreCase = true)) "$mine · $native" else mine
+        }
+    }
 
     /** Where a text's surahs are kept, on the site and on the phone. */
     data class Text(val path: String, val rtl: Boolean, val source: String, val key: String)
@@ -64,7 +67,7 @@ object Meanings {
         private set
     @Volatile private var refreshed = false
 
-    private val kept = object : LinkedHashMap<String, List<String>>(KEEP, 0.75f, true) {
+    private val surahs = object : LinkedHashMap<String, List<String>>(KEEP, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, List<String>>?) = size > KEEP
     }
 
@@ -121,9 +124,9 @@ object Meanings {
     /** Ayah [ayah] of [surah] in [text], on the main thread; null when it could not be had. */
     fun ayah(context: Context, text: Text, surah: Int, ayah: Int, done: (String?) -> Unit) {
         val name = "${text.path}$surah.json"
-        synchronized(kept) { kept[name] }?.let { done(it.getOrNull(ayah - 1)); return }
+        synchronized(surahs) { surahs[name] }?.let { done(it.getOrNull(ayah - 1)); return }
         kept(context, name, ::ayahs) { got ->
-            got?.let { synchronized(kept) { kept[name] = it } }
+            got?.let { synchronized(surahs) { surahs[name] = it } }
             done(got?.getOrNull(ayah - 1))
         }
     }
@@ -143,8 +146,8 @@ object Meanings {
         }
     }
 
-    private fun ayahs(json: String?): List<String>? = try {
-        val all = JSONArray(json ?: return null)
+    private fun ayahs(json: String): List<String>? = try {
+        val all = JSONArray(json)
         List(all.length()) { all.getString(it) }
     } catch (_: Exception) {
         null
@@ -162,6 +165,12 @@ object Meanings {
         }
     } catch (_: Exception) {
         null
+    }
+
+    /** The translation chosen, as [offered] has it now; one gone from the list falls back to the first. */
+    fun chosen(context: Context, offered: List<Translation>): Translation {
+        val id = Settings.translation(context) ?: firstChoice(offered)
+        return offered.firstOrNull { it.id == id } ?: offered.firstOrNull { it.id == first.id } ?: first
     }
 
     /** The translation a reader starts with: their phone's language where one is offered, beyond Arabic; else, and for English, Saheeh International. */

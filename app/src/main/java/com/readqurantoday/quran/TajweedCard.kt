@@ -3,7 +3,7 @@ package com.readqurantoday.quran
 import android.app.Activity
 import android.app.Dialog
 import android.content.res.ColorStateList
-import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -56,9 +56,7 @@ class TajweedCard(
             setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.text_heading))
             val pad = (WORD_PAD * resources.displayMetrics.density).toInt()
             setPadding(0, pad, 0, pad)
-            text = SpannableString(OBJECT).apply {
-                setSpan(QuranWordSpan(host, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed), 0, 1, 0)
-            }
+            text = SpannableStringBuilder().apply { appendQuranWord(host, EndPages.Word(page, glyphs), WORD_SCALE, Mushaf.tajweed) }
         })
         // Recite from the word, hear it alone, and the recitation's speed, always all three, so the buttons never move
         rows.addView(LinearLayout(host).apply {
@@ -134,8 +132,7 @@ class TajweedCard(
     }
 }
 
-// The object character a word's span stands on; the word drawn three times the sheet's text, with room above and below
-private const val OBJECT = "￼"
+// The word drawn three times the sheet's text, with room above and below
 private const val WORD_SCALE = 3f
 private const val WORD_PAD = 12f
 private const val LOADING_ALPHA = 0x66

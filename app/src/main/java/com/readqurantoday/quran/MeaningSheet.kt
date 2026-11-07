@@ -114,8 +114,8 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         // Whose text it is, on both sides, so the sheet keeps one height; only a translation can be changed
         val chosen = Meanings.chosen(host, offered)
         pickLabel.text = if (tafsir) host.getString(R.string.meaning_muyassar) else listOfNotNull(
-            languageOf(chosen), nameOf(chosen),
-            host.getString(R.string.meaning_complex).takeIf { chosen.complex && nameOf(chosen) != it }
+            chosen.language(arabic), chosen.name(arabic),
+            host.getString(R.string.meaning_complex).takeIf { chosen.complex && chosen.name(arabic) != it }
         ).joinToString(" · ")
         pick.isClickable = !tafsir
         pickIcon.visibility = if (tafsir) View.INVISIBLE else View.VISIBLE
@@ -135,19 +135,12 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         }
     }
 
-    // The ayah in the mushaf's own glyphs, word by word from the pages it is printed on, its number kept with its last word
+    // The ayah in the mushaf's own glyphs, word by word from the pages it is printed on
     private fun printed(surah: Int, ayah: Int): CharSequence = SpannableStringBuilder().apply {
         val from = Ayat.pageOf(surah, ayah).takeIf { it > 0 } ?: return@apply
         val book = Mushaf.plain
         for (page in from..minOf(from + 1, Mushaf.PAGES)) {
-            val marks = book.marksOn(page)
-            for (glyphs in book.ayahOn(page, surah, ayah)) {
-                if (isNotEmpty()) append(if (marks.contains(glyphs)) NO_BREAK else " ")
-                val at = length
-                append(OBJECT)
-                setSpan(QuranWordSpan(host.applicationContext, EndPages.Word(page, glyphs), AYAH_SCALE), at, length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
+            for (glyphs in book.ayahOn(page, surah, ayah)) appendQuranWord(host, EndPages.Word(page, glyphs), AYAH_SCALE, book)
         }
     }
 
@@ -161,23 +154,11 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         }
     }
 
-    private fun nameOf(t: Meanings.Translation) = (if (arabic) t.nameAr else t.nameEn).ifEmpty { t.nameEn }
-
-    private fun languageOf(t: Meanings.Translation) = translationLanguage(t, arabic)
-
     private companion object {
         const val SURAHS = 114
         // The ayah and its meaning's room, as a share of the screen's height
         const val BODY_TALL = 0.4f
-        // The ayah's glyphs over the meaning's type size; the object character each word's span stands on
+        // The ayah's glyphs over the meaning's type size
         const val AYAH_SCALE = 1.5f
-        const val OBJECT = "￼"
-        const val NO_BREAK = " "
     }
-}
-
-/** A translation's language in the app's language, with its own name beside it where that differs. */
-fun translationLanguage(t: Meanings.Translation, arabic: Boolean): String {
-    val mine = (if (arabic) t.languageAr else t.languageEn).ifEmpty { t.languageEn }
-    return if (t.native.isNotEmpty() && !t.native.equals(mine, ignoreCase = true)) "$mine · ${t.native}" else mine
 }

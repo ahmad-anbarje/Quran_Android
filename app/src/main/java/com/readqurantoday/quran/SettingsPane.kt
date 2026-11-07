@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -229,13 +228,11 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
     // Picking the other theme rebuilds the screen in it
     private fun themeSwitch(night: Boolean): View {
         val row = blow.inflate(R.layout.row_setting_segment, into, false)
-        val day = row.findViewById<TextView>(R.id.seg_day)
-        val dark = row.findViewById<TextView>(R.id.seg_night)
-        for ((option, isOn) in listOf(day to !night, dark to night)) {
-            option.setBackgroundResource(if (isOn) R.drawable.seg_on else R.drawable.row_flat)
-            option.setTextColor(host.getColor(if (isOn) R.color.text else R.color.text_mute))
-            option.setTypeface(option.typeface, if (isOn) Typeface.BOLD else Typeface.NORMAL)
-        }
+        val day = row.findViewById<TextView>(R.id.seg_first).apply { setText(R.string.theme_light) }
+        val dark = row.findViewById<TextView>(R.id.seg_second).apply { setText(R.string.theme_dark) }
+        val face = day.typeface
+        day.markSegment(!night, face)
+        dark.markSegment(night, face)
         day.setOnClickListener { if (night) readingStyle(night = false) }
         dark.setOnClickListener { if (!night) readingStyle(night = true) }
         return row

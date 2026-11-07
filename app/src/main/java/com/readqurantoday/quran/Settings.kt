@@ -164,6 +164,21 @@ object Settings {
         restyled()
     }
 
+    // --- translation and tafsir ---
+
+    private const val MEANING_TAFSIR = "meaning-tafsir"
+    private const val TRANSLATION = "translation"
+
+    /** Whether the meaning sheet opens on the tafsir; until one is read, as the app's language suggests. */
+    fun meaningTafsir(context: Context) = store(context).getBoolean(MEANING_TAFSIR, language(context) == "ar")
+
+    fun setMeaningTafsir(context: Context, on: Boolean) = store(context).edit { putBoolean(MEANING_TAFSIR, on) }
+
+    /** The translation chosen, by its id in the list; null until one is. */
+    fun translation(context: Context): String? = store(context).getString(TRANSLATION, null)
+
+    fun setTranslation(context: Context, id: String) = store(context).edit { putString(TRANSLATION, id) }
+
     // --- recently read ---
 
     /** A place read lately: its surah, the page, and when, in epoch ms (0 unknown). */

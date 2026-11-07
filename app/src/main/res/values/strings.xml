@@ -527,4 +527,18 @@
     <string name="tajweed_silent">الحرف الساكن</string>
     <string name="set_tajweed_legend">ألوان التجويد</string>
     <string name="tajweed_word_plain">لا أحكام ملوّنة في هذه الكلمة، فتُقرأ كالمعتاد.</string>
+
+    <!-- Translation and tafsir -->
+    <string name="label_meaning">التفسير</string>
+    <string name="meaning_name">الترجمة والتفسير</string>
+    <string name="meaning_translation">الترجمة</string>
+    <string name="meaning_tafsir">التفسير</string>
+    <string name="meaning_unreached">تعذّر التحميل. تحقق من الاتصال.</string>
+    <string name="meaning_source">المصدر: %1$s</string>
+    <string name="meaning_muyassar">التفسير الميسر · مجمع الملك فهد</string>
+    <string name="meaning_complex">مجمع الملك فهد</string>
+    <string name="source_quranenc">موسوعة القرآن الكريم (QuranEnc)</string>
+    <string name="source_tanzil">تنزيل (Tanzil)</string>
+    <string name="translation_pick">اللغة والمترجم</string>
+    <string name="translation_search_hint">ابحث عن لغة أو مترجم</string>
 </resources>

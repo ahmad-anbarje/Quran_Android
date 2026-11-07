@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What an ayah means: which ayah, with steps either side; translation or tafsir; the text, and who it is from -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layoutDirection="locale"
+    android:background="@drawable/sheet"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/grip" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/meaning_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text"
+            android:textSize="@dimen/text_title" />
+
+        <ImageView
+            android:id="@+id/meaning_prev"
+            android:layout_width="@dimen/word_listen"
+            android:layout_height="@dimen/word_listen"
+            android:padding="11dp"
+            android:scaleX="-1"
+            android:background="@drawable/row_flat"
+            android:src="@drawable/ic_chevron"
+            android:contentDescription="@string/previous_ayah" />
+
+        <ImageView
+            android:id="@+id/meaning_next"
+            android:layout_width="@dimen/word_listen"
+            android:layout_height="@dimen/word_listen"
+            android:padding="11dp"
+            android:background="@drawable/row_flat"
+            android:src="@drawable/ic_chevron"
+            android:contentDescription="@string/next_ayah" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/meaning_tabs"
+        layout="@layout/row_setting_segment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp" />
+
+    <!-- The translation in use; a tap chooses another -->
+    <LinearLayout
+        android:id="@+id/meaning_pick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_margin"
+        android:layout_marginEnd="@dimen/screen_margin"
+        android:layout_marginTop="4dp"
+        android:minHeight="@dimen/quarter_chip_height"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/chip_outline"
+        android:paddingStart="14dp"
+        android:paddingEnd="10dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/meaning_pick_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/text"
+            android:textSize="@dimen/text_body" />
+
+        <ImageView
+            android:id="@+id/meaning_pick_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layoutDirection="ltr"
+            android:rotation="90"
+            android:src="@drawable/ic_chevron"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/meaning_body"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none">
+
+        <TextView
+            android:id="@+id/meaning_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:lineSpacingMultiplier="1.45"
+            android:textIsSelectable="true"
+            android:textColor="@color/text"
+            android:textSize="@dimen/text_title" />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/meaning_by"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:background="@drawable/row_flat"
+        android:textColor="@color/text_mute"
+        android:textSize="@dimen/text_meta" />
+</LinearLayout>

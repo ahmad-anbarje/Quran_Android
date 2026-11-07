@@ -448,4 +448,18 @@
     <string name="tajweed_silent">Silent letter</string>
     <string name="set_tajweed_legend">Tajweed colours</string>
     <string name="tajweed_word_plain">No coloured rules in this word; it is read as usual.</string>
+
+    <!-- Translation and tafsir -->
+    <string name="label_meaning">Meaning</string>
+    <string name="meaning_name">Translation and tafsir</string>
+    <string name="meaning_translation">Translation</string>
+    <string name="meaning_tafsir">Tafsir</string>
+    <string name="meaning_unreached">Could not load. Check the connection.</string>
+    <string name="meaning_source">Source: %1$s</string>
+    <string name="meaning_muyassar">Al-Muyassar · King Fahd Complex (Arabic)</string>
+    <string name="meaning_complex">King Fahd Complex</string>
+    <string name="source_quranenc">QuranEnc, Encyclopedia of the Noble Quran</string>
+    <string name="source_tanzil">Tanzil</string>
+    <string name="translation_pick">Language and translator</string>
+    <string name="translation_search_hint">Search a language or translator</string>
 </resources>

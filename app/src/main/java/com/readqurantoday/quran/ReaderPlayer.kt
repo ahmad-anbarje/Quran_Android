@@ -26,6 +26,8 @@ class ReaderPlayer(
         fun redrawPages()
         /** Shows the Tajweed card of the word marked now, if one is. */
         fun showMarkedTajweed()
+        /** Shows the translation and tafsir of the ayah being read. */
+        fun showMeaning()
         /** Shows the player, and the controls with it. */
         fun showPlayer()
         /** Lets the controls leave a moment after the sound starts. */
@@ -208,6 +210,7 @@ class ReaderPlayer(
         panel.findViewById<View>(R.id.p_reciter).setOnClickListener { pickReciter() }
         panel.findViewById<View>(R.id.p_repeat).setOnClickListener { pickRepeat() }
         panel.findViewById<View>(R.id.p_word).setOnClickListener { sayWord() }
+        panel.findViewById<View>(R.id.p_meaning).setOnClickListener { reader.showMeaning() }
         panel.findViewById<View>(R.id.p_translit).setOnClickListener {
             val on = !Settings.translit(host)
             Settings.setTranslit(host, on)

@@ -51,6 +51,7 @@ class ReaderActivity : LanguageActivity() {
         override fun lit(surah: Int, ayah: Int, word: Int) = this@ReaderActivity.lit(surah, ayah, word)
         override fun redrawPages() = this@ReaderActivity.redrawPages()
         override fun showMarkedTajweed() = this@ReaderActivity.showMarkedTajweed()
+        override fun showMeaning() = this@ReaderActivity.showMeaning()
         override fun showPlayer() = this@ReaderActivity.showPlayer()
         override fun closeSoon() = this@ReaderActivity.closeSoon()
         override fun armClose() = this@ReaderActivity.armClose()
@@ -724,6 +725,27 @@ class ReaderActivity : LanguageActivity() {
         if (word >= 0 && card?.open == true) Ayat.pageOf(surah, ayah).takeIf { it > 0 }?.let { at ->
             card?.show(pageWith(surah, ayah, word, at), surah, ayah, word)
         }
+        // An open meaning moves on with each new ayah lit, and stays on one the reader stepped to until then
+        val now = surah * AYAH_KEY + ayah
+        if (word >= 0 && now != litAyahKey) meaning?.takeIf { it.open }?.show(surah, ayah)
+        litAyahKey = if (word >= 0) now else -1
+    }
+
+    // The ayah of the word last lit, so a meaning follows a change of ayah and not every word
+    private var litAyahKey = -1
+
+    /* The translation and tafsir open over the page, if any. */
+    private var meaning: MeaningSheet? = null
+
+    // The ayah marked, else the one recited, else the first on the page in view
+    private fun showMeaning() {
+        val at = page()
+        val (surah, ayah) = shownWord?.let { it[0] to it[1] }
+            ?: if (Recite.playing != 0 && rc.readingSurah > 0) rc.readingSurah to rc.litAyah.coerceAtLeast(1)
+            else if (at in 1..pages) Ayat.surahAt(at) to Ayat.ayahAt(at).coerceAtLeast(1)
+            else return
+        if (surah <= 0) return
+        (meaning ?: MeaningSheet(this) { meaning = null }.also { meaning = it }).show(surah, ayah)
     }
 
     /* The Tajweed card open over the page, if any. */
@@ -861,5 +883,7 @@ class ReaderActivity : LanguageActivity() {
         private const val TURN_FLING_DP = 400f
         private const val AUTO_CLOSE_MS = 1500L
         private const val IDLE_CLOSE_MS = 6000L
+        // Above any ayah's number, so a surah and ayah make one key
+        private const val AYAH_KEY = 1000
     }
 }

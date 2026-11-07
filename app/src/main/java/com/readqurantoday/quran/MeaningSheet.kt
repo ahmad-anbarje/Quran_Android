@@ -25,6 +25,7 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
     private val tafsirTab = tabs.findViewById<TextView>(R.id.seg_second)
     private val pick = view.findViewById<View>(R.id.meaning_pick)
     private val pickLabel = view.findViewById<TextView>(R.id.meaning_pick_label)
+    private val pickIcon = view.findViewById<View>(R.id.meaning_pick_icon)
     private val body = view.findViewById<ScrollView>(R.id.meaning_body)
     private val ayahText = view.findViewById<TextView>(R.id.meaning_ayah)
     private val text = view.findViewById<TextView>(R.id.meaning_text)
@@ -45,6 +46,8 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         tafsirTab.setText(R.string.meaning_tafsir)
         translationTab.setOnClickListener { choose(tafsir = false) }
         tafsirTab.setOnClickListener { choose(tafsir = true) }
+        // Standing alone, not in a card, the two sides are held in one outline
+        tabs.setBackgroundResource(R.drawable.seg_track)
         val mute = ColorStateList.valueOf(host.getColor(R.color.chrome_ink))
         for (id in intArrayOf(R.id.meaning_prev, R.id.meaning_next, R.id.meaning_pick_icon)) {
             view.findViewById<ImageView>(id).imageTintList = mute
@@ -103,16 +106,20 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         val tafsir = Settings.meaningTafsir(host)
         translationTab.markSegment(!tafsir, face)
         tafsirTab.markSegment(tafsir, face)
-        val s = Surahs.of(surah)
-        val name = s?.let { if (arabic) it.name else it.english }.orEmpty()
+        // The ayah's number alone: its surah is the one being read, and the ayah itself is shown below
         title.text = host.getString(if (tafsir) R.string.meaning_of_tafsir else R.string.meaning_of_translation,
-            figures(ayah, host.resources), name)
+            figures(ayah, host.resources))
         ayahText.text = printed(surah, ayah)
 
+        // Whose text it is, on both sides, so the sheet keeps one height; only a translation can be changed
         val chosen = Meanings.chosen(host, offered)
-        pick.visibility = if (tafsir) View.GONE else View.VISIBLE
-        pickLabel.text = listOf(languageOf(chosen), nameOf(chosen)).joinToString(" · ")
-        by.text = credit(tafsir, chosen)
+        pickLabel.text = if (tafsir) host.getString(R.string.meaning_muyassar) else listOfNotNull(
+            languageOf(chosen), nameOf(chosen),
+            host.getString(R.string.meaning_complex).takeIf { chosen.complex && nameOf(chosen) != it }
+        ).joinToString(" · ")
+        pick.isClickable = !tafsir
+        pickIcon.visibility = if (tafsir) View.INVISIBLE else View.VISIBLE
+        by.text = source(tafsir, chosen)
 
         val shown = shownText()
         text.textDirection = if (shown.rtl) View.TEXT_DIRECTION_RTL else View.TEXT_DIRECTION_LTR
@@ -144,14 +151,10 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         }
     }
 
-    // Who the text is from, and its source, which a tap opens
-    private fun credit(tafsir: Boolean, t: Meanings.Translation): CharSequence {
-        val who = if (tafsir) host.getString(R.string.meaning_muyassar)
-        else listOfNotNull(nameOf(t), host.getString(R.string.meaning_complex).takeIf { t.complex && nameOf(t) != it }, languageOf(t))
-            .joinToString(" · ")
+    // Where the text comes from, under it, which a tap opens
+    private fun source(tafsir: Boolean, t: Meanings.Translation): CharSequence {
         val source = host.getString(if (!tafsir && t.source == "quranenc") R.string.source_quranenc else R.string.source_tanzil)
-        return SpannableStringBuilder("$who · ").apply {
-            append(host.getString(R.string.meaning_source, ""))
+        return SpannableStringBuilder(host.getString(R.string.meaning_source, "")).apply {
             val at = length
             append(source)
             setSpan(UnderlineSpan(), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

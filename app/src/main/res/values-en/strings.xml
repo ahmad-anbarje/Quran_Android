@@ -453,8 +453,8 @@
     <string name="meaning_name">Translation and tafsir</string>
     <string name="meaning_translation">Translation</string>
     <string name="meaning_tafsir">Tafsir</string>
-    <string name="meaning_of_translation">Translation of ayah %1$s, Surah %2$s</string>
-    <string name="meaning_of_tafsir">Tafsir of ayah %1$s, Surah %2$s</string>
+    <string name="meaning_of_translation">Translation of ayah %1$s</string>
+    <string name="meaning_of_tafsir">Tafsir of ayah %1$s</string>
     <string name="meaning_unreached">Could not load. Check the connection.</string>
     <string name="meaning_source">Source: %1$s</string>
     <string name="meaning_muyassar">Al-Muyassar · King Fahd Complex (Arabic)</string>

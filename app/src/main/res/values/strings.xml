@@ -532,8 +532,8 @@
     <string name="meaning_name">الترجمة والتفسير</string>
     <string name="meaning_translation">الترجمة</string>
     <string name="meaning_tafsir">التفسير</string>
-    <string name="meaning_of_translation">ترجمة الآية %1$s من سورة %2$s</string>
-    <string name="meaning_of_tafsir">تفسير الآية %1$s من سورة %2$s</string>
+    <string name="meaning_of_translation">ترجمة الآية %1$s</string>
+    <string name="meaning_of_tafsir">تفسير الآية %1$s</string>
     <string name="meaning_unreached">تعذّر التحميل. تحقق من الاتصال.</string>
     <string name="meaning_source">المصدر: %1$s</string>
     <string name="meaning_muyassar">التفسير الميسر · مجمع الملك فهد</string>

@@ -57,17 +57,18 @@
         layout="@layout/row_setting_segment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp" />
+        android:layout_marginStart="@dimen/screen_margin"
+        android:layout_marginEnd="@dimen/screen_margin"
+        android:layout_marginTop="4dp" />
 
-    <!-- The translation in use; a tap chooses another -->
+    <!-- Whose text it is: the translation in use, which a tap changes, or the tafsir's name; the same height for both -->
     <LinearLayout
         android:id="@+id/meaning_pick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/screen_margin"
         android:layout_marginEnd="@dimen/screen_margin"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:minHeight="@dimen/quarter_chip_height"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -102,7 +103,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:scrollbars="none">
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="28dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,19 +144,20 @@
                 android:textIsSelectable="true"
                 android:textColor="@color/text"
                 android:textSize="@dimen/text_title" />
+
+            <!-- Where the text comes from, which a tap opens -->
+            <TextView
+                android:id="@+id/meaning_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/row_flat"
+                android:textColor="@color/text_mute"
+                android:textSize="@dimen/text_meta" />
         </LinearLayout>
     </ScrollView>
-
-    <TextView
-        android:id="@+id/meaning_by"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:background="@drawable/row_flat"
-        android:textColor="@color/text_mute"
-        android:textSize="@dimen/text_meta" />
 </LinearLayout>

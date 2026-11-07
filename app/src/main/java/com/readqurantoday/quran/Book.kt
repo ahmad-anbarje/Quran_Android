@@ -123,6 +123,24 @@ class Book(private val asset: String, private val key: String, private val table
         return null
     }
 
+    /** Ayah [ayah] of [surah] as [page] prints it: the glyphs of its words there, and of its end mark if it ends there. */
+    fun ayahOn(page: Int, surah: Int, ayah: Int): List<String> {
+        var s = Ayat.surahAt(page)
+        var a = Ayat.ayahAt(page)
+        val marks = marksOn(page)
+        val out = ArrayList<String>()
+        for (line in lines(page)) {
+            if (line.kind == "surah") { s = line.surah; a = 1 }
+            if (line.kind != "ayah") continue
+            for (parts in line.words) {
+                val glyphs = parts.joinToString(" ")
+                if (s == surah && a == ayah) out.add(glyphs)
+                if (marks.contains(glyphs)) a++
+            }
+        }
+        return out
+    }
+
     /** Release what no page in this range uses; keep the Basmalahs' always. */
     @Synchronized
     fun keepOnly(near: IntRange) {

@@ -123,17 +123,24 @@ object Meanings {
     fun ayah(context: Context, text: Text, surah: Int, ayah: Int, done: (String?) -> Unit) {
         val name = "${text.path}$surah.json"
         synchronized(kept) { kept[name] }?.let { done(it.getOrNull(ayah - 1)); return }
+        kept(context, name, ::ayahs) { got ->
+            got?.let { synchronized(kept) { kept[name] = it } }
+            done(got?.getOrNull(ayah - 1))
+        }
+    }
+
+    /** A file of the site's data, [read] from the phone, or fetched and kept when it reads; heard on the main thread. */
+    fun <T> kept(context: Context, name: String, read: (String) -> T?, done: (T?) -> Unit) {
         val app = context.applicationContext
         net.execute {
             val saved = file(app, name)
-            val got = ayahs(saved.takeIf { it.exists() }?.readText()) ?: fetch(name)?.let { json ->
-                ayahs(json)?.also {
+            val got = saved.takeIf { it.exists() }?.readText()?.let(read) ?: fetch(name)?.let { json ->
+                read(json)?.also {
                     saved.parentFile?.mkdirs()
                     saved.writeText(json)
                 }
             }
-            got?.let { synchronized(kept) { kept[name] = it } }
-            main.post { done(got?.getOrNull(ayah - 1)) }
+            main.post { done(got) }
         }
     }
 

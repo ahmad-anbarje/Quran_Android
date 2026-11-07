@@ -849,12 +849,15 @@ class MushafPageView @JvmOverloads constructor(
     // The lit word's transliteration, when the reader has it on; drawn last so it sits over the lines
     private fun tipLitWord(canvas: Canvas, top: Float) {
         if (litWord < 0 || !Settings.translit(context)) return
-        val said = Translit.of(litSurah, litAyah, litWord) ?: return
+        val said = Translit.of(litSurah, litAyah, litWord)
+        // A video's frames carry the sound of the words only
+        val means = if (context is Settings.OwnPhonetics) null else WordMeaning.of(context, litSurah, litAyah, litWord)
+        if (said == null && means == null) return
         val w = placed.firstOrNull {
             it[4].toInt() == litSurah && it[5].toInt() == litAyah && it[6].toInt() == litWord
         } ?: return
         tip.draw(
-            canvas, said,
+            canvas, said, means,
             left = w[0], top = w[2], right = w[1], bottom = w[3],
             minX = side, maxX = width - side, minY = maxOf(top, scrollTop),
             ink = paint.color, paper = paperTrial ?: Settings.paperColor(context)

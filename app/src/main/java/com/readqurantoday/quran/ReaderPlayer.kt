@@ -46,10 +46,8 @@ class ReaderPlayer(
     private val speedLabel = panel.findViewById<TextView>(R.id.p_speed_label)
     private val wordIcon = panel.findViewById<ImageView>(R.id.p_word_icon)
     private val wordLabel = panel.findViewById<TextView>(R.id.p_word_label)
-    private val translitIcon = panel.findViewById<ImageView>(R.id.p_translit_icon)
     private val tajweedIcon = panel.findViewById<ImageView>(R.id.p_tajweed_icon)
     private val tajweedLabel = panel.findViewById<TextView>(R.id.p_tajweed_label)
-    private val translitLabel = panel.findViewById<TextView>(R.id.p_translit_label)
 
     /* Word chosen by long-press but not yet played. */
     private var pendingSurah = 0
@@ -174,9 +172,8 @@ class ReaderPlayer(
         sayToggles()
     }
 
-    // The switches that stay as set, read from the settings
+    // The switch that stays as set, read from the settings
     private fun sayToggles() {
-        tint(translitIcon, translitLabel, Settings.translit(host))
         tint(tajweedIcon, tajweedLabel, Settings.tajweed(host))
     }
 
@@ -211,13 +208,6 @@ class ReaderPlayer(
         panel.findViewById<View>(R.id.p_repeat).setOnClickListener { pickRepeat() }
         panel.findViewById<View>(R.id.p_word).setOnClickListener { sayWord() }
         panel.findViewById<View>(R.id.p_meaning).setOnClickListener { reader.showMeaning() }
-        panel.findViewById<View>(R.id.p_translit).setOnClickListener {
-            val on = !Settings.translit(host)
-            Settings.setTranslit(host, on)
-            say()
-            if (on && !Translit.ready) Thread { Translit.load(host); host.runOnUiThread { reader.redrawPages() } }.start()
-            else reader.redrawPages()
-        }
         /* Speed: each tap steps to the next, round to the start. */
         panel.findViewById<View>(R.id.p_speed).setOnClickListener {
             stepSpeed(host)

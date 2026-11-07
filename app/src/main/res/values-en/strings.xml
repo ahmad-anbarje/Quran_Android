@@ -138,7 +138,6 @@
     <string name="dl_save_denied">Storage permission is needed to save to the phone</string>
     <string name="label_tajweed">Tajweed</string>
     <string name="label_repeat">Repeat</string>
-    <string name="label_translit">Phonetic</string>
     <string name="label_word">Word</string>
     <string name="word_play_name">Play the word alone</string>
     <string name="word_unheard">This word could not be played. Check the internet connection</string>
@@ -454,6 +453,8 @@
     <string name="meaning_name">Translation and tafsir</string>
     <string name="meaning_translation">Translation</string>
     <string name="meaning_tafsir">Tafsir</string>
+    <string name="meaning_of_translation">Translation of ayah %1$s, Surah %2$s</string>
+    <string name="meaning_of_tafsir">Tafsir of ayah %1$s, Surah %2$s</string>
     <string name="meaning_unreached">Could not load. Check the connection.</string>
     <string name="meaning_source">Source: %1$s</string>
     <string name="meaning_muyassar">Al-Muyassar · King Fahd Complex (Arabic)</string>
@@ -461,5 +462,8 @@
     <string name="source_quranenc">QuranEnc, Encyclopedia of the Noble Quran</string>
     <string name="source_tanzil">Tanzil</string>
     <string name="translation_pick">Language and translator</string>
+    <string name="set_word_tip">Pronunciation and meaning over the word</string>
+    <string name="word_tip_on">Shown</string>
+    <string name="word_tip_off">Hidden</string>
     <string name="translation_search_hint">Search a language or translator</string>
 </resources>

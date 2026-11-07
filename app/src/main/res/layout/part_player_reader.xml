@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Reader player: eight equal columns, play among them; ids on icons and labels that sayPlayer() changes -->
+<!-- Reader player: seven equal columns, three either side of play; ids on icons and labels that sayPlayer() changes -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/player"
     android:layout_width="match_parent"
@@ -57,33 +57,6 @@
         <TextView
             style="@style/IconLabel"
             android:text="@string/reciter" />
-    </LinearLayout>
-
-    <!-- Transliteration over the lit word: accent while on, like repeat -->
-    <LinearLayout
-        android:id="@+id/p_translit"
-        android:contentDescription="@string/translit_name"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/row_flat"
-        android:clickable="true"
-        android:focusable="true">
-
-        <ImageView
-            android:id="@+id/p_translit_icon"
-            android:layout_width="@dimen/icon_nav"
-            android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
-            android:src="@drawable/ic_translit"
-            android:contentDescription="@null" />
-
-        <TextView
-            style="@style/IconLabel"
-            android:id="@+id/p_translit_label"
-            android:text="@string/label_translit" />
     </LinearLayout>
 
     <!-- What the ayah means: its translation and tafsir -->

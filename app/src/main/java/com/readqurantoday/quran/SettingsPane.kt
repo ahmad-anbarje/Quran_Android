@@ -49,6 +49,13 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
             }) {
                 Settings.setPageTurn(host, !Settings.pageTurn(host))
             })
+            rows.add(valueRow(R.string.set_word_tip, {
+                if (Settings.translit(host)) R.string.word_tip_on else R.string.word_tip_off
+            }) {
+                val on = !Settings.translit(host)
+                Settings.setTranslit(host, on)
+                if (on) Thread { loadWordTips(host) }.start()
+            })
             rows.add(linkRow(R.string.set_group_reading, openStyle,
                 listOf(Settings.highlightColor(host), Settings.resolvedAyahColor(host))))
             rows.add(linkRow(R.string.set_tajweed_legend, { host.showTajweedLegend() },

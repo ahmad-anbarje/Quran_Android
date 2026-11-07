@@ -62,7 +62,6 @@
     <string name="next_ayah">الآية التالية</string>
     <string name="label_tajweed">تجويد</string>
     <string name="label_repeat">تكرار</string>
-    <string name="label_translit">النطق</string>
     <string name="label_word">كلمة</string>
     <string name="word_play_name">تشغيل الكلمة وحدها</string>
     <string name="word_unheard">تعذّر تشغيل الكلمة. تحقق من الاتصال بالإنترنت</string>
@@ -533,6 +532,8 @@
     <string name="meaning_name">الترجمة والتفسير</string>
     <string name="meaning_translation">الترجمة</string>
     <string name="meaning_tafsir">التفسير</string>
+    <string name="meaning_of_translation">ترجمة الآية %1$s من سورة %2$s</string>
+    <string name="meaning_of_tafsir">تفسير الآية %1$s من سورة %2$s</string>
     <string name="meaning_unreached">تعذّر التحميل. تحقق من الاتصال.</string>
     <string name="meaning_source">المصدر: %1$s</string>
     <string name="meaning_muyassar">التفسير الميسر · مجمع الملك فهد</string>
@@ -540,5 +541,8 @@
     <string name="source_quranenc">موسوعة القرآن الكريم (QuranEnc)</string>
     <string name="source_tanzil">تنزيل (Tanzil)</string>
     <string name="translation_pick">اللغة والمترجم</string>
+    <string name="set_word_tip">النطق والمعنى فوق الكلمة</string>
+    <string name="word_tip_on">ظاهر</string>
+    <string name="word_tip_off">مخفي</string>
     <string name="translation_search_hint">ابحث عن لغة أو مترجم</string>
 </resources>

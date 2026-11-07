@@ -26,6 +26,7 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
     private val pick = view.findViewById<View>(R.id.meaning_pick)
     private val pickLabel = view.findViewById<TextView>(R.id.meaning_pick_label)
     private val body = view.findViewById<ScrollView>(R.id.meaning_body)
+    private val ayahText = view.findViewById<TextView>(R.id.meaning_ayah)
     private val text = view.findViewById<TextView>(R.id.meaning_text)
     private val by = view.findViewById<TextView>(R.id.meaning_by)
     private val face = translationTab.typeface
@@ -103,8 +104,10 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         translationTab.markSegment(!tafsir, face)
         tafsirTab.markSegment(tafsir, face)
         val s = Surahs.of(surah)
-        val name = s?.let { host.getString(R.string.surah_named, if (arabic) it.name else it.english) }.orEmpty()
-        title.text = host.getString(R.string.search_ayah_ref, name, figures(ayah, host.resources))
+        val name = s?.let { if (arabic) it.name else it.english }.orEmpty()
+        title.text = host.getString(if (tafsir) R.string.meaning_of_tafsir else R.string.meaning_of_translation,
+            figures(ayah, host.resources), name)
+        ayahText.text = printed(surah, ayah)
 
         val chosen = Meanings.chosen(host, offered)
         pick.visibility = if (tafsir) View.GONE else View.VISIBLE
@@ -122,6 +125,22 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
             text.setTextColor(host.getColor(if (got != null) R.color.text else R.color.text_mute))
             text.text = got ?: host.getString(R.string.meaning_unreached)
             body.scrollTo(0, 0)
+        }
+    }
+
+    // The ayah in the mushaf's own glyphs, word by word from the pages it is printed on, its number kept with its last word
+    private fun printed(surah: Int, ayah: Int): CharSequence = SpannableStringBuilder().apply {
+        val from = Ayat.pageOf(surah, ayah).takeIf { it > 0 } ?: return@apply
+        val book = Mushaf.plain
+        for (page in from..minOf(from + 1, Mushaf.PAGES)) {
+            val marks = book.marksOn(page)
+            for (glyphs in book.ayahOn(page, surah, ayah)) {
+                if (isNotEmpty()) append(if (marks.contains(glyphs)) NO_BREAK else " ")
+                val at = length
+                append(OBJECT)
+                setSpan(QuranWordSpan(host.applicationContext, EndPages.Word(page, glyphs), AYAH_SCALE), at, length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
         }
     }
 
@@ -145,8 +164,12 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
 
     private companion object {
         const val SURAHS = 114
-        // The text's room, as a share of the screen's height
-        const val BODY_TALL = 0.34f
+        // The ayah and its meaning's room, as a share of the screen's height
+        const val BODY_TALL = 0.4f
+        // The ayah's glyphs over the meaning's type size; the object character each word's span stands on
+        const val AYAH_SCALE = 1.5f
+        const val OBJECT = "￼"
+        const val NO_BREAK = " "
     }
 }
 

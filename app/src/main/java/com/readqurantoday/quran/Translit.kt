@@ -2,10 +2,8 @@ package com.readqurantoday.quran
 
 import android.content.Context
 
-// Word-by-word Latin transliteration (Quran.com), lined up with the mushaf's own word count per ayah
-object Translit {
-
-    private const val ASSET = "data/translit.txt"
+/** One line a word for every ayah, lined up with the mushaf's own word count per ayah, read from an asset of "surah:ayah⇥w|w|…". */
+class WordList(private val asset: String) {
 
     private val words = HashMap<Int, List<String>>(6300)
 
@@ -18,7 +16,7 @@ object Translit {
     fun load(context: Context) {
         if (ready) return
         try {
-            context.applicationContext.assets.open(ASSET).bufferedReader(Charsets.UTF_8).useLines { lines ->
+            context.applicationContext.assets.open(asset).bufferedReader(Charsets.UTF_8).useLines { lines ->
                 for (line in lines) {
                     val colon = line.indexOf(':')
                     val tab = line.indexOf('\t')
@@ -34,7 +32,10 @@ object Translit {
         ready = true
     }
 
-    /** One word's transliteration; [word] counts from 0 as the page does. Null until loaded. */
+    /** One word's line; [word] counts from 0 as the page does. Null until loaded. */
     fun of(surah: Int, ayah: Int, word: Int): String? =
         if (ready) words[surah * 1000 + ayah]?.getOrNull(word) else null
 }
+
+/** Word-by-word Latin transliteration (Quran.com). */
+val Translit = WordList("data/translit.txt")

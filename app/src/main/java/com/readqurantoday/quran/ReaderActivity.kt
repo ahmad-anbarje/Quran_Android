@@ -136,6 +136,8 @@ class ReaderActivity : LanguageActivity() {
 
         setContentView(R.layout.activity_reader)
         onBackPressedDispatcher.addCallback(this) { toMenu() }
+        // A word's meaning in the chosen translation's language, once it arrives, over the word marked
+        WordMeaning.arrived = { redrawPages() }
         pager  = findViewById(R.id.pager)
         bar    = findViewById(R.id.bar)
         mark      = findViewById(R.id.mark)
@@ -811,6 +813,8 @@ class ReaderActivity : LanguageActivity() {
         pager.removeCallbacks(idleClose)
         pager.removeCallbacks(autoClose)
         rc.detach()
+        WordMeaning.arrived = null
+        meaning?.close()
         super.onDestroy()
     }
 

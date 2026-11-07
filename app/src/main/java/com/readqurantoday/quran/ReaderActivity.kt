@@ -411,7 +411,7 @@ class ReaderActivity : LanguageActivity() {
         val on = Settings.pageTurn(this)
         // The button names the motion in use; tapping switches to the other
         btnTurn.setImageResource(if (on) R.drawable.ic_motion_turn else R.drawable.ic_motion_slide)
-        btnTurn.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
+        btnTurn.imageTintList = ColorStateList.valueOf(getColor(R.color.chrome_ink))
         turnLabel.setText(if (on) R.string.motion_turn else R.string.motion_slide)
     }
 
@@ -649,9 +649,9 @@ class ReaderActivity : LanguageActivity() {
             getString(R.string.bar_place, juzNamed(juz, resources), at)
         } else at
 
-        // Filled and accent when saved, as the player's switches show theirs on; muted otherwise
+        // Filled and accent when saved, as the player's switches show theirs on; the bar's ink otherwise
         val marked = Settings.marked(this, page)
-        val colour = getColor(if (marked) R.color.accent else R.color.text_mute)
+        val colour = getColor(if (marked) R.color.accent else R.color.chrome_ink)
         mark.setImageResource(if (marked) R.drawable.ic_bookmark else R.drawable.ic_bookmark_off)
         mark.imageTintList = ColorStateList.valueOf(colour)
         markLabel.setTextColor(colour)
@@ -701,7 +701,7 @@ class ReaderActivity : LanguageActivity() {
             Settings.DARK -> R.drawable.ic_moon
             else -> R.drawable.ic_theme_system
         })
-        btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.text_mute))
+        btnTheme.imageTintList = ColorStateList.valueOf(getColor(R.color.chrome_ink))
         themeLabel.setText(when (mode) {
             Settings.LIGHT -> R.string.theme_light
             Settings.DARK -> R.string.theme_dark

@@ -26,7 +26,7 @@
             android:id="@+id/p_tajweed_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_tajweed"
             android:contentDescription="@null" />
 
@@ -50,7 +50,7 @@
         <ImageView
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_reciter"
             android:contentDescription="@null" />
 
@@ -75,7 +75,7 @@
         <ImageView
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_meaning"
             android:contentDescription="@null" />
 
@@ -127,7 +127,6 @@
             android:id="@+id/p_play_label"
             android:layout_marginTop="2dp"
             android:text="@string/play"
-            android:textColor="@color/text_mute"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -148,7 +147,7 @@
             android:id="@+id/p_word_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_word_play"
             android:contentDescription="@null" />
 
@@ -173,7 +172,7 @@
             android:id="@+id/p_repeat_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_repeat"
             android:contentDescription="@null" />
 
@@ -200,7 +199,7 @@
             android:id="@+id/p_speed_icon"
             android:layout_width="@dimen/icon_nav"
             android:layout_height="@dimen/icon_nav"
-            android:tint="@color/text_mute"
+            android:tint="@color/chrome_ink"
             android:src="@drawable/ic_speed"
             android:contentDescription="@null" />
 

@@ -178,7 +178,7 @@ class ReaderPlayer(
     }
 
     private fun tint(icon: ImageView, label: TextView, on: Boolean) {
-        val colour = host.getColor(if (on) R.color.accent else R.color.text_mute)
+        val colour = host.getColor(if (on) R.color.accent else R.color.chrome_ink)
         icon.imageTintList = ColorStateList.valueOf(colour)
         label.setTextColor(colour)
     }

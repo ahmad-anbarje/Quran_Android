@@ -45,7 +45,7 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         tafsirTab.setText(R.string.meaning_tafsir)
         translationTab.setOnClickListener { choose(tafsir = false) }
         tafsirTab.setOnClickListener { choose(tafsir = true) }
-        val mute = ColorStateList.valueOf(host.getColor(R.color.text_mute))
+        val mute = ColorStateList.valueOf(host.getColor(R.color.chrome_ink))
         for (id in intArrayOf(R.id.meaning_prev, R.id.meaning_next, R.id.meaning_pick_icon)) {
             view.findViewById<ImageView>(id).imageTintList = mute
         }

@@ -6,7 +6,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">@dimen/icon_label_gap</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/text_mute</item>
+        <item name="android:textColor">@color/chrome_ink</item>
         <item name="android:textSize">@dimen/icon_label</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:maxLines">1</item>

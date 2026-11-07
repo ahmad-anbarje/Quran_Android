@@ -24,6 +24,9 @@
     <!-- Dark enough for the 9-11sp labels under the icons to hold 5:1 on white -->
     <color name="text_mute">#577284</color>
     <color name="on_dark">#FFFFFF</color>
+    <!-- The bars' icons and their names: near-black, with a soft grey pill behind the tab in use -->
+    <color name="chrome_ink">#1B1E22</color>
+    <color name="chrome_pill">#ECEEF1</color>
 
     <!-- Highlighted word ink, and what the reset in settings returns to. -->
     <color name="ink_lit">#A4161A</color>

@@ -39,6 +39,7 @@ class SurahListActivity : LanguageActivity() {
 
     private lateinit var panes: List<View>
     private lateinit var navIcons: List<ImageView>
+    private lateinit var navPills: List<View>
     private lateinit var navLabels: List<TextView>
 
     private var tab = 0
@@ -81,6 +82,7 @@ class SurahListActivity : LanguageActivity() {
         val tabs  = navIds.map { findViewById<View>(it) }
         navIcons  = tabs.map { it.findViewById<ImageView>(R.id.nav_icon) }
         navLabels = tabs.map { it.findViewById<TextView>(R.id.nav_label) }
+        navPills  = tabs.map { it.findViewById<View>(R.id.nav_pill) }
         navLabels.forEachIndexed { i, label -> label.setText(navNames[i]) }
 
         buildLists()
@@ -136,21 +138,14 @@ class SurahListActivity : LanguageActivity() {
             else -> panes[which].riseWhole()
         }
         if (paneIds[which] != R.id.pane_search) putKeyboardAway()
-        val accent = getColor(R.color.accent)
-        val muted  = getColor(R.color.text_mute)
+        // As one dark ink throughout; the tab in use is told by its filled icon on a soft pill and its bold name
+        val ink = ColorStateList.valueOf(getColor(R.color.chrome_ink))
         for (i in navIds.indices) {
             val selected = i == which
             navIcons[i].setImageResource(if (selected) iconsFilled[i] else iconsOutline[i])
-            val tint = if (selected) {
-                ColorStateList.valueOf(accent)
-            } else {
-                ColorStateList(
-                    arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf()),
-                    intArrayOf(accent, muted)
-                )
-            }
-            navIcons[i].imageTintList = tint
-            navLabels[i].setTextColor(tint)
+            navIcons[i].imageTintList = ink
+            navPills[i].setBackgroundResource(if (selected) R.drawable.nav_pill else 0)
+            navLabels[i].setTextColor(ink)
             // Null would reset the labels to the system font
             navLabels[i].setTypeface(labelFace, if (selected) Typeface.BOLD else Typeface.NORMAL)
         }

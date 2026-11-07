@@ -86,7 +86,7 @@ class TajweedCard(
             findViewById<ImageView>(R.id.word_listen_icon).apply {
                 // Its shape tells play from pause, so it stays muted with the buttons beside it
                 setImageResource(if (sounding) R.drawable.ic_pause else R.drawable.ic_play)
-                imageTintList = ColorStateList.valueOf(host.getColor(R.color.text_mute))
+                imageTintList = ColorStateList.valueOf(host.getColor(R.color.chrome_ink))
             }
             (layoutParams as LinearLayout.LayoutParams).marginEnd = (BUTTON_GAP * resources.displayMetrics.density).toInt()
             setOnClickListener {
@@ -97,7 +97,7 @@ class TajweedCard(
 
     // Steps the recitation's speed, as the player's speed button does
     private fun speed(row: LinearLayout): View = host.layoutInflater.inflate(R.layout.part_speed_chip, row, false).apply {
-        findViewById<ImageView>(R.id.speed_chip_icon).imageTintList = ColorStateList.valueOf(host.getColor(R.color.text_mute))
+        findViewById<ImageView>(R.id.speed_chip_icon).imageTintList = ColorStateList.valueOf(host.getColor(R.color.chrome_ink))
         val label = findViewById<TextView>(R.id.speed_chip_label)
         label.setText(speedName(host))
         setOnClickListener {
@@ -113,7 +113,7 @@ class TajweedCard(
         WordVoice.warm(host, surah, ayah, word)
         // Muted at rest and accent while the word sounds, as the player's Word button; faded while it is fetched
         fun say() {
-            icon.imageTintList = ColorStateList.valueOf(host.getColor(if (WordVoice.saying) R.color.accent else R.color.text_mute))
+            icon.imageTintList = ColorStateList.valueOf(host.getColor(if (WordVoice.saying) R.color.accent else R.color.chrome_ink))
             icon.imageAlpha = if (WordVoice.loading) LOADING_ALPHA else 0xFF
         }
         say()

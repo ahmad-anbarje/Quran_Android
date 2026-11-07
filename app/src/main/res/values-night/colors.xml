@@ -19,6 +19,8 @@
     <color name="line">#323C47</color>
     <color name="text">#DDE2E7</color>
     <color name="text_mute">#B2B9C0</color>
+    <color name="chrome_ink">#E8EBEE</color>
+    <color name="chrome_pill">#2C343C</color>
     <!-- On the accent: light, as by day, so knobs, play marks and chosen buttons read the same; a soft white, since pure white glares at night -->
     <color name="on_dark">#F4F7FA</color>
     <!-- Lit word at night: amber, the one hue that reads as coloured beside near-white type, at its brightness -->

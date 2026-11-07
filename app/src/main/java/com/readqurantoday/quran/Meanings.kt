@@ -23,11 +23,10 @@ object Meanings {
     // Surahs kept in memory at once, across texts
     private const val KEEP = 8
 
-    /** The translation offered before a reader picks one, and the one used before the list has come. */
+    /** The English offered before a reader picks a translation, and the one used before the list has come. */
     val first = Translation(
-        id = "hilali", lang = "en", rtl = false, languageAr = "الإنجليزية", languageEn = "English", native = "English",
-        nameAr = "تقي الدين الهلالي ومحسن خان", nameEn = "Hilali and Khan", source = "quranenc", key = "english_hilali_khan",
-        complex = false
+        id = "sahih", lang = "en", rtl = false, languageAr = "الإنجليزية", languageEn = "English", native = "English",
+        nameAr = "صحيح إنترناشيونال", nameEn = "Saheeh International", source = "tanzil", key = "", complex = false
     )
 
     /** The translation chosen, as [offered] has it now; one gone from the list falls back to the first. */
@@ -165,12 +164,13 @@ object Meanings {
         null
     }
 
-    /** The translation a reader starts with: their phone's language where one is offered, beyond Arabic; else Hilali and Khan. */
+    /** The translation a reader starts with: their phone's language where one is offered, beyond Arabic; else, and for English, Saheeh International. */
     private fun firstChoice(offered: List<Translation>): String {
         val locales = Resources.getSystem().configuration.locales
         for (i in 0 until locales.size()) {
             val lang = locales[i].language
             if (lang == "ar") continue
+            if (lang == first.lang) return first.id
             offered.firstOrNull { it.lang == lang }?.let { return it.id }
         }
         return first.id

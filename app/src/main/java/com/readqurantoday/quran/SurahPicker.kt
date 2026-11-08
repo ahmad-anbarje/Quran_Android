@@ -55,12 +55,14 @@ private class SurahChoices(private val current: Int, private val picked: (Int, I
 
     private var shown: List<Search.Hit> = Surahs.list().map { Search.Hit.Name(it) }
 
-    // By number, Arabic name (its marks set aside) or English name; words past a surah's name find ayahs too
+    // By number, or by name however it is typed; words past a surah's name find ayahs too
     fun filter(typed: String) {
         val q = latinDigits(typed.trim())
         val folded = Search.fold(q)
-        val surahs = if (q.isEmpty()) Surahs.list() else Surahs.list().filter {
-            it.id.toString() == q || Search.fold(it.name).contains(folded) || it.english.contains(q, ignoreCase = true)
+        val surahs = when {
+            q.isEmpty() -> Surahs.list()
+            q.toIntOrNull() != null -> Surahs.list().filter { it.id.toString() == q }
+            else -> Search.surahsNamed(q, Surahs.list())
         }
         val verses = if (q.isEmpty() || q.toIntOrNull() != null) emptyList() else Search.verses(folded)
         shown = buildList {

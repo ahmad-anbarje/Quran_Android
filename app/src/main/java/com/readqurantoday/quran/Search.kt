@@ -77,9 +77,7 @@ object Search {
         val folded = fold(q)
 
         // Surah names before ayahs that merely contain the word
-        val found = all.filter {
-            fold(it.name).contains(folded) || it.english.contains(q, ignoreCase = true)
-        }
+        val found = surahsNamed(q, all)
         if (found.isNotEmpty()) {
             hits.add(Hit.Head(R.string.search_surahs))
             for (s in found) hits.add(Hit.Name(s))
@@ -93,4 +91,67 @@ object Search {
 
         return hits.ifEmpty { listOf(Hit.None) }
     }
+
+    // --- surah names ---
+
+    // The word "surah" before a name, as readers type it in either script, and the Arabic article
+    private val surahWordAr = Regex("^(سوره|سورت)\\s*")
+    private val surahWordEn = Regex("^(surah|surat|sura|soorah)[\\s'-]*")
+    private val articleEn = Regex("^a[a-z]{1,2}[\\s'’-]+")
+    private val notArabic = Regex("[^ء-ي]")
+    private val notLatin = Regex("[^a-z]")
+    private val vowels = Regex("[aeiouy]")
+    private val doubled = Regex("(.)\\1+")
+
+    /** The surahs [typed] names, best first: by the Arabic name with or without «سورة» and «ال», or by a Latin spelling of it. */
+    fun surahsNamed(typed: String, all: List<Surahs.Surah>): List<Surahs.Surah> {
+        val arabic = arabicKey(surahWordAr.replace(fold(typed), ""))
+        val lower = surahWordEn.replace(typed.trim().lowercase(), "")
+        val latin = latinKey(lower)
+        // "albakara" is "al" and the name; the article is only dropped where enough is left to be a name
+        val bare = latinKey(articleEn.replace(lower, "")).takeIf { it.length >= MIN_BARE }
+            ?: latinKey(lower.removePrefix("al")).takeIf { lower.startsWith("al") && it.length >= MIN_BARE }
+        if (arabic.isEmpty() && latin.isEmpty()) return emptyList()
+        return all.mapNotNull { s -> rank(s, arabic, listOfNotNull(latin.ifEmpty { null }, bare))?.let { s to it } }
+            .sortedWith(compareBy({ it.second }, { it.first.id }))
+            .map { it.first }
+    }
+
+    // How well a surah answers: 0 its very name, 1 a name begun, 2 a name contained, 3 the same consonants; null none
+    private fun rank(s: Surahs.Surah, arabic: String, latin: List<String>): Int? {
+        var best: Int? = null
+        fun take(r: Int) { best = minOf(best ?: r, r) }
+        if (arabic.isNotEmpty()) {
+            val name = arabicKey(s.name)
+            when {
+                name == arabic -> take(0)
+                name.startsWith(arabic) -> take(1)
+                name.contains(arabic) -> take(2)
+            }
+        }
+        val names = listOf(latinKey(s.english), latinKey(articleEn.replace(s.english.lowercase(), "")))
+        for (q in latin) for (name in names) when {
+            name == q -> take(0)
+            name.startsWith(q) -> take(1)
+            name.contains(q) -> take(2)
+        }
+        latin.firstOrNull()?.let { q ->
+            val bones = q.replace(vowels, "")
+            if (bones.length >= MIN_BONES && names.any { it.replace(vowels, "").contains(bones) }) take(3)
+        }
+        return best
+    }
+
+    // An Arabic name as its letters alone, the article set aside
+    private fun arabicKey(s: String): String = notArabic.replace(fold(s), "").removePrefix("ال")
+
+    // A Latin spelling as it sounds: q and k alike, doubled letters once, no closing h
+    private fun latinKey(s: String): String = notLatin.replace(s.lowercase(), "")
+        .replace('q', 'k').replace("ee", "i").replace("oo", "u").replace("ou", "u")
+        .replace(doubled, "$1")
+        .removeSuffix("h")
+
+    // Letters a name must keep once its article is dropped, and consonants a spelling needs to be matched by them alone
+    private const val MIN_BARE = 4
+    private const val MIN_BONES = 3
 }

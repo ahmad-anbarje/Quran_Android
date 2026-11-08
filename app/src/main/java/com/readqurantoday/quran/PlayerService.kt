@@ -127,6 +127,12 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    // The app swiped away from the recent apps takes its recitation with it, as the notification's Close does
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Recite.stop()
+        super.onTaskRemoved(rootIntent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (running === this) running = null

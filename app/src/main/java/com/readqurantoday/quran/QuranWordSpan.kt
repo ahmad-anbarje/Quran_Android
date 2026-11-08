@@ -91,7 +91,8 @@ fun SpannableStringBuilder.appendQuranWord(context: Context, word: EndPages.Word
     if (isNotEmpty() && last() != '(') append(if (word.glyphs in book.marksOn(word.page)) NO_BREAK else " ")
     val at = length
     append(OBJECT)
-    setSpan(QuranWordSpan(context.applicationContext, word, scale, book), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    // The screen's own context, which knows the reader's day or night, so a Tajweed word takes that palette
+    setSpan(QuranWordSpan(context, word, scale, book), at, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
 
 // The object character a word's span stands on, and the space that keeps an ayah's number on its last word's line

@@ -113,7 +113,15 @@ object Mushaf {
     fun medal(context: Context, page: Int, cp: Int): Medal? = medalsOn(context, page)?.get(cp)
 
     /** Whether every ayah number on [page] has its medallion, so the page's numbers are drawn alike. */
-    fun hasMedals(context: Context, page: Int) = !medalsOn(context, page).isNullOrEmpty()
+    private fun hasMedals(context: Context, page: Int) = !medalsOn(context, page).isNullOrEmpty()
+
+    /**
+     * The font [page]'s ayah numbers are drawn from as medallions, as the website draws them; null draws them plain:
+     * before Android 12, in a video, which paints its own, or once the reader chose their colour.
+     */
+    fun medalFont(context: Context, page: Int): Font? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && context !is Settings.OwnPhonetics &&
+            !Settings.ownAyahColor(context) && hasMedals(context, page)) TajweedFonts.medals(context, page) else null
 
     private fun medalsOn(context: Context, page: Int): Map<Int, Medal>? {
         medals[page]?.let { return it }

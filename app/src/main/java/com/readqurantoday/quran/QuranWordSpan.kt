@@ -35,6 +35,7 @@ class QuranWordSpan(
         val glyphs = book.glyphs(context, word.page) ?: return
         val size = paint.textSize * scale
         val step = size / glyphs.upem
+        if (medal(canvas, glyphs, size, x, y, paint)) return
         // Right to left from the span's far edge, each glyph placed as the page places it
         var pen = x + wide(size)
         var n = 0
@@ -67,6 +68,22 @@ class QuranWordSpan(
             paint.typeface = typeface
         }
         paint.textSize = saved
+    }
+
+    // An ayah's number as its page draws it, a medallion centred in the number's room; false where it stays plain
+    private fun medal(canvas: Canvas, glyphs: Book.Glyphs, size: Float, x: Float, y: Int, paint: Paint): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || book !== Mushaf.plain || word.glyphs.length != 1) return false
+        val cp = word.glyphs.codePointAt(0)
+        val face = Mushaf.medalFont(context, word.page) ?: return false
+        val medal = Mushaf.medal(context, word.page, cp) ?: return false
+        ids[0] = medal.id
+        spots[0] = x + (glyphs.advance(cp) * size / glyphs.upem - medal.advance * size / medal.upem) / 2f
+        spots[1] = y.toFloat()
+        val saved = paint.textSize
+        paint.textSize = size
+        canvas.drawGlyphs(ids, 0, spots, 0, 1, face, paint)
+        paint.textSize = saved
+        return true
     }
 
     private fun wide(size: Float): Float {

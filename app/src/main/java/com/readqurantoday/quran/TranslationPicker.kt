@@ -30,8 +30,8 @@ fun Activity.pickTranslation(offered: List<Meanings.Translation>, current: Strin
     view.findViewById<RecyclerView>(R.id.picker_list).apply {
         layoutManager = LinearLayoutManager(this@pickTranslation)
         adapter = rows
-        // Opens at the translation in use, its language's heading above it
-        (layoutManager as LinearLayoutManager).scrollToPositionWithOffset((rows.at(current) - 1).coerceAtLeast(0), 0)
+        // Opens at the language of the translation in use, its heading at the top
+        (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(rows.headingOf(current), 0)
     }
     view.findViewById<EditText>(R.id.picker_search).apply {
         setHint(R.string.translation_search_hint)
@@ -68,7 +68,11 @@ private class TranslationChoices(
 
     private var shown: List<Line> = lines("")
 
-    fun at(id: String) = shown.indexOfFirst { it is Line.One && it.t.id == id }.coerceAtLeast(0)
+    /** The row of the heading over translation [id]'s language. */
+    fun headingOf(id: String): Int {
+        val at = shown.indexOfFirst { it is Line.One && it.t.id == id }
+        return if (at < 0) 0 else (at downTo 0).first { shown[it] is Line.Language }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun filter(typed: String) {

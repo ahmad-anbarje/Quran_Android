@@ -752,9 +752,7 @@ class MushafPageView @JvmOverloads constructor(
         paint.typeface = book.face(context, pageNo)
         lineWords = lines.map { line -> line.words.map { it.joinToString(" ") } }
         pageMarks = book.marksOn(pageNo)
-        // A video paints its markers in its own colours
-        medalFont = if (book === Mushaf.plain && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            context !is Settings.OwnPhonetics && Mushaf.hasMedals(context, pageNo)) TajweedFonts.medals(context, pageNo) else null
+        medalFont = if (book === Mushaf.plain) Mushaf.medalFont(context, pageNo) else null
         laidOut = false
         step = 0f
     }

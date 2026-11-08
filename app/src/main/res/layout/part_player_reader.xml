@@ -18,7 +18,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true">
 
@@ -43,7 +43,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true">
 
@@ -67,7 +67,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="@string/meaning_name">
@@ -92,7 +92,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true">
 
@@ -138,7 +138,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="@string/word_play_name">
@@ -164,7 +164,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true">
 
@@ -190,7 +190,7 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/row_flat"
+        android:background="@drawable/bar_press"
         android:clickable="true"
         android:focusable="true"
         android:contentDescription="@string/speed_name">

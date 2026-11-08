@@ -126,8 +126,7 @@
             style="@style/IconLabel"
             android:id="@+id/p_play_label"
             android:layout_marginTop="2dp"
-            android:text="@string/play"
-            android:textStyle="bold" />
+            android:text="@string/play" />
     </LinearLayout>
 
     <!-- The chosen word on its own, from the word-by-word recordings -->

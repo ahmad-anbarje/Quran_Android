@@ -47,7 +47,6 @@ class ReaderPlayer(
     private val wordIcon = panel.findViewById<ImageView>(R.id.p_word_icon)
     private val wordLabel = panel.findViewById<TextView>(R.id.p_word_label)
     private val tajweedIcon = panel.findViewById<ImageView>(R.id.p_tajweed_icon)
-    private val tajweedLabel = panel.findViewById<TextView>(R.id.p_tajweed_label)
 
     /* Word chosen by long-press but not yet played. */
     private var pendingSurah = 0
@@ -160,13 +159,13 @@ class ReaderPlayer(
             }
         )
         // Repeat reads like a selected tab: accent while on
-        tint(repeatIcon, repeatLabel, Recite.repeat != Recite.ONCE)
+        tint(repeatIcon, Recite.repeat != Recite.ONCE)
         // Accent off the recorded speed, like repeat while it is on
         val speed = Settings.speed(host)
-        tint(speedIcon, speedLabel, speed != 1f)
+        tint(speedIcon, speed != 1f)
         speedLabel.setText(SPEED_NAMES.getOrElse(SPEEDS.indexOfFirst { it == speed }) { R.string.speed_normal })
         // Accent while the word is being said; faded while it is fetched
-        tint(wordIcon, wordLabel, WordVoice.saying)
+        tint(wordIcon, WordVoice.saying)
         wordIcon.imageAlpha = if (WordVoice.loading) 0x66 else 0xFF
         wordLabel.setText(if (WordVoice.loading) R.string.loading else R.string.label_word)
         sayToggles()
@@ -174,13 +173,12 @@ class ReaderPlayer(
 
     // The switch that stays as set, read from the settings
     private fun sayToggles() {
-        tint(tajweedIcon, tajweedLabel, Settings.tajweed(host))
+        tint(tajweedIcon, Settings.tajweed(host))
     }
 
-    private fun tint(icon: ImageView, label: TextView, on: Boolean) {
-        val colour = host.getColor(if (on) R.color.accent else R.color.chrome_ink)
-        icon.imageTintList = ColorStateList.valueOf(colour)
-        label.setTextColor(colour)
+    // A switch on shows it in its icon; every name under the icons keeps the bar's one ink
+    private fun tint(icon: ImageView, on: Boolean) {
+        icon.imageTintList = ColorStateList.valueOf(host.getColor(if (on) R.color.accent else R.color.chrome_ink))
     }
 
     // --- buttons ---

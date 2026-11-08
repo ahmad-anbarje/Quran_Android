@@ -32,7 +32,6 @@ class ReaderActivity : LanguageActivity() {
     private lateinit var lanes: LinearLayoutManager
     private lateinit var bar: View
     private lateinit var mark: ImageView
-    private lateinit var markLabel: TextView
     private lateinit var barPlace: TextView
     private lateinit var player: View
     private lateinit var btnTheme: ImageView
@@ -141,7 +140,6 @@ class ReaderActivity : LanguageActivity() {
         pager  = findViewById(R.id.pager)
         bar    = findViewById(R.id.bar)
         mark      = findViewById(R.id.mark)
-        markLabel = findViewById(R.id.mark_label)
         barPlace  = findViewById(R.id.bar_place)
         player    = findViewById(R.id.player)
         curl      = findViewById(R.id.curl)
@@ -649,12 +647,10 @@ class ReaderActivity : LanguageActivity() {
             getString(R.string.bar_place, juzNamed(juz, resources), at)
         } else at
 
-        // Filled and accent when saved, as the player's switches show theirs on; the bar's ink otherwise
+        // Filled and accent when saved, as the player's switches show theirs on; its name keeps the bar's ink
         val marked = Settings.marked(this, page)
-        val colour = getColor(if (marked) R.color.accent else R.color.chrome_ink)
         mark.setImageResource(if (marked) R.drawable.ic_bookmark else R.drawable.ic_bookmark_off)
-        mark.imageTintList = ColorStateList.valueOf(colour)
-        markLabel.setTextColor(colour)
+        mark.imageTintList = ColorStateList.valueOf(getColor(if (marked) R.color.accent else R.color.chrome_ink))
     }
 
     // --- recitation ---

@@ -53,6 +53,17 @@ Set Build Variants back to **debug** before running the app from Android Studio 
    **Create new release → Add from library → pick the version**, then
    **Publishing overview → Send changes for review**.
 
+### Or upload from the terminal
+
+With the Play publishing key in place (below), after `./gradlew bundleRelease`:
+
+```bash
+python tools/play_upload.py --track internal --notes docs/release-notes.txt
+```
+
+It uploads the bundle with the notes in `docs/release-notes.txt` and leaves the release as a draft on the track,
+to be checked and sent from Play Console. `--publish` sends it straight away. Needs `pip install google-api-python-client google-auth`.
+
 ## Testing on the phone before a release
 
 Debug builds install as a separate app, `com.readqurantoday.quran.dev`, next to the Play version,
@@ -89,3 +100,12 @@ keyPassword=…
 On a new computer, copy the `.jks` file and recreate `keystore.properties`; without it the release build is unsigned and Play rejects it.
 
 Google keeps the real app signing key (Play App Signing). If the upload key is ever lost, Play support can reset it and the app stays safe.
+
+## Play publishing key
+
+A Google Cloud service account lets `tools/play_upload.py` upload releases. Its key is a `.json` file, as secret as the upload key.
+
+- Kept beside the upload key: `C:\Users\ahmad\AndroidKeys\play-publisher.json`, with a copy in personal cloud storage
+- Named in the gitignored `keystore.properties`: `playKey=C:/Users/ahmad/AndroidKeys/play-publisher.json`
+- Made once: Google Cloud Console → IAM → Service accounts → create one, then Keys → Add key → JSON; in Play Console →
+  Users and permissions → Invite new users → the service account's email, with the app's release permissions

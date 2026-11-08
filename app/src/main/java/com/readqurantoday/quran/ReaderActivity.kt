@@ -724,7 +724,7 @@ class ReaderActivity : LanguageActivity() {
             card?.show(pageWith(surah, ayah, word, at), surah, ayah, word)
         }
         // An open meaning moves on with each new ayah lit, and stays on one the reader stepped to until then
-        val now = surah * AYAH_KEY + ayah
+        val now = ayahKey(surah, ayah)
         if (word >= 0 && now != litAyahKey) meaning?.takeIf { it.open }?.show(surah, ayah)
         litAyahKey = if (word >= 0) now else -1
     }
@@ -883,7 +883,5 @@ class ReaderActivity : LanguageActivity() {
         private const val TURN_FLING_DP = 400f
         private const val AUTO_CLOSE_MS = 1500L
         private const val IDLE_CLOSE_MS = 6000L
-        // Above any ayah's number, so a surah and ayah make one key
-        private const val AYAH_KEY = 1000
     }
 }

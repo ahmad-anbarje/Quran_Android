@@ -1199,7 +1199,7 @@ class MushafPageView @JvmOverloads constructor(
         val heads = Mushaf.heads(context) ?: return 1f
         val longest = context.getString(R.string.head_hizb_three, figures(HIZB_MOST, resources))
         val label = label.measureText(longest)
-        val title = (1..SURAHS).maxOf { heads.advance(Mushaf.headCode(it)) } * this.label.textSize * HEAD_TITLE_MATCH / heads.upem
+        val title = (1..Mushaf.SURAHS).maxOf { heads.advance(Mushaf.headCode(it)) } * this.label.textSize * HEAD_TITLE_MATCH / heads.upem
         // Either side of the centre: half the title, a corner label, three paddings and a gap
         val room = measure / 2f - pad * 3f - pad * HEAD_GAP
         return (room / (label + title / 2f)).coerceAtMost(1f)
@@ -1408,7 +1408,6 @@ class MushafPageView @JvmOverloads constructor(
         // The least gap between neighbouring cartouches, in paddings, and the highest hizb
         private const val HEAD_GAP = 0.5f
         private const val HIZB_MOST = 60
-        private const val SURAHS = 114
 
         /** Furthest the page may be pinched. Past 3x the glyphs gain nothing. */
         const val MAX_ZOOM = 3f

@@ -14,8 +14,6 @@ import java.util.concurrent.Executors
 // Offline audio in app storage, one folder per reciter, via DownloadManager so it survives the app closing
 object Downloads {
 
-    const val SURAHS = 114
-
     fun file(context: Context, surah: Int, reciter: String): File {
         val dir = File(context.getExternalFilesDir("audio"), reciter)
         return File(dir, surah.toString().padStart(3, '0') + ".mp3")
@@ -43,7 +41,7 @@ object Downloads {
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val dir = File(context.getExternalFilesDir("audio"), reciter).absolutePath
         // A queued download may have no local path yet, so it is also matched by its web address
-        val byUrl = (1..SURAHS).associateBy { Recite.urlFor(context, it, reciter) }
+        val byUrl = (1..Mushaf.SURAHS).associateBy { Recite.urlFor(context, it, reciter) }
         val out = HashMap<Int, Flight>()
         val moving = DownloadManager.Query().setFilterByStatus(
             DownloadManager.STATUS_PENDING or DownloadManager.STATUS_RUNNING or
@@ -81,7 +79,7 @@ object Downloads {
     fun kept(context: Context, reciter: String): Set<Int> {
         val flying = inFlight(context, reciter).keys
         tidy(context, reciter, flying)
-        return (1..SURAHS).filterTo(HashSet()) { s ->
+        return (1..Mushaf.SURAHS).filterTo(HashSet()) { s ->
             s !in flying && file(context, s, reciter).let { it.exists() && it.length() > 0 }
         }
     }
@@ -129,7 +127,7 @@ object Downloads {
         val kept = kept(context, reciter)
         val flying = inFlight(context, reciter).keys
         var queued = 0
-        for (s in 1..SURAHS) {
+        for (s in 1..Mushaf.SURAHS) {
             if (s in kept || s in flying) continue
             start(context, s, reciter)
             queued++
@@ -193,7 +191,7 @@ object Downloads {
         asking.execute {
             val store = sizes(ctx)
             var fresh = 0
-            for (s in 1..SURAHS) {
+            for (s in 1..Mushaf.SURAHS) {
                 if (size(ctx, s, reciter) > 0L) continue
                 val length = try {
                     val c = URL(Recite.urlFor(ctx, s, reciter)).openConnection() as HttpURLConnection

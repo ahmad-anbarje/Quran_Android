@@ -28,7 +28,7 @@ class DownloadsPane(
     private lateinit var shareAll: TextView
     private lateinit var openFolder: TextView
     private lateinit var wordsAction: TextView
-    private val rows = HashMap<Int, View>(Downloads.SURAHS)
+    private val rows = HashMap<Int, View>(Mushaf.SURAHS)
 
     private var ticking = false
     private var saving = false
@@ -94,17 +94,17 @@ class DownloadsPane(
         // Nothing kept is said in words: zero surahs and zero bytes read as stray dots in Arabic figures
         keptValue.text = if (kept.isEmpty()) host.getString(R.string.dl_kept_none) else host.getString(
             R.string.dl_kept_value,
-            figures(kept.size, host.resources), figures(Downloads.SURAHS, host.resources),
+            figures(kept.size, host.resources), figures(Mushaf.SURAHS, host.resources),
             bytes(Downloads.keptBytes(host, reciter.id, kept))
         )
 
         // Marked as still counting until every surah size is known
-        val sizes = (1..Downloads.SURAHS).map { Downloads.size(host, it, reciter.id) }
+        val sizes = (1..Mushaf.SURAHS).map { Downloads.size(host, it, reciter.id) }
         val known = sizes.count { it > 0 }
-        wholeValue.text = if (known == Downloads.SURAHS) bytes(sizes.sum())
+        wholeValue.text = if (known == Mushaf.SURAHS) bytes(sizes.sum())
             else host.getString(R.string.dl_counting, bytes(sizes.sum()))
 
-        val missing = (1..Downloads.SURAHS).filter { it !in kept && it !in flying }
+        val missing = (1..Mushaf.SURAHS).filter { it !in kept && it !in flying }
         getAll.visibility = if (missing.isEmpty()) View.GONE else View.VISIBLE
         // What is left to come down, said on the button, since a tap starts it straight away
         val left = missing.sumOf { Downloads.size(host, it, reciter.id) }

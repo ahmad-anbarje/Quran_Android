@@ -23,7 +23,7 @@ class WordList(private val asset: String) {
                     if (colon <= 0 || tab <= colon) continue
                     val surah = line.substring(0, colon).toIntOrNull() ?: continue
                     val ayah = line.substring(colon + 1, tab).toIntOrNull() ?: continue
-                    words[surah * 1000 + ayah] = line.substring(tab + 1).split('|')
+                    words[ayahKey(surah, ayah)] = line.substring(tab + 1).split('|')
                 }
             }
         } catch (_: Exception) {
@@ -34,7 +34,7 @@ class WordList(private val asset: String) {
 
     /** One word's line; [word] counts from 0 as the page does. Null until loaded. */
     fun of(surah: Int, ayah: Int, word: Int): String? =
-        if (ready) words[surah * 1000 + ayah]?.getOrNull(word) else null
+        if (ready) words[ayahKey(surah, ayah)]?.getOrNull(word) else null
 }
 
 /** Word-by-word Latin transliteration (Quran.com). */

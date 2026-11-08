@@ -98,7 +98,7 @@ object Recite {
         val at = at()
         val now = timing.ayahAt(at)
         if (forward && now >= timing.count) {
-            if (playing < 114) start(where, playing + 1, 0, wantsToPlay())
+            if (playing < Mushaf.SURAHS) start(where, playing + 1, 0, wantsToPlay())
             return
         }
         val target = when {
@@ -193,7 +193,7 @@ object Recite {
                         }
                         val next = playing + 1
                         val where = app
-                        if (next in 2..114 && where != null) {
+                        if (next in 2..Mushaf.SURAHS && where != null) {
                             start(where, next, 0, true)
                         } else {
                             stop()

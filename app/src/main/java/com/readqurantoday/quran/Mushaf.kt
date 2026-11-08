@@ -12,6 +12,9 @@ object Mushaf {
     /** Pages in the mushaf. */
     const val PAGES = 604
 
+    /** Surahs in the mushaf. */
+    const val SURAHS = 114
+
     /** How many pages either side of the one in view are loaded ahead. */
     const val AHEAD = 3
 

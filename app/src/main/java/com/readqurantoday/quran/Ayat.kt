@@ -15,8 +15,6 @@ object Ayat {
     var ready = false
         private set
 
-    private fun key(surah: Int, ayah: Int) = surah * 1000 + ayah
-
     /** Walk all 604 pages once (~78 000 words). Run off the main thread. */
     fun build(context: Context) {
         if (ready) return
@@ -49,7 +47,7 @@ object Ayat {
                         v++
                         w = 0
                     } else {
-                        if (w == 0) opensOn.getOrPut(key(s, v)) { p }
+                        if (w == 0) opensOn.getOrPut(ayahKey(s, v)) { p }
                         w++
                     }
                 }
@@ -64,5 +62,8 @@ object Ayat {
     fun wordAt(page: Int) = atWord.getOrElse(page) { 0 }
 
     /** The page this ayah opens on, or 0 if not yet known. */
-    fun pageOf(surah: Int, ayah: Int) = opensOn[key(surah, ayah)] ?: 0
+    fun pageOf(surah: Int, ayah: Int) = opensOn[ayahKey(surah, ayah)] ?: 0
 }
+
+/** One number for an ayah, its surah's above any ayah's, to key maps and tell ayahs apart. */
+fun ayahKey(surah: Int, ayah: Int) = surah * 1000 + ayah

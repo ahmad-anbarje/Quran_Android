@@ -92,7 +92,7 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
         val ayahs = Surahs.of(surah)?.ayahs ?: return
         when {
             ayah + by in 1..ayahs -> ayah += by
-            by > 0 && surah < SURAHS -> { surah++; ayah = 1 }
+            by > 0 && surah < Mushaf.SURAHS -> { surah++; ayah = 1 }
             by < 0 && surah > 1 -> { surah--; ayah = Surahs.of(surah)?.ayahs ?: 1 }
             else -> return
         }
@@ -155,7 +155,6 @@ class MeaningSheet(private val host: Activity, private val closed: () -> Unit) {
     }
 
     private companion object {
-        const val SURAHS = 114
         // The ayah and its meaning's room, as a share of the screen's height
         const val BODY_TALL = 0.4f
         // The ayah's glyphs over the meaning's type size

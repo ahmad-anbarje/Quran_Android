@@ -15,7 +15,7 @@ object WordMeaning {
     // The languages the site has word meanings in besides English
     private val LANGS = setOf("ur", "id", "bn", "tr", "fa", "hi")
     // As tools/word_meaning.py: a printed slot the recitation counts as two words, by ayah
-    private val PAIRS = mapOf(2 * 1000 + 181 to 2, 8 * 1000 + 6 to 3, 13 * 1000 + 37 to 7)
+    private val PAIRS = mapOf(ayahKey(2, 181) to 2, ayahKey(8, 6) to 3, ayahKey(13, 37) to 7)
 
     private val other = ConcurrentHashMap<String, List<List<String>>>()
     private val asked = ConcurrentHashMap.newKeySet<String>()
@@ -46,7 +46,7 @@ object WordMeaning {
         List(all.length()) { a ->
             val ayah = all.getJSONArray(a)
             val words = List(ayah.length()) { ayah.getString(it) }
-            PAIRS[surah * 1000 + a + 1]?.let { w -> words.take(w + 1) + words.drop(w) } ?: words
+            PAIRS[ayahKey(surah, a + 1)]?.let { w -> words.take(w + 1) + words.drop(w) } ?: words
         }
     } catch (_: Exception) {
         null

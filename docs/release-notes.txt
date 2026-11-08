@@ -1,0 +1,16 @@
+<ar>
+• الترجمة والتفسير لكل آية: التفسير الميسر وأكثر من ١٢٠ ترجمة بلغات العالم، تتبع التلاوة آيةً آية
+• معنى الكلمة تحت نطقها عند تحديدها
+• أرقام الآيات بزخرفة المصحف، في الوضع الفاتح والداكن
+• ألوان التجويد في الوضع الداكن كما في المصحف المطبوع ليلًا
+• بحث أذكى عن السور: «سورة البقرة» أو «بقرة» أو Al-Baqarah
+• التكبير باللمس، وصانع مقاطع التلاوة، وأيقونات أوضح
+</ar>
+<en-US>
+• Translation and tafsir for every ayah: Tafsir al-Muyassar and 120+ translations, following the recitation ayah by ayah
+• Each word's meaning under its pronunciation when marked
+• Ornamented ayah numbers, in light and dark mode
+• Tajweed colours made for dark mode
+• Smarter surah search: "Surah Al-Baqarah", "baqara" or «سورة البقرة»
+• Pinch zoom, the recitation video maker, and clearer icons
+</en-US>

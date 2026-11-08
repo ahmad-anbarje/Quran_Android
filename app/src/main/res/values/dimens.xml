@@ -15,7 +15,7 @@
     <dimen name="card_pad_v">8dp</dimen>
 
     <!-- Icon sizes -->
-    <dimen name="icon_nav">22dp</dimen>   <!-- chrome bar + bottom nav -->
+    <dimen name="icon_nav">24dp</dimen>   <!-- chrome bar + bottom nav -->
 
 
     <!-- Chrome bar button row height (icon 22dp + 3dp gap + ~14dp label + padding) -->

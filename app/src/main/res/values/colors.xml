@@ -11,8 +11,8 @@
     <color name="icon_ink">#FFFDF7</color>
     <color name="accent_soft">#4D1A6FA3</color>
     <color name="surface">#FFFFFF</color>
-    <!-- Reader bars over the page: a cool tint, since white on warm paper read as the same sheet -->
-    <color name="reader_chrome">#F1F6FC</color>
+    <!-- Reader bars over the page: white, apart from both the cream page and its blue frame -->
+    <color name="reader_chrome">#FFFFFF</color>
     <!-- Every screen's ground, lists included, so the tabs read as one app -->
     <color name="surface_2">#F5F9FD</color>
     <!-- Scrollbar at rest: visible on any ground, never louder than the text -->
@@ -30,8 +30,8 @@
 
     <!-- Highlighted word ink, and what the reset in settings returns to. -->
     <color name="ink_lit">#A4161A</color>
-    <!-- The ayah markers on the page, until the reader picks a colour: the accent. -->
-    <color name="ayah_mark">@color/accent</color>
+    <!-- The ayah markers on the page, until the reader picks a colour: the website's, the accent deepened -->
+    <color name="ayah_mark">#155982</color>
     <!-- The week chart's floating day card: the page's colours turned over, so it stands apart from the cards -->
     <color name="tip_ground">#16283A</color>
     <color name="tip_ink">#FFFFFF</color>

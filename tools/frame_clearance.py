@@ -1,5 +1,6 @@
 # Checks that no letter or mark of any page comes near the page frame or a surah band.
 # Repeats MushafPageView's layout (layOut, drawLine, basmalah) and measures each glyph's ink, colour layers included,
+# the plain pages' ayah numbers as the medallions the app draws there,
 # against the frame's fine inner rule and each surah band's edges, for several screens, in both editions.
 # Usage: python tools/frame_clearance.py [--near DP]   (lists pages closer than DP, default 2; exits 1 if any ink touches)
 import json, os, sys
@@ -93,7 +94,7 @@ class Face:
 
 # Each page's ink boxes in units of its type size, as (row, left, top, right, bottom): x from the text's right edge,
 # y from the row's middle. The measure is always em type sizes wide, so these hold on every screen.
-def page_inks(data, key, em, centre_below, face, bas_face):
+def page_inks(data, key, em, centre_below, face, bas_face, medals=None):
     pages = {}
     for page in range(1, len(data['fonts']) + 1):
         f = face(data['fonts'][page - 1])
@@ -121,12 +122,56 @@ def page_inks(data, key, em, centre_below, face, bas_face):
                 short = natural < em * centre_below
                 gap = 0 if gaps <= 0 else (min(CENTRE_GAP * size, spare / gaps) if short else spare / gaps)
                 x = (em + natural + gap * gaps) / 2 if short else em
+                drawn = medals(page) if medals else {}
                 for wd in words:
+                    if wd in drawn:
+                        # The plain number's room, the medallion centred in it as the app draws it
+                        (l, b_, r, t), wide = drawn[wd]
+                        room = f.width(wd, size)
+                        left = x - room + (room - wide * size) / 2
+                        inks.append((row, left + l * size, centre - t * size, left + r * size, centre - b_ * size))
+                        x = x - room - gap
+                        continue
                     box, pen = f.ink(wd, x, centre, size)
                     if box: inks.append((row,) + box)
                     x = pen - gap
         pages[page] = (inks, bands)
     return pages
+
+
+# The plain pages' ayah numbers as the app draws them, the Tajweed edition's medallions: for each page, the plain
+# number's glyphs to the medallion's ink box and width, both in ems, paired in reading order
+def medals_for(plain, key):
+    tj = json.load(open(os.path.join(MAIN, 'assets', 'data', 'mushaf-tajweed.json'), encoding='utf-8'))
+
+    def ends(d, k, page):
+        marks = d['marks'].get(str(page), '')
+        return [w for l in d['pages'][str(page)] if l['t'] == 'ayah' for w in l[k].split('|') if w in marks]
+
+    def page_medals(page):
+        mine, theirs = ends(plain, key, page), ends(tj, 'v2', page)
+        if len(mine) != len(theirs):
+            return {}
+        rows = open(os.path.join(MAIN, 'fonts-tajweed', f'gt{page}.txt'), encoding='ascii').read().split()
+        upem = float(rows[0])
+        gid = {int(rows[i]): (int(rows[i + 1]), int(rows[i + 2])) for i in range(1, len(rows), 3)}
+        f = TTFont(os.path.join(MAIN, 'fonts-tajweed', f'tj{page}.otf'), lazy=True)
+        order, glyf, hmtx, layers = f.getGlyphOrder(), f['glyf'], f['hmtx'], f['COLR'].ColorLayers
+        out = {}
+        for a, b in zip(mine, theirs):
+            g, adv = gid[ord(b)]
+            name = order[g]
+            boxes = []
+            for part in [name] + [l.name for l in layers.get(name, [])]:
+                gl = glyf[part]
+                if gl.numberOfContours:
+                    lsb = hmtx[part][1]
+                    boxes.append((lsb, gl.yMin, lsb + gl.xMax - gl.xMin, gl.yMax))
+            box = (min(x[0] for x in boxes) / upem, min(x[1] for x in boxes) / upem,
+                   max(x[2] for x in boxes) / upem, max(x[3] for x in boxes) / upem)
+            out[a] = (box, adv / upem)
+        return out
+    return page_medals
 
 
 def edition(name, asset, key, folder, font_name, table_name):
@@ -140,7 +185,7 @@ def edition(name, asset, key, folder, font_name, table_name):
         return faces[n]
 
     bas_font = data['basmalah'].get('font', 1)
-    pages = page_inks(data, key, em, centre_below, face, face(bas_font))
+    pages = page_inks(data, key, em, centre_below, face, face(bas_font), medals_for(data, key) if name == 'plain' else None)
     touches = 0
     print(f'\n=== {name} ({len(pages)} pages) ===')
     for screen, (w, h, d) in SCREENS.items():

@@ -1,7 +1,6 @@
 package com.readqurantoday.quran
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.fonts.Font
 import android.os.Build
@@ -26,20 +25,16 @@ object TajweedFonts : FontSource {
     private const val NIGHT_PALETTE = 1
 
     // The plain edition's ayah numbers as this edition's medallions: the slots of their outline, ornament, disc and
-    // numerals, in the website's blues by day and as its dark pages turn them by night
+    // numerals, painted the theme's medal colours
     private val MEDAL_SLOTS = intArrayOf(10, 11, 12, 13)
+    private val MEDAL_COLOURS = intArrayOf(R.color.medal_outline, R.color.medal_ornament, R.color.medal_disc, R.color.medal_numerals)
     // The slots only a medallion uses, by which one is known
     private val MEDAL_ONLY = setOf(10, 11, 12)
-    private val MEDAL_DAY = intArrayOf(0xFF0D4A73.toInt(), 0xFF5AAEDD.toInt(), 0xFFDBEEFA.toInt(), 0xFF000000.toInt())
-    private val MEDAL_NIGHT = intArrayOf(0xFF5AAEDD.toInt(), 0xFF3F9BD1.toInt(), 0xFF1C2E3D.toInt(), 0xFFFFFFFF.toInt())
 
     // Keyed by page and theme, as key() makes them
     private val fonts = ConcurrentHashMap<Int, Font>()
     private val faces = ConcurrentHashMap<Int, Typeface>()
     private val medals = ConcurrentHashMap<Int, Font>()
-
-    private fun night(context: Context) =
-        context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
     private fun key(page: Int, night: Boolean) = page * 2 + if (night) 1 else 0
 
@@ -74,7 +69,7 @@ object TajweedFonts : FontSource {
 
     override fun font(context: Context, n: Int): Font? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-        val night = night(context)
+        val night = context.isNight
         fonts[key(n, night)]?.let { return it }
         val file = ready(context, n, night) ?: return null
         return try {
@@ -85,7 +80,7 @@ object TajweedFonts : FontSource {
     }
 
     override fun face(context: Context, n: Int): Typeface? {
-        val night = night(context)
+        val night = context.isNight
         faces[key(n, night)]?.let { return it }
         val file = ready(context, n, night) ?: return null
         return try {
@@ -98,10 +93,10 @@ object TajweedFonts : FontSource {
     /** The page's font with its ayah medallions in the website's blues for this theme, for the plain edition's numbers. */
     fun medals(context: Context, page: Int): Font? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-        val night = night(context)
+        val night = context.isNight
         medals[key(page, night)]?.let { return it }
         val file = written(context, "p$page-medal-${theme(night)}-$MADE.ttf") {
-            painted(bytes(context, page), MEDAL_SLOTS, if (night) MEDAL_NIGHT else MEDAL_DAY)
+            painted(bytes(context, page), MEDAL_SLOTS, IntArray(MEDAL_COLOURS.size) { context.getColor(MEDAL_COLOURS[it]) })
         } ?: return null
         return try {
             Font.Builder(file).build().also { medals[key(page, night)] = it }

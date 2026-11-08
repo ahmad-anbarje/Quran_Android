@@ -2,7 +2,6 @@ package com.readqurantoday.quran
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -12,7 +11,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.core.graphics.ColorUtils
 
 /** One of the mushaf's closing pages, framed as the Quran's pages are, its paragraphs wrapped to fit the frame whole. */
 @SuppressLint("ViewConstructor")
@@ -145,10 +143,8 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         super.onDraw(canvas)
         val inset = INSET * dp
         val edge = EDGE * dp
-        // As on the Quran's pages: the ornament drawn back toward the page by night
-        val night = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         val mark = Settings.resolvedAyahColor(context)
-        val ink = if (night) ColorUtils.blendARGB(mark, Settings.paperColor(context), NIGHT_RECEDE) else mark
+        val ink = frameInk(context, mark, Settings.paperColor(context))
         // The foot band runs to the screen's foot, as the Quran's pages' does, its letter in the middle
         val foot = inset + FOOT * dp
         val bottom = height - foot / 2f
@@ -186,7 +182,6 @@ class EndPageView(context: Context, private val tapped: () -> Unit) : FrameLayou
         // The letter's cartouche: its height over the letter's size, and padding either side
         const val LABEL_TALL = 1.6f
         const val LABEL_PAD = 0.5f
-        const val NIGHT_RECEDE = 0.3f
         // The frame's band as a share of the margin round the text
         const val BAND = 0.9f
     }

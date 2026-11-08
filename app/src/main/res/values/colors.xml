@@ -47,4 +47,9 @@
     <color name="tajweed_qalqalah">#2FADFF</color>
     <color name="tajweed_heavy">#3F48E6</color>
     <color name="tajweed_silent">#A5A5A5</color>
+    <!-- An ayah's medallion on the plain pages, as the website draws it: outline, ornament, disc and numerals in its blues -->
+    <color name="medal_outline">#0D4A73</color>
+    <color name="medal_ornament">#5AAEDD</color>
+    <color name="medal_disc">#DBEEFA</color>
+    <color name="medal_numerals">#000000</color>
 </resources>

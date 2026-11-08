@@ -42,4 +42,9 @@
     <color name="tajweed_qalqalah">#00DEFF</color>
     <color name="tajweed_heavy">#3C84D5</color>
     <color name="tajweed_silent">#9D9999</color>
+    <!-- The medallion as the website's dark pages turn its blues -->
+    <color name="medal_outline">#5AAEDD</color>
+    <color name="medal_ornament">#3F9BD1</color>
+    <color name="medal_disc">#1C2E3D</color>
+    <color name="medal_numerals">#FFFFFF</color>
 </resources>

@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.graphics.ColorUtils
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -1208,11 +1207,7 @@ class MushafPageView @JvmOverloads constructor(
         return (room / (label + title / 2f)).coerceAtMost(1f)
     }
 
-    // The frame's and bands' colour: the ayah marks', drawn back toward the page by night so the ornament stays behind the text
-    private fun adornInk(): Int {
-        val night = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-        return if (night) ColorUtils.blendARGB(markPaint.color, paperColour, NIGHT_RECEDE) else markPaint.color
-    }
+    private fun adornInk(): Int = frameInk(context, markPaint.color, paperColour)
 
     // Half the folio's cartouche, measured at the labels' full size
     private fun folioHalf() = label.measureText(folioText) / 2f + padBottom * FOOT_TALL * FOOT_PAD
@@ -1404,7 +1399,6 @@ class MushafPageView @JvmOverloads constructor(
         // The surah's cartouche's clearance from the head band's rules, in dp
         private const val HEAD_CLEAR = 2.5f
         // How far the ornament's colour is drawn toward the page by night
-        private const val NIGHT_RECEDE = 0.3f
         // The box behind a lit word that keeps its colours: its alpha out of 255, and its corners as a share of a line
         private const val LIT_BOX_ALPHA = 0x5C
         private const val LIT_ROUND = 0.12f

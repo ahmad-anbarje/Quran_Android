@@ -49,7 +49,7 @@ object Feedback {
             Settings.DARK -> "dark"
             else -> "system"
         }
-        val night = (config.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        val night = context.isNight
         val orientation = if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) "landscape" else "portrait"
         return Details(
             version, Build.VERSION.RELEASE, Build.VERSION.SDK_INT,

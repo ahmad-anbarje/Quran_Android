@@ -72,7 +72,7 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
     }
 
     /** The reading style screen: the preview, then colour and weight for each styled thing. */
-    fun readingStyle(night: Boolean = isNight(host)) {
+    fun readingStyle(night: Boolean = host.isNight) {
         into.removeAllViews()
         look = inTheme(night)
 
@@ -252,10 +252,6 @@ class SettingsPane(private val host: Activity, private val into: LinearLayout) {
             (if (night) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO)
         return host.createConfigurationContext(conf)
     }
-
-    private fun isNight(ctx: Context) =
-        (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
 
     // The theme's current colours, offered as-is on the sheet
     private fun inUse() = intArrayOf(

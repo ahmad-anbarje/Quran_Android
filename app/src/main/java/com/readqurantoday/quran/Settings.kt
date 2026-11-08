@@ -231,11 +231,7 @@ object Settings {
     // --- reading style ---
 
     // Style is stored per theme so dark ink chosen by day does not land on dark paper at night
-    private fun themed(ctx: Context, key: String): String = key + if (isNight(ctx)) "-night" else "-day"
-
-    private fun isNight(ctx: Context) =
-        (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
+    private fun themed(ctx: Context, key: String): String = key + if (ctx.isNight) "-night" else "-day"
 
     // Own value, else a colour saved before per-theme keys (0 = unset), else the theme default
     private fun colour(ctx: Context, key: String, shared: String?, default: Int): Int {
@@ -335,3 +331,7 @@ object Settings {
         restyled()
     }
 }
+
+/** Whether this context is drawn dark: the reader's theme on a screen, which the app's own context does not carry. */
+val Context.isNight: Boolean
+    get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

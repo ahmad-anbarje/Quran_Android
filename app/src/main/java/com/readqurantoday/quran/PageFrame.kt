@@ -1,5 +1,6 @@
 package com.readqurantoday.quran
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -105,3 +106,10 @@ class PageFrame {
         private const val DOT = 0.07f
     }
 }
+
+/** The frame's and bands' colour, on every page: the ayah marks', drawn back toward the page by night so the ornament stays behind the text. */
+fun frameInk(context: Context, mark: Int, paper: Int): Int =
+    if (context.isNight) ColorUtils.blendARGB(mark, paper, NIGHT_RECEDE) else mark
+
+// How far the frame is drawn toward the page by night
+private const val NIGHT_RECEDE = 0.3f

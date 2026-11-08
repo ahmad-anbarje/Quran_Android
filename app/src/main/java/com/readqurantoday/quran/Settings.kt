@@ -271,6 +271,9 @@ object Settings {
 
     /* The ayah markers. ayah_mark is themed: the accent blue by day, a lighter blue by night. */
     fun resolvedAyahColor(ctx: Context) = colour(ctx, AYAH_COLOR, AYAH_COLOR, R.color.ayah_mark)
+
+    /** Whether the reader chose the markers' colour; until then they are drawn as the website's medallions. */
+    fun ownAyahColor(ctx: Context) = store(ctx).run { contains(themed(ctx, AYAH_COLOR)) || getInt(AYAH_COLOR, 0) != 0 }
     fun setAyahColor(ctx: Context, color: Int) = setColour(ctx, AYAH_COLOR, color)
     fun resetAyahColor(ctx: Context) = resetColour(ctx, AYAH_COLOR, AYAH_COLOR)
 

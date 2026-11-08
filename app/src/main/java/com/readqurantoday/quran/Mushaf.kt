@@ -100,6 +100,31 @@ object Mushaf {
         Packed.fonts.keys.retainAll(used)
         Packed.faces.keys.retainAll(used)
         TajweedFonts.keepOnly(near)
+        medals.keys.retainAll { it in near }
+    }
+
+    /** A plain page's ayah number as the Tajweed edition's medallion: its glyph in that page's font, and its width. */
+    data class Medal(val id: Int, val advance: Float, val upem: Float)
+
+    // Each page's medallions by the plain edition's number glyph; none where the two editions' numbers do not pair
+    private val medals = ConcurrentHashMap<Int, Map<Int, Medal>>()
+
+    /** The medallion for number glyph [cp] on [page], paired by reading order; null where the page has none to give. */
+    fun medal(context: Context, page: Int, cp: Int): Medal? = medalsOn(context, page)?.get(cp)
+
+    /** Whether every ayah number on [page] has its medallion, so the page's numbers are drawn alike. */
+    fun hasMedals(context: Context, page: Int) = !medalsOn(context, page).isNullOrEmpty()
+
+    private fun medalsOn(context: Context, page: Int): Map<Int, Medal>? {
+        medals[page]?.let { return it }
+        val table = tajweed.glyphs(context, page) ?: return null
+        val plainEnds = plain.endsOn(page)
+        val tajweedEnds = tajweed.endsOn(page)
+        val paired = if (plainEnds.size != tajweedEnds.size) emptyMap() else plainEnds.zip(tajweedEnds).associate { (p, t) ->
+            val cp = t.codePointAt(0)
+            p.codePointAt(0) to Medal(table.id(cp), table.advance(cp), table.upem)
+        }
+        return paired.also { medals[page] = it }
     }
 
     /** The surah names font for the lists: 114 names + the word سورة, addressed by surah number. */

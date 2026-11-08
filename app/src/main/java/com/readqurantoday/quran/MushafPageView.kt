@@ -78,6 +78,10 @@ class MushafPageView @JvmOverloads constructor(
     var plainOnly = false
     private var table: Book.Glyphs? = null
     private var font: android.graphics.fonts.Font? = null
+    // The page's ayah numbers as the website's medallions, from the Tajweed edition's font; null draws them plain
+    private var medalFont: android.graphics.fonts.Font? = null
+    // The reader chose the markers' colour, so they are drawn plain in it
+    private var ownAyah = false
     private var pageNo = 0
 
     /** The page on show. */
@@ -569,6 +573,7 @@ class MushafPageView @JvmOverloads constructor(
         litBoxPaint.color = ColorUtils.setAlphaComponent(litPaint.color, LIT_BOX_ALPHA)
         inkSpread = spread(Settings.inkWeight(context))
         markSpread = spread(Settings.ayahWeight(context))
+        ownAyah = Settings.ownAyahColor(context)
         litSpread = spread(Settings.litWeight(context))
         labelSpread = spread(Settings.labelWeight(context))
         label.style = if (labelSpread > 0f) Paint.Style.FILL_AND_STROKE else Paint.Style.FILL
@@ -748,6 +753,9 @@ class MushafPageView @JvmOverloads constructor(
         paint.typeface = book.face(context, pageNo)
         lineWords = lines.map { line -> line.words.map { it.joinToString(" ") } }
         pageMarks = book.marksOn(pageNo)
+        // A video paints its markers in its own colours
+        medalFont = if (book === Mushaf.plain && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            context !is Settings.OwnPhonetics && Mushaf.hasMedals(context, pageNo)) TajweedFonts.medals(context, pageNo) else null
         laidOut = false
         step = 0f
     }
@@ -945,6 +953,8 @@ class MushafPageView @JvmOverloads constructor(
 
         val scale = size / glyphs.upem
         val marks = pageMarks
+        // Every number on the page a medallion, or none: a trial colour or the reader's own shows them plain
+        val medals = medalFont.takeIf { markTrial == null && !ownAyah }
         var x = start
         var n = 0
         var m = 0
@@ -983,8 +993,10 @@ class MushafPageView @JvmOverloads constructor(
                 val advance = glyphs.advance(cp) * scale
                 if (isMark) {
                     if (m * 2 + 1 >= markSpots.size) growMarks()
-                    markIds[m] = id
-                    markSpots[m * 2] = pen - advance
+                    val medal = if (medals != null) Mushaf.medal(context, pageNo, cp) else null
+                    markIds[m] = medal?.id ?: id
+                    // The medallion centred where the plain number stood
+                    markSpots[m * 2] = pen - advance + (medal?.let { advance - it.advance * size / it.upem } ?: 0f) / 2f
                     markSpots[m * 2 + 1] = y
                     m++
                     pen -= advance
@@ -1037,7 +1049,9 @@ class MushafPageView @JvmOverloads constructor(
             if (n > 0) drawRun(canvas, face, ids, spots, n, paint, inkSpread)
             if (m > 0) {
                 markPaint.textSize = size
-                drawRun(canvas, face, markIds, markSpots, m, markPaint, markSpread)
+                // A medallion carries its own colours and weight
+                if (medals != null) drawRun(canvas, medals, markIds, markSpots, m, markPaint, 0f)
+                else drawRun(canvas, face, markIds, markSpots, m, markPaint, markSpread)
             }
             if (litN > 0) {
                 litPen.textSize = size

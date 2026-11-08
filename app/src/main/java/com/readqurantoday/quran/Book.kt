@@ -141,6 +141,12 @@ class Book(private val asset: String, private val key: String, private val table
         return out
     }
 
+    /** The ayah numbers [page] prints, in reading order, as their glyphs. */
+    fun endsOn(page: Int): List<String> {
+        val marks = marksOn(page)
+        return lines(page).filter { it.kind == "ayah" }.flatMap { it.words }.map { it.joinToString(" ") }.filter { marks.contains(it) }
+    }
+
     /** Release what no page in this range uses; keep the Basmalahs' always. */
     @Synchronized
     fun keepOnly(near: IntRange) {

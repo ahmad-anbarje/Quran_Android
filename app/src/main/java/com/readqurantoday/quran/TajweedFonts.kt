@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap
 object TajweedFonts : FontSource {
 
     private const val FOLDER = "tajweed"
+    // Bumped when the fonts are made differently, so copies made before are made again
+    private const val MADE = 2
     // The palette slots of the plain letters, which then follow the paint
     private val LETTERS = setOf(0, 13, 14)
     private const val FOREGROUND = 0xFFFF
@@ -26,6 +28,8 @@ object TajweedFonts : FontSource {
     // The plain edition's ayah numbers as this edition's medallions: the slots of their outline, ornament, disc and
     // numerals, in the website's blues by day and as its dark pages turn them by night
     private val MEDAL_SLOTS = intArrayOf(10, 11, 12, 13)
+    // The slots only a medallion uses, by which one is known
+    private val MEDAL_ONLY = setOf(10, 11, 12)
     private val MEDAL_DAY = intArrayOf(0xFF0D4A73.toInt(), 0xFF5AAEDD.toInt(), 0xFFDBEEFA.toInt(), 0xFF000000.toInt())
     private val MEDAL_NIGHT = intArrayOf(0xFF5AAEDD.toInt(), 0xFF3F9BD1.toInt(), 0xFF1C2E3D.toInt(), 0xFFFFFFFF.toInt())
 
@@ -45,9 +49,15 @@ object TajweedFonts : FontSource {
     private fun bytes(context: Context, page: Int): ByteArray =
         context.assets.open("tj$page.otf").use { it.readBytes() }
 
-    // A font made from a page's, written once into the cache under [name]
+    @Volatile private var swept = false
+
+    // A font made from a page's, written once into the cache under [name]; copies made the old way go, once a run
     private fun written(context: Context, name: String, make: () -> ByteArray): File? {
         val out = File(context.cacheDir, "$FOLDER/$name")
+        if (!swept) {
+            swept = true
+            out.parentFile?.listFiles()?.filterNot { it.name.endsWith("-$MADE.ttf") }?.forEach { it.delete() }
+        }
         if (out.exists()) return out
         return try {
             out.parentFile?.mkdirs()
@@ -60,7 +70,7 @@ object TajweedFonts : FontSource {
 
     // The page's font as the screen wants it in this theme
     private fun ready(context: Context, page: Int, night: Boolean): File? =
-        written(context, "p$page-ink-${theme(night)}.ttf") { recolour(bytes(context, page), night) }
+        written(context, "p$page-ink-${theme(night)}-$MADE.ttf") { recolour(bytes(context, page), night) }
 
     override fun font(context: Context, n: Int): Font? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
@@ -90,7 +100,7 @@ object TajweedFonts : FontSource {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
         val night = night(context)
         medals[key(page, night)]?.let { return it }
-        val file = written(context, "p$page-medal-${theme(night)}.ttf") {
+        val file = written(context, "p$page-medal-${theme(night)}-$MADE.ttf") {
             painted(bytes(context, page), MEDAL_SLOTS, if (night) MEDAL_NIGHT else MEDAL_DAY)
         } ?: return null
         return try {
@@ -142,15 +152,24 @@ object TajweedFonts : FontSource {
         return out
     }
 
-    // The font's colour layers: plain letters follow the paint, the rules keep the font's own colours, by night its night palette's
+    // The font's colour layers: plain letters follow the paint, the rules keep the font's own colours, by night its
+    // night palette's; an ayah's medallion keeps all its own, its numerals and outline the font's black or white, as the website
     private fun recolour(bytes: ByteArray, night: Boolean): ByteArray {
         val b = ByteBuffer.wrap(bytes)
         val colr = table(bytes, "COLR")
         if (colr >= 0) {
+            val bases = colr + b.getInt(colr + 4)
             val layers = colr + b.getInt(colr + 8)
+            val medals = HashSet<Int>()
+            for (i in 0 until (b.getShort(colr + 2).toInt() and 0xFFFF)) {
+                val first = b.getShort(bases + i * 6 + 2).toInt() and 0xFFFF
+                val count = b.getShort(bases + i * 6 + 4).toInt() and 0xFFFF
+                val own = (first until first + count)
+                if (own.any { (b.getShort(layers + it * 4 + 2).toInt() and 0xFFFF) in MEDAL_ONLY }) medals.addAll(own)
+            }
             for (i in 0 until (b.getShort(colr + 12).toInt() and 0xFFFF)) {
                 val slot = layers + i * 4 + 2
-                if ((b.getShort(slot).toInt() and 0xFFFF) in LETTERS) b.putShort(slot, FOREGROUND.toShort())
+                if (i !in medals && (b.getShort(slot).toInt() and 0xFFFF) in LETTERS) b.putShort(slot, FOREGROUND.toShort())
             }
         }
         val cpal = table(bytes, "CPAL")

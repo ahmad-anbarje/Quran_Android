@@ -7,6 +7,8 @@
         <item name="android:layout_marginTop">@dimen/icon_label_gap</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/chrome_ink</item>
+        <!-- Bold, as the bar's names read firm under their icons; the face has only one weight, so it is thickened -->
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/icon_label</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:maxLines">1</item>
